@@ -1,0 +1,6 @@
+<menu2 id="MainMenu" title="@Strings.AppName">
+    <menu-item id="queue" label="@Strings.menuQueue"></menu-item>
+    <menu-item id="podcasts" label="@Strings.menuPodcasts"></menu-item>
+    <menu-item id="sync" label="@Strings.menuSync"></menu-item>
+    <menu-item id="settings" label="@Strings.menuSettings"></menu-item>
+</menu2>
