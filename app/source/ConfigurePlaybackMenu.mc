@@ -24,21 +24,13 @@ class ConfigurePlaybackMenu extends WatchUi.CheckboxMenu {
         for (var i = 0; i < episodes.size(); i++) {
         
             var refId = episodes[i][Constants.EPISODE_MEDIA];       	
-            var mediaObj;
-            try{
-                var ref = new Media.ContentRef(episodes[i][Constants.EPISODE_MEDIA], Media.CONTENT_TYPE_AUDIO);
-                mediaObj = Media.getCachedContentObj(ref);
-            }catch(ex){
-                mediaObj = null;
-            }
-            
+            var mediaObj = Utils.getSafeMedia(refId);
+
             if(mediaObj != null){
 	            var episodeTitle = mediaObj.getMetadata().title;
 	            var episodePodcast = mediaObj.getMetadata().artist;
 	            
-	            var item = new WatchUi.CheckboxMenuItem(episodeTitle, episodePodcast, refId, currentPlaylist.hasKey(refId), {});
-	            
-	            addItem(item);
+	            addItem(new WatchUi.CheckboxMenuItem(episodeTitle, episodePodcast, refId, currentPlaylist.hasKey(refId), {}));
             }
         }
     }

@@ -97,20 +97,19 @@ class SyncDelegate extends Communications.SyncDelegate {
 		    				
 					episode[Constants.EPISODE_ID] = items[i]["id"];
 					episode[Constants.EPISODE_PODCAST] = podcasts[podcastsIndex][Constants.PODCAST_ID];
-					episodes.add(episode);	
 					
-					var mediaObj = null;
-					try {
-						var existing = Utils.findArrayField(saved, Constants.EPISODE_ID, episode[Constants.EPISODE_ID]);
-						var ref = new Media.ContentRef(existing[Constants.EPISODE_MEDIA], Media.CONTENT_TYPE_AUDIO);
-						mediaObj = Media.getCachedContentObj(ref);
-					} catch(ex) {
-						mediaObj = null;
+					var match = Utils.findArrayField(saved, Constants.EPISODE_ID, episode[Constants.EPISODE_ID]);
+					var refId = null;
+					if(match != null){
+						episode[Constants.EPISODE_MEDIA]= match[Constants.EPISODE_MEDIA];
 					}
+            		var mediaObj = Utils.getSafeMedia(episode[Constants.EPISODE_MEDIA]);
 		
 		    		if(mediaObj == null){				
+						episodes.add(episode);	
 						episodesUrl.add(items[i]["enclosureUrl"]);
 		    		}else{
+						episodes.add(episode);	
 		    			episodesUrl.add(null);
 		    			System.println("Episode ID " + episode[Constants.EPISODE_ID] + " already downloaded!");
 		    		}	  					
@@ -173,7 +172,6 @@ class SyncDelegate extends Communications.SyncDelegate {
 				episodesIndex++;
 				getNextEpisode();
 			}		
-			
 		}else{
 			// All episodes downloaded, get next podcast
 			podcastsIndex++;

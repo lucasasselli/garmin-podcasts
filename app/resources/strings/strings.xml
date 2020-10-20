@@ -3,6 +3,10 @@
     
     <string id="menuSearch">Search</string>
     <string id="menuSubscribed">Subscribed</string>
+
+    <string id="menuQueue">Playback queue</string>
+    <string id="menuPodcasts">Podcasts</string>
+    <string id="menuSync">Sync</string>
     <string id="menuSettings">Settings</string>  
     
     <string id="errorNoResults">No results!</string>

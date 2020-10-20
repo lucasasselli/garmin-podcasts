@@ -1,3 +1,4 @@
 out
 app/bin
 app/source/Secrets.mc
+.vscode

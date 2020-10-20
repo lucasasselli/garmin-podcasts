@@ -87,8 +87,6 @@ class SyncConfigurationDelegate extends WatchUi.Menu2InputDelegate {
             } else {
             	WatchUi.pushView(new ErrorView(Rez.Strings.errorNoSubscriptions), null, WatchUi.SLIDE_LEFT); 
             }
-		} else {
-			WatchUi.pushView(new Rez.Menus.SettingsMain(), new SettingsMainDelegate(), WatchUi.SLIDE_LEFT);
 		}
     }
     

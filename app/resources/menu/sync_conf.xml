@@ -1,5 +1,4 @@
 <menu2 id="SyncConfigurationMenu" title="@Strings.AppName">
     <menu-item id="search" label="@Strings.menuSearch"></menu-item>
     <menu-item id="subscribed" label="@Strings.menuSubscribed"></menu-item>
-    <menu-item id="settings" label="@Strings.menuSettings"></menu-item>
 </menu2>

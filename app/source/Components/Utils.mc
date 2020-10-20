@@ -1,4 +1,5 @@
 using Toybox.Application.Storage;
+using Toybox.Media;
 
 class Utils {
 
@@ -68,5 +69,18 @@ class Utils {
         }else{
         	return null;
         }
+	}
+
+	function getSafeMedia(refId){
+		var mediaObj = null;
+		if(refId != null){
+			try{
+				var ref = new Media.ContentRef(refId, Media.CONTENT_TYPE_AUDIO);
+				mediaObj = Media.getCachedContentObj(ref);
+			}catch(ex){
+				mediaObj = null;
+			}
+		}
+		return mediaObj;
 	}
 }

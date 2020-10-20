@@ -22,14 +22,7 @@ class PodcastsApp extends Application.AudioContentProviderApp {
 
     // Get the initial view for configuring playback
     function getPlaybackConfigurationView() {
-    
-	    var episodes = Storage.getValue(Constants.STORAGE_SAVED);
-	    
-        if ((episodes != null) && (episodes.size() != 0)) {
-            return [new ConfigurePlaybackMenu(), new ConfigurePlaybackMenuDelegate()];
-        } else {
-            return [new ErrorView(Rez.Strings.errorNoEpisodes)];
-        }
+        return [ new Rez.Menus.MainMenu(), new MainMenuDelegate() ];
     }
 
     // Get the initial view for configuring sync
