@@ -52,7 +52,7 @@ class SyncDelegate extends Communications.SyncDelegate {
     
     function throwSyncError(msg){
     	Communications.cancelAllRequests();
-    	Media.notifySyncComplete(msg);
+    	Communications.notifySyncComplete(msg);
     }
     
     function cleanMedia(){
@@ -76,7 +76,7 @@ class SyncDelegate extends Communications.SyncDelegate {
     	} else {
 			Storage.setValue(Constants.STORAGE_SAVED, episodes);		
 			cleanMedia();		
-			Media.notifySyncComplete(null);		
+			Communications.notifySyncComplete(null);		
 		}
     }
     
@@ -153,10 +153,6 @@ class SyncDelegate extends Communications.SyncDelegate {
         
     	if(episodesIndex < episodes.size())
     	{ 	
-    	    var progress =  episodesIndex / episodes.size().toFloat();
-	        progress = (progress * 100).toNumber();
-	        Media.notifySyncProgress(progress);
-    	
     		if(episodesUrl[episodesIndex] != null){
     		
 	            var options = {     
@@ -214,6 +210,6 @@ class SyncDelegate extends Communications.SyncDelegate {
     		progress += (bytesTransferred/fileSize.toFloat())/episodesToDownload.toFloat();
     	}
     	
-    	Media.notifySyncProgress((progress*100).toNumber());
+    	Communications.notifySyncProgress((progress*100).toNumber());
     }
 }

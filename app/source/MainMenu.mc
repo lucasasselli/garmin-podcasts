@@ -19,8 +19,14 @@ class MainMenuDelegate extends WatchUi.Menu2InputDelegate {
             // Podcast subscription management
 			WatchUi.pushView(new Rez.Menus.SyncConfigurationMenu(), new SyncConfigurationDelegate(), WatchUi.SLIDE_LEFT);
         } else if (item.getId() == :sync) {  
-            // Start sync
-            Communications.startSync();
+            var podcasts = Storage.getValue(Constants.STORAGE_SUBSCRIBED);
+            if ((podcasts != null) && (podcasts.size() != 0)) {
+                // Start sync
+                Communications.startSync();
+            } else {
+                // No podcasts
+			    WatchUi.pushView(new ErrorView(Rez.Strings.errorNoSubscriptions), null, WatchUi.SLIDE_LEFT);
+            }
         } else if (item.getId() == :settings) {  
             // Settings
 			WatchUi.pushView(new Rez.Menus.SettingsMain(), new SettingsMainDelegate(), WatchUi.SLIDE_LEFT);

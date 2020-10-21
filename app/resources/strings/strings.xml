@@ -11,7 +11,7 @@
     
     <string id="errorNoResults">No results!</string>
     <string id="errorNoSubscriptions">No subscriptions!</string>
-    <string id="errorNoEpisodes">No episodes!</string>
+    <string id="errorNoEpisodes">No episodes\ndownloaded!</string>
     
     <string id="titlePlaybackMenu">Choose episodes</string>
     <string id="titleSubscriptionMenu">Subscribed</string>
