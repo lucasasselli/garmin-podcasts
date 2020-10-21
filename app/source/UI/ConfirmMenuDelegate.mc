@@ -15,6 +15,11 @@ class ConfirmMenuDelegate extends WatchUi.Menu2InputDelegate {
     function onSelect(item) {
 		WatchUi.pushView(new WatchUi.Confirmation(msg), new ConfirmMenuPromptDelegate(item, callback), WatchUi.SLIDE_LEFT);
     }
+
+	function onBack(){
+    	WatchUi.popView(WatchUi.SLIDE_RIGHT);    	
+		return true;
+	}
 }
 
 class ConfirmMenuPromptDelegate extends WatchUi.ConfirmationDelegate {

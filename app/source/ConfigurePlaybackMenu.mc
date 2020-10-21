@@ -36,18 +36,16 @@ class ConfigurePlaybackMenu extends WatchUi.CheckboxMenu {
     }
 }
 
-// Delegate for playback menu
 class ConfigurePlaybackMenuDelegate extends WatchUi.Menu2InputDelegate {
 
-    // Constructor
     function initialize() {
         Menu2InputDelegate.initialize();
     }
 
-    // When an item is selected, add or remove it from the system playlist
     function onSelect(item) {
         var playlist = Utils.getSafeStorageArray(Constants.STORAGE_PLAYLIST);
 
+        // When an item is selected, add or remove it from the system playlist
         if (item.isChecked()) {
             playlist.add(item.getId());
         } else {
@@ -57,13 +55,12 @@ class ConfigurePlaybackMenuDelegate extends WatchUi.Menu2InputDelegate {
         Storage.setValue(Constants.STORAGE_PLAYLIST, playlist);
     }
 
-    // Pop the view when done
     function onDone() {
         Media.startPlayback(null);
     }
 
-    // Pop the view when back is pushed
-    function onBack() {
-        WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
-    }
+	function onBack(){
+    	WatchUi.popView(WatchUi.SLIDE_RIGHT);    	
+		return true;
+	}
 }

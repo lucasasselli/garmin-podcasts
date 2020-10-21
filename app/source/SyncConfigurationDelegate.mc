@@ -6,6 +6,10 @@ using Toybox.StringUtil;
 using Toybox.Application.Storage;
 
 class SyncConfigurationDelegate extends WatchUi.Menu2InputDelegate {
+
+	function initialize() {
+        Menu2InputDelegate.initialize();
+    }
     
     function onSearchQuery(query){
 		   								
@@ -22,7 +26,6 @@ class SyncConfigurationDelegate extends WatchUi.Menu2InputDelegate {
     
     function onSearchResults(responseCode, data) {
     
-    	WatchUi.popView(WatchUi.SLIDE_RIGHT);    	
     	
         if (responseCode == 200) {
             
@@ -89,6 +92,11 @@ class SyncConfigurationDelegate extends WatchUi.Menu2InputDelegate {
             }
 		}
     }
+
+	function onBack(){
+    	WatchUi.popView(WatchUi.SLIDE_RIGHT);    	
+		return true;
+	}
     
     function onPodcastAdd(context){
     
@@ -125,8 +133,7 @@ class SearchProgressDelegate extends WatchUi.BehaviorDelegate
 	
 	function onBack() {
 		Communications.cancelAllRequests();
-		WatchUi.popView(WatchUi.SLIDE_RIGHT);
-		return true;
+		return false;
 	}
 }
 
@@ -141,6 +148,7 @@ class PickerSearchDelegate extends WatchUi.TextPickerDelegate {
 
 	function onTextEntered(text, changed)
 	{
+    	WatchUi.popView(WatchUi.SLIDE_RIGHT);    	
 		callback.invoke(text);
 	}
 }
