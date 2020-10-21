@@ -5,8 +5,12 @@ class ErrorView extends WatchUi.View {
 
     private var msg;
 
-    function initialize(msgId) {
-        msg = WatchUi.loadResource(msgId);
+    function initialize(x) {
+        if(x instanceof String){
+            msg = x;
+        } else {
+            msg = WatchUi.loadResource(x);
+        }
         View.initialize();
     }
 

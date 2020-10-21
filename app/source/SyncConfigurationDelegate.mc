@@ -10,9 +10,8 @@ class SyncConfigurationDelegate extends WatchUi.Menu2InputDelegate {
 	function initialize() {
         Menu2InputDelegate.initialize();
     }
-    
+
     function onSearchQuery(query){
-		   								
 		Remote.request(
 			Constants.URL_SEARCH, 
 			{
@@ -20,12 +19,9 @@ class SyncConfigurationDelegate extends WatchUi.Menu2InputDelegate {
 				"max" => "5" // Safe number to avoid using all the memory
 			}, 
 			method(:onSearchResults));
-
-		WatchUi.pushView(new ProgressBar("Searching...", null), new SearchProgressDelegate(), WatchUi.SLIDE_LEFT);
     }
     
     function onSearchResults(responseCode, data) {
-    
     	
         if (responseCode == 200) {
             
@@ -34,7 +30,7 @@ class SyncConfigurationDelegate extends WatchUi.Menu2InputDelegate {
 	       	var feeds = Utils.getSafeDictKey(data, "feeds");
 	       	
 	       	if(feeds == null || feeds.size() == 0){
-	       		WatchUi.pushView(new ErrorView(responseCode), null, WatchUi.SLIDE_IMMEDIATE);
+	       		WatchUi.pushView(new ErrorView(Rez.Strings.errorNoResults), null, WatchUi.SLIDE_IMMEDIATE);
 	       		return;
 	       	}
 	       	
@@ -48,7 +44,7 @@ class SyncConfigurationDelegate extends WatchUi.Menu2InputDelegate {
 	            podcast[Constants.PODCAST_AUTHOR] 	= feed["author"];
 	            
 	            menu.addItem(
-					new MenuItem(
+					new WatchUi.MenuItem(
 						feed["title"],
 						feed["author"],
 						podcast,
@@ -56,19 +52,26 @@ class SyncConfigurationDelegate extends WatchUi.Menu2InputDelegate {
 					));
 	        }
 	        
-	        WatchUi.pushView(menu, new ConfirmMenuDelegate(Rez.Strings.confirmSubscribe, method(:onPodcastAdd)), WatchUi.SLIDE_LEFT);
+	        WatchUi.switchToView(menu, new ConfirmMenuDelegate(Rez.Strings.confirmSubscribe, method(:onPodcastAdd)), WatchUi.SLIDE_LEFT);
 	        
         } else {
-            WatchUi.pushView(new ErrorView(responseCode), null, WatchUi.SLIDE_IMMEDIATE);
+            WatchUi.switchToView(new ErrorView(responseCode), null, WatchUi.SLIDE_IMMEDIATE);
         }
-        
+    }
+    
+    function onPodcastAdd(context){
+ 			var subscribed = Utils.getSafeStorageArray(Constants.STORAGE_SUBSCRIBED);
+			var x = Utils.findArrayField(subscribed, Constants.PODCAST_ID, context[Constants.PODCAST_ID]);
+			if(x == null){
+				subscribed.add(context);
+			}
+			Storage.setValue(Constants.STORAGE_SUBSCRIBED, subscribed);
     }
 
     function onSelect(item) {
     
         if (item.getId() == :search) {
-        
-            WatchUi.pushView(new TextPicker(""), new PickerSearchDelegate(method(:onSearchQuery)), WatchUi.SLIDE_LEFT);
+            WatchUi.switchToView(new TextPicker(""), new PickerSearchDelegate(method(:onSearchQuery)), WatchUi.SLIDE_LEFT);
         } else if (item.getId() == :subscribed) {  
                   	
         	var subscribed = Utils.getSafeStorageArray(Constants.STORAGE_SUBSCRIBED); 
@@ -97,30 +100,14 @@ class SyncConfigurationDelegate extends WatchUi.Menu2InputDelegate {
     	WatchUi.popView(WatchUi.SLIDE_RIGHT);    	
 		return true;
 	}
-    
-    function onPodcastAdd(context){
-    
- 			var subscribed = Utils.getSafeStorageArray(Constants.STORAGE_SUBSCRIBED);
-			
-			var x = Utils.findArrayField(subscribed, Constants.PODCAST_ID, context[Constants.PODCAST_ID]);
-			if(x == null){
-				subscribed.add(context);
-			}
 
-			Storage.setValue(Constants.STORAGE_SUBSCRIBED, subscribed);
-    }
-    
     function onPodcastRemove(context){
 		var subscribed = Utils.getSafeStorageArray(Constants.STORAGE_SUBSCRIBED);	
-			
 		var x = Utils.findArrayField(subscribed, Constants.PODCAST_ID, context[Constants.PODCAST_ID]);
 		if(x != null){
 			subscribed.remove(x);
-				
-			// Delete artwork
-			Storage.deleteValue(x[Constants.PODCAST_ID]);
-
 			Storage.setValue(Constants.STORAGE_SUBSCRIBED, subscribed);
+			Storage.deleteValue(x[Constants.PODCAST_ID]); // Delete artwork
 		} 
     }
 }
@@ -139,16 +126,19 @@ class SearchProgressDelegate extends WatchUi.BehaviorDelegate
 
 class PickerSearchDelegate extends WatchUi.TextPickerDelegate {
 
-    hidden var callback;
+	hidden var callback;
 
     function initialize(callback) {     
-        self.callback = callback;
+		self.callback = callback;
         TextPickerDelegate.initialize();
     }
 
 	function onTextEntered(text, changed)
 	{
-    	WatchUi.popView(WatchUi.SLIDE_RIGHT);    	
+		var progressBar = new WatchUi.ProgressBar("Searching...", null);
+    	WatchUi.switchToView(progressBar, new SearchProgressDelegate(), WatchUi.SLIDE_IMMEDIATE);
+    	WatchUi.pushView(progressBar, new SearchProgressDelegate(), WatchUi.SLIDE_IMMEDIATE); // Ugly fix
 		callback.invoke(text);
+		return true;
 	}
 }
