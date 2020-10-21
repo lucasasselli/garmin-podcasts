@@ -1,24 +1,30 @@
 <strings>
     <string id="AppName">Podcasts</string>
     
+    <!-- Menu Items -->
     <string id="menuSearch">Search</string>
     <string id="menuSubscribed">Subscribed</string>
-
     <string id="menuQueue">Playback queue</string>
     <string id="menuPodcasts">Podcasts</string>
     <string id="menuSync">Sync</string>
     <string id="menuSettings">Settings</string>  
     
+    <!-- Errors -->
     <string id="errorNoResults">No results!</string>
     <string id="errorNoSubscriptions">No subscriptions!</string>
     <string id="errorNoEpisodes">No episodes\ndownloaded!</string>
     
+    <!-- Titles -->
     <string id="titlePlaybackMenu">Choose episodes</string>
     <string id="titleSubscriptionMenu">Subscribed</string>
     <string id="titleResultsMenu">Results</string>
     
+    <!-- Confirm Dialog -->
     <string id="confirmSubscribe">Do you want to subscribe?</string>
     <string id="confirmUnsubscribe">Do you want to unsubscribe?</string>
     
+    <!-- Other -->
     <string id="settings">Settings</string>
+    <string id="emptyTitle">(no title)</string>  
+    <string id="searching">Searching...</string>  
 </strings>

@@ -15,9 +15,6 @@ class SyncDelegate extends Communications.SyncDelegate {
 	
 	var settingEpisodesPerPodcast;
 
-	var progressTotal;
-
-
     function initialize() {
         SyncDelegate.initialize();
     }
@@ -40,12 +37,10 @@ class SyncDelegate extends Communications.SyncDelegate {
     	getNextPodcast();
     }
 
-    // Called by the system to determine if the app needs to be synced.
     function isSyncNeeded() {
         return true;
     }
 
-    // Called when the user chooses to cancel an active sync.
     function onStopSync() {
         throwSyncError(null);
     }
@@ -62,10 +57,9 @@ class SyncDelegate extends Communications.SyncDelegate {
     		if(x == null){  		
     			System.println("Episode " + saved[i][Constants.EPISODE_ID] + " no longer needed!");
     			    			
-				try{
-    				Media.deleteCachedItem(new Media.ContentRef(saved[i][Constants.EPISODE_ID], Media.CONTENT_TYPE_AUDIO));
-				} catch (ex){
-					// Do nothing.
+            	var mediaObj = Utils.getSafeMedia(saved[i][Constants.EPISODE_MEDIA]);
+				if(mediaObj != null){
+					Media.deleteCachedItem(mediaObj.getContentRef());
 				}
     		}
     	}
@@ -77,6 +71,8 @@ class SyncDelegate extends Communications.SyncDelegate {
 			System.println("Downloading podcast " + podcastId);
     		Remote.request(Constants.URL_EPISODES, {"id" => podcastId, "max" => settingEpisodesPerPodcast}, method(:onPodcast));
     	} else {
+			// All episode info ready, remove old episodes
+			cleanMedia();		
 			getNextEpisode();
 		}
     }
@@ -99,7 +95,6 @@ class SyncDelegate extends Communications.SyncDelegate {
 					episode[Constants.EPISODE_PODCAST] = podcasts[podcastsIndex][Constants.PODCAST_ID];
 					
 					var match = Utils.findArrayField(saved, Constants.EPISODE_ID, episode[Constants.EPISODE_ID]);
-					var refId = null;
 					if(match != null){
 						episode[Constants.EPISODE_MEDIA]= match[Constants.EPISODE_MEDIA];
 					}
@@ -151,10 +146,6 @@ class SyncDelegate extends Communications.SyncDelegate {
     }
       
     function getNextEpisode() {
-
-    	progressTotal = episodesIndex/episodes.size().toFloat();
-    	Communications.notifySyncProgress((progressTotal*100).toNumber());
-
     	if(episodesIndex < episodes.size())
     	{ 	
     		if(episodesUrl[episodesIndex] != null){
@@ -178,26 +169,29 @@ class SyncDelegate extends Communications.SyncDelegate {
 		}else{
 			// All episodes downloaded, get next podcast
 			System.println("Sync complete!");
-			Storage.setValue(Constants.STORAGE_SAVED, episodes);		
-			cleanMedia();		
 			Communications.notifySyncComplete(null);		
 		}
     }
 
     function onEpisode(responseCode, data) {   	
         if (responseCode == 200) {
-	        var refId = data.getId();
-            var ref = new Media.ContentRef(refId, Media.CONTENT_TYPE_AUDIO);
+            var ref = new Media.ContentRef(data.getId(), Media.CONTENT_TYPE_AUDIO);
             var metadata = Media.getCachedContentObj(ref).getMetadata();
 
-	        episodes[episodesIndex][Constants.EPISODE_MEDIA] = refId;
+	        episodes[episodesIndex][Constants.EPISODE_MEDIA] = data.getId();
             
+			// Fix metadata
+			var podcast = Utils.findArrayField(podcasts, Constants.PODCAST_ID, episodes[episodesIndex][Constants.EPISODE_PODCAST]);
             if(metadata.title == null || metadata.title == ""){
-            	metadata.title = "(no title)";
+				// Title is empty
+            	metadata.title = WatchUi.loadResource(Rez.Strings.emptyTitle);
             }     
-            metadata.artist = podcasts[podcastsIndex][Constants.PODCAST_TITLE];
+            metadata.artist = podcast[Constants.PODCAST_TITLE];
             Media.getCachedContentObj(ref).setMetadata(metadata);
             
+			// Update storage
+			Storage.setValue(Constants.STORAGE_SAVED, episodes);		
+
             episodesIndex++;
             getNextEpisode();           
         } else {
@@ -206,9 +200,10 @@ class SyncDelegate extends Communications.SyncDelegate {
     }
     
     function onFileProgress(bytesTransferred, fileSize){
+    	var progress= episodesIndex/episodes.size().toFloat();
     	if(bytesTransferred != null && fileSize != null && fileSize != 0){
-    		var progressFile = progressTotal + (bytesTransferred/fileSize.toFloat())/episodes.size().toFloat();
-    		Communications.notifySyncProgress((progressFile*100).toNumber());
+    		progress += (bytesTransferred/fileSize.toFloat())/episodes.size().toFloat();
     	}
+		Communications.notifySyncProgress((progress*100).toNumber());
     }
 }
