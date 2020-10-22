@@ -69,7 +69,7 @@ class SyncConfiguration extends CompactMenu {
             
 	       	var feeds = Utils.getSafeDictKey(data, "feeds");
 	       	if(feeds == null || feeds.size() == 0){
-	       		WatchUi.switchView(new ErrorView(Rez.Strings.errorNoResults), null, WatchUi.SLIDE_LEFT);
+	       		WatchUi.switchToView(new ErrorView(Rez.Strings.errorNoResults), null, WatchUi.SLIDE_LEFT);
 	       		return;
 	       	}
 	       	
