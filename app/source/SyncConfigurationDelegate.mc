@@ -84,12 +84,12 @@ class SyncConfigurationDelegate extends WatchUi.Menu2InputDelegate {
     }
     
     function onPodcastAdd(context){
- 			var subscribed = Utils.getSafeStorageArray(Constants.STORAGE_SUBSCRIBED);
-			var x = Utils.findArrayField(subscribed, Constants.PODCAST_ID, context[Constants.PODCAST_ID]);
-			if(x == null){
-				subscribed.add(context);
-			}
-			Storage.setValue(Constants.STORAGE_SUBSCRIBED, subscribed);
+		var subscribed = Utils.getSafeStorageArray(Constants.STORAGE_SUBSCRIBED);
+		var x = Utils.findArrayField(subscribed, Constants.PODCAST_ID, context[Constants.PODCAST_ID]);
+		if(x == null){
+			subscribed.add(context);
+		}
+		Storage.setValue(Constants.STORAGE_SUBSCRIBED, subscribed);
     }
 
 	function onBack(){
@@ -131,7 +131,7 @@ class PickerSearchDelegate extends WatchUi.TextPickerDelegate {
 
 	function onTextEntered(text, changed)
 	{
-		var progressBar = new WatchUi.ProgressBar(Rez.Strings.searching, null);
+		var progressBar = new WatchUi.ProgressBar(WatchUi.loadResource(Rez.Strings.searching), null);
     	WatchUi.switchToView(progressBar, new SearchProgressDelegate(), WatchUi.SLIDE_IMMEDIATE);
     	WatchUi.pushView(progressBar, new SearchProgressDelegate(), WatchUi.SLIDE_IMMEDIATE); // Ugly fix
 		callback.invoke(text);
