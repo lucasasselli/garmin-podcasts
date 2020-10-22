@@ -69,7 +69,7 @@ class SyncConfiguration extends CompactMenu {
             
 	       	var feeds = Utils.getSafeDictKey(data, "feeds");
 	       	if(feeds == null || feeds.size() == 0){
-	       		WatchUi.pushView(new ErrorView(Rez.Strings.errorNoResults), null, WatchUi.SLIDE_IMMEDIATE);
+	       		WatchUi.switchView(new ErrorView(Rez.Strings.errorNoResults), null, WatchUi.SLIDE_LEFT);
 	       		return;
 	       	}
 	       	
@@ -94,7 +94,7 @@ class SyncConfiguration extends CompactMenu {
 	        
 	        WatchUi.switchToView(menu, new ConfirmMenuDelegate(Rez.Strings.confirmSubscribe, method(:onPodcastAdd)), WatchUi.SLIDE_LEFT);
         } else {
-            WatchUi.switchToView(new ErrorView(responseCode), null, WatchUi.SLIDE_IMMEDIATE);
+            WatchUi.switchToView(new ErrorView(responseCode), null, WatchUi.SLIDE_LEFT);
         }
     }
     
@@ -143,7 +143,7 @@ class PickerSearchDelegate extends WatchUi.TextPickerDelegate {
 	{
 		var progressBar = new WatchUi.ProgressBar(WatchUi.loadResource(Rez.Strings.searching), null);
     	WatchUi.switchToView(progressBar, new SearchProgressDelegate(), WatchUi.SLIDE_IMMEDIATE);
-    	WatchUi.pushView(progressBar, new SearchProgressDelegate(), WatchUi.SLIDE_IMMEDIATE); // Ugly fix
+    	WatchUi.pushView(progressBar, new SearchProgressDelegate(), WatchUi.SLIDE_LEFT); // Ugly fix
 		callback.invoke(text);
 		return true;
 	}
