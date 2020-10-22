@@ -11,12 +11,6 @@ class Settings extends CompactMenu {
 	}
 
 	function getEpisodesPerPodcast(){
-        var playlist = Utils.getSafeStorageArray(Constants.STORAGE_PLAYLIST);
-		if(playlist == null){
-			return "0 " + WatchUi.loadResource(Rez.Strings.episodes);
-		}else{
-			return playlist.size().toString() + " " + WatchUi.loadResource(Rez.Strings.episodes);
-		}
     	return Application.getApp().getProperty("settingEpisodes").toString();
 	}
 
