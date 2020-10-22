@@ -2,12 +2,12 @@
     <string id="AppName">Podcasts</string>
     
     <!-- Menu Items -->
-    <string id="menuSearch">Search</string>
-    <string id="menuSubscribed">Subscribed</string>
     <string id="menuQueue">Playback queue</string>
     <string id="menuPodcasts">Podcasts</string>
     <string id="menuSync">Sync</string>
     <string id="menuSettings">Settings</string>  
+    <string id="menuSearch">Search</string>
+    <string id="menuSubscribed">Subscribed</string>
     
     <!-- Errors -->
     <string id="errorNoResults">No results!</string>
@@ -27,4 +27,6 @@
     <string id="settings">Settings</string>
     <string id="emptyTitle">(no title)</string>  
     <string id="searching">Searching...</string>  
+    <string id="episodes">episodes</string>  
+    <string id="podcasts">podcasts</string>  
 </strings>

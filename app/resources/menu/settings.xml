@@ -1,3 +1,0 @@
-<menu2 id="SettingsMain" title="@Strings.settings">
-    <menu-item id="episodes" label="@Strings.settingsEpisodesPerPodcastTitle"></menu-item>
-</menu2>

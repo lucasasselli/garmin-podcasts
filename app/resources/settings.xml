@@ -4,14 +4,14 @@
 	</properties>
 	
 	<strings>
-	    <string id="settingsEpisodesPerPodcastTitle">Episodes per Podcast</string>	    
+	    <string id="settingEpisodesPerPodcastTitle">Episodes per Podcast</string>	    
 	    <string id="number1">1</string>
 	    <string id="number2">2</string>
 	    <string id="number5">5</string>
     </strings>
 	
 	<settings>
-		<setting propertyKey="@Properties.settingEpisodes" title="@Strings.settingsEpisodesPerPodcastTitle">
+		<setting propertyKey="@Properties.settingEpisodes" title="@Strings.settingEpisodesPerPodcastTitle">
 	        <settingConfig type="list">
 	            <listEntry value="1">@Strings.number1</listEntry>
 	            <listEntry value="2">@Strings.number2</listEntry>

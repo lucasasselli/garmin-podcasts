@@ -6,10 +6,6 @@ class PodcastsApp extends Application.AudioContentProviderApp {
         AudioContentProviderApp.initialize();
     }
     
-    function getSettingsView() {
-    	return [ new Rez.Menus.SettingsMain(), new SettingsMainDelegate() ];
-    }
-
     // Get a Media.ContentDelegate for use by the system to get and iterate through media on the device
     function getContentDelegate(arg) {
         return new ContentDelegate();
@@ -22,12 +18,12 @@ class PodcastsApp extends Application.AudioContentProviderApp {
 
     // Get the initial view for configuring playback
     function getPlaybackConfigurationView() {
-        return [ new Rez.Menus.MainMenu(), new MainMenuDelegate() ];
+        return new MainMenu().get();
     }
 
     // Get the initial view for configuring sync
     function getSyncConfigurationView() {
-        return [ new Rez.Menus.SyncConfigurationMenu(), new SyncConfigurationDelegate() ];
+        return new SyncConfiguration().get();
     }
     
     // Get the provider icon

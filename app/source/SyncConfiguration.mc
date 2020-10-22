@@ -5,48 +5,63 @@ using Toybox.Cryptography;
 using Toybox.StringUtil;
 using Toybox.Application.Storage;
 
-class SyncConfigurationDelegate extends WatchUi.Menu2InputDelegate {
+class SyncConfiguration extends CompactMenu {
 
-	function initialize() {
-        Menu2InputDelegate.initialize();
+    function initialize(){
+		CompactMenu.initialize(Rez.Strings.AppName);
+    }
+
+	function build(){
+		add(Rez.Strings.menuSearch, null, method(:callbackSearch));
+		add(Rez.Strings.menuSubscribed, method(:getSubscribedCount), method(:callbackSubscribed));
+	}
+
+	// Search new podcast
+	function callbackSearch(){
+        WatchUi.pushView(new WatchUi.TextPicker(""), new PickerSearchDelegate(method(:onSearchQuery)), WatchUi.SLIDE_LEFT);
+	}
+
+	// Return number of subscribed podcast strings
+	function getSubscribedCount(){
+		var subscribed = Utils.getSafeStorageArray(Constants.STORAGE_SUBSCRIBED); 
+        if(subscribed == null){
+            return "0 " + WatchUi.loadResource(Rez.Strings.podcasts);
+        }else{
+            return subscribed.size().toString() + " " + WatchUi.loadResource(Rez.Strings.podcasts);
+        }
+	}
+
+	// Manage subscribed podcasts
+    function callbackSubscribed(){
+		var subscribed = Utils.getSafeStorageArray(Constants.STORAGE_SUBSCRIBED); 
+				
+		if(subscribed.size() > 0){
+			var menu = new WatchUi.Menu2({:title=> Rez.Strings.titleSubscriptionMenu });
+			
+			for(var i=0; i<subscribed.size(); i++){
+				var podcast = subscribed[i];
+				menu.addItem(
+					new WatchUi.MenuItem(
+						podcast[Constants.PODCAST_TITLE],
+						podcast[Constants.PODCAST_AUTHOR],
+						podcast,
+					{})
+				);     	
+			}
+			WatchUi.pushView(menu, new ConfirmMenuDelegate(Rez.Strings.confirmUnsubscribe, method(:onPodcastRemove)), WatchUi.SLIDE_LEFT);
+		} else {
+			WatchUi.pushView(new ErrorView(Rez.Strings.errorNoSubscriptions), null, WatchUi.SLIDE_LEFT); 
+		}
     }
 
     function onSearchQuery(query){
 		Remote.request(
 			Constants.URL_SEARCH, 
 			{
-				"q"   => Utils.stringReplace(query, " ", "+"),
+				"q"   => StringHelper.substringReplace(query, " ", "+"),
 				"max" => "5" // Safe number to avoid using all the memory
 			}, 
 			method(:onSearchResults));
-    }
-
-    function onSelect(item) {
-    
-        if (item.getId() == :search) {
-            WatchUi.pushView(new TextPicker(""), new PickerSearchDelegate(method(:onSearchQuery)), WatchUi.SLIDE_LEFT);
-        } else if (item.getId() == :subscribed) {  
-                  	
-        	var subscribed = Utils.getSafeStorageArray(Constants.STORAGE_SUBSCRIBED); 
-        	      	
-            if(subscribed.size() > 0){
-            	var menu = new WatchUi.Menu2({:title=> Rez.Strings.titleSubscriptionMenu });
-            	
-            	for(var i=0; i<subscribed.size(); i++){
-            		var podcast = subscribed[i];
-       	            menu.addItem(
-						new MenuItem(
-							podcast[Constants.PODCAST_TITLE],
-							podcast[Constants.PODCAST_AUTHOR],
-							podcast,
-						{})
-					);     	
-            	}
-            	WatchUi.pushView(menu, new ConfirmMenuDelegate(Rez.Strings.confirmUnsubscribe, method(:onPodcastRemove)), WatchUi.SLIDE_LEFT);
-            } else {
-            	WatchUi.pushView(new ErrorView(Rez.Strings.errorNoSubscriptions), null, WatchUi.SLIDE_LEFT); 
-            }
-		}
     }
 
     function onSearchResults(responseCode, data) {
@@ -91,11 +106,6 @@ class SyncConfigurationDelegate extends WatchUi.Menu2InputDelegate {
 		}
 		Storage.setValue(Constants.STORAGE_SUBSCRIBED, subscribed);
     }
-
-	function onBack(){
-    	WatchUi.popView(WatchUi.SLIDE_RIGHT);    	
-		return true;
-	}
 
     function onPodcastRemove(context){
 		var subscribed = Utils.getSafeStorageArray(Constants.STORAGE_SUBSCRIBED);	

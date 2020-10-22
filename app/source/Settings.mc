@@ -1,22 +1,32 @@
 using Toybox.WatchUi;
 
-class SettingsMainDelegate extends WatchUi.Menu2InputDelegate {
+class Settings extends CompactMenu {
 
-	function initialize() {
-        Menu2InputDelegate.initialize();
-    }
+	function initialize(){
+		CompactMenu.initialize(Rez.Strings.settings);
+	}
+	
+	function build(){
+		add(Rez.Strings.settingEpisodesPerPodcastTitle, method(:getEpisodesPerPodcast), method(:callbackEpisodesPerPodcast));
+	}
 
-    function onSelect(item) {  
+	function getEpisodesPerPodcast(){
+        var playlist = Utils.getSafeStorageArray(Constants.STORAGE_PLAYLIST);
+		if(playlist == null){
+			return "0 " + WatchUi.loadResource(Rez.Strings.episodes);
+		}else{
+			return playlist.size().toString() + " " + WatchUi.loadResource(Rez.Strings.episodes);
+		}
+    	return Application.getApp().getProperty("settingEpisodes").toString();
+	}
+
+	function callbackEpisodesPerPodcast(){
 		var settingEpisodesMenu = new Rez.Menus.SettingsEpisodes();
 		WatchUi.pushView(settingEpisodesMenu, new SettingsEpisodesDelegate(), WatchUi.SLIDE_LEFT); 
-    } 
-
-	function onBack(){
-    	WatchUi.popView(WatchUi.SLIDE_RIGHT);    	
-		return true;
 	}
+
 }
-   
+
 class SettingsEpisodesDelegate extends WatchUi.Menu2InputDelegate {
 
 	function initialize() {
