@@ -2,27 +2,22 @@ using Toybox.WatchUi;
 using Toybox.Application.Storage;
 using Toybox.Media;
 
-// Menu to choose what songs to playback
 class ConfigurePlaybackMenu extends WatchUi.CheckboxMenu {
 
     function initialize() {
-    
         CheckboxMenu.initialize({:title => Rez.Strings.titlePlaybackMenu});
         
         // Get the current stored playlist.
         var currentPlaylist = {};
-        var playlist = Utils.getSafeStorageArray(Constants.STORAGE_PLAYLIST);
-        if (playlist != null) {
-            for (var i = 0; i < playlist.size(); ++i) {
-                currentPlaylist[playlist[i]] = true;
-            }
+        var playlist = StorageHelper.get(Constants.STORAGE_PLAYLIST, []);
+        for (var i = 0; i < playlist.size(); ++i) {
+            currentPlaylist[playlist[i]] = true;
         }
 
         // For each song in the playlist, precheck the item when adding it to the menu
-        var episodes = Utils.getSafeStorageArray(Constants.STORAGE_SAVED);
+        var episodes = StorageHelper.get(Constants.STORAGE_SAVED, []);
         
         for (var i = 0; i < episodes.size(); i++) {
-        
             var refId = episodes[i][Constants.EPISODE_MEDIA];       	
             var mediaObj = Utils.getSafeMedia(refId);
 
@@ -43,7 +38,7 @@ class ConfigurePlaybackMenuDelegate extends WatchUi.Menu2InputDelegate {
     }
 
     function onSelect(item) {
-        var playlist = Utils.getSafeStorageArray(Constants.STORAGE_PLAYLIST);
+        var playlist = StorageHelper.get(Constants.STORAGE_PLAYLIST, []);
 
         // When an item is selected, add or remove it from the system playlist
         if (item.isChecked()) {

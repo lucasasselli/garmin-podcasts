@@ -1,7 +1,6 @@
 using Toybox.Media;
 using Toybox.Application.Storage;
 
-// The content delegate to handle actions from the media player
 class ContentDelegate extends Media.ContentDelegate {
 
     // Iterator for playing songs
@@ -13,7 +12,7 @@ class ContentDelegate extends Media.ContentDelegate {
     function initialize() {
         ContentDelegate.initialize();
         resetContentIterator();            
-        saved = Utils.getSafeStorageArray(Constants.STORAGE_SAVED);
+        saved = StorageHelper.get(Constants.STORAGE_SAVED, []); // TODO: Reorganize
     }
 
     // Returns the iterator to play songs

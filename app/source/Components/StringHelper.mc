@@ -1,4 +1,3 @@
-
 using Toybox.Application.Storage;
 using Toybox.Media;
 

@@ -21,14 +21,14 @@ class SyncDelegate extends Communications.SyncDelegate {
     
     function onStartSync() {
     
-    	podcasts = Utils.getSafeStorageArray(Constants.STORAGE_SUBSCRIBED);
+    	podcasts = StorageHelper.get(Constants.STORAGE_SUBSCRIBED, []);
         podcastsIndex = 0;
         
         episodes = [];
         episodesUrl = [];
 	    episodesIndex = 0;
         
-    	saved = Utils.getSafeStorageArray(Constants.STORAGE_SAVED);
+    	saved = StorageHelper.get(Constants.STORAGE_SAVED, []);
     	
     	// Get settings
     	settingEpisodesPerPodcast = Application.getApp().getProperty("settingEpisodes").toNumber();

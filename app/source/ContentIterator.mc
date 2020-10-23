@@ -107,7 +107,7 @@ class ContentIterator extends Media.ContentIterator {
     // Gets the songs to play. If no playlist is available then all the songs in the
     // system are played.
     function initializePlaylist() {
-        var tempPlaylist = Utils.getSafeStorageArray(Constants.STORAGE_PLAYLIST);
+        var tempPlaylist = StorageHelper.get(Constants.STORAGE_PLAYLIST, null);
 
         if (tempPlaylist == null) {
             var availableSongs = Media.getContentRefIter({:contentType => Media.CONTENT_TYPE_AUDIO});

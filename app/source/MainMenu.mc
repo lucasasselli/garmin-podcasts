@@ -17,12 +17,8 @@ class MainMenu extends CompactMenu {
 
     // Return playback queue size string
 	function getQueueSize(){
-        var playlist = Utils.getSafeStorageArray(Constants.STORAGE_PLAYLIST);
-        if(playlist == null){
-            return "0 " + WatchUi.loadResource(Rez.Strings.episodes);
-        }else{
-            return playlist.size().toString() + " " + WatchUi.loadResource(Rez.Strings.episodes);
-        }
+        var playlist = StorageHelper.get(Constants.STORAGE_PLAYLIST, []);
+        return playlist.size().toString() + " " + WatchUi.loadResource(Rez.Strings.episodes);
 	}
 
     // Playback queue

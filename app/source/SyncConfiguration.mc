@@ -23,17 +23,13 @@ class SyncConfiguration extends CompactMenu {
 
 	// Return number of subscribed podcast strings
 	function getSubscribedCount(){
-		var subscribed = Utils.getSafeStorageArray(Constants.STORAGE_SUBSCRIBED); 
-        if(subscribed == null){
-            return "0 " + WatchUi.loadResource(Rez.Strings.podcasts);
-        }else{
-            return subscribed.size().toString() + " " + WatchUi.loadResource(Rez.Strings.podcasts);
-        }
+		var subscribed = StorageHelper.get(Constants.STORAGE_SUBSCRIBED, []); 
+        return subscribed.size().toString() + " " + WatchUi.loadResource(Rez.Strings.podcasts);
 	}
 
 	// Manage subscribed podcasts
     function callbackSubscribed(){
-		var subscribed = Utils.getSafeStorageArray(Constants.STORAGE_SUBSCRIBED); 
+		var subscribed = StorageHelper.get(Constants.STORAGE_SUBSCRIBED, []); 
 				
 		if(subscribed.size() > 0){
 			var menu = new WatchUi.Menu2({:title=> Rez.Strings.titleSubscriptionMenu });
@@ -99,7 +95,8 @@ class SyncConfiguration extends CompactMenu {
     }
     
     function onPodcastAdd(context){
-		var subscribed = Utils.getSafeStorageArray(Constants.STORAGE_SUBSCRIBED);
+		// TODO
+		var subscribed = Utils.getSafeStorageArray(Constants.STORAGE_SUBSCRIBED); 
 		var x = Utils.findArrayField(subscribed, Constants.PODCAST_ID, context[Constants.PODCAST_ID]);
 		if(x == null){
 			subscribed.add(context);
@@ -108,6 +105,7 @@ class SyncConfiguration extends CompactMenu {
     }
 
     function onPodcastRemove(context){
+		// TODO
 		var subscribed = Utils.getSafeStorageArray(Constants.STORAGE_SUBSCRIBED);	
 		var x = Utils.findArrayField(subscribed, Constants.PODCAST_ID, context[Constants.PODCAST_ID]);
 		if(x != null){
