@@ -2,6 +2,8 @@ module Constants {
 	
     const URL_SEARCH   = "https://api.podcastindex.org/api/1.0/search/byterm";
     const URL_EPISODES = "https://api.podcastindex.org/api/1.0/episodes/byfeedid";
+
+    const CONNECTION_ATTEMPTS = 3;
     
     enum {
         STORAGE_SUBSCRIBED,

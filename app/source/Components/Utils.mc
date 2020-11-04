@@ -34,15 +34,6 @@ class Utils {
 		return x;
 	}
 	
-	function getSafeStorageArray(key){
-	   	var x = Storage.getValue(key);
-        if(x == null) {
-        	return [];
-        }else{
-        	return x;
-        }
-	}
-	
 	function getSafeDictKey(dict, key){
         if(dict.hasKey(key)) {
         	return dict[key];

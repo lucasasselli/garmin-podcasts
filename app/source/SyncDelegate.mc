@@ -12,6 +12,8 @@ class SyncDelegate extends Communications.SyncDelegate {
 	var episodesIndex;
 	
 	var saved;
+
+	var attempts;
 	
 	var settingEpisodesPerPodcast;
 
@@ -30,6 +32,8 @@ class SyncDelegate extends Communications.SyncDelegate {
         
     	saved = StorageHelper.get(Constants.STORAGE_SAVED, []);
     	
+		attempts = 0;
+
     	// Get settings
     	settingEpisodesPerPodcast = Application.getApp().getProperty("settingEpisodes").toNumber();
 
@@ -72,6 +76,7 @@ class SyncDelegate extends Communications.SyncDelegate {
     		Remote.request(Constants.URL_EPISODES, {"id" => podcastId, "max" => settingEpisodesPerPodcast}, method(:onPodcast));
     	} else {
 			// All episode info ready, remove old episodes
+			attempts = 0;
 			cleanMedia();		
 			getNextEpisode();
 		}
@@ -130,6 +135,15 @@ class SyncDelegate extends Communications.SyncDelegate {
 					getNextPodcast();
 			   	}
 		   	}
+		} else if (responseCode == Communications.REQUEST_CANCELLED || responseCode == Communications.REQUEST_CONNECTION_DROPPED){
+			if(attempts < Constants.CONNECTION_ATTEMPTS){
+				attempts++;
+				getNextPodcast();
+			}else{
+				attempts = 0;
+				podcastsIndex++;
+				getNextPodcast();
+			}
         } else {
             throwSyncError("Error " + responseCode);
         }
@@ -194,6 +208,15 @@ class SyncDelegate extends Communications.SyncDelegate {
 
             episodesIndex++;
             getNextEpisode();           
+		} else if (responseCode == Communications.REQUEST_CANCELLED || responseCode == Communications.REQUEST_CONNECTION_DROPPED){
+			if(attempts < Constants.CONNECTION_ATTEMPTS){
+				attempts++;
+				getNextEpisode();
+			}else{
+				attempts = 0;
+				episodesIndex++;
+				getNextEpisode();
+			}
         } else {
             throwSyncError("Error " + responseCode);
         }

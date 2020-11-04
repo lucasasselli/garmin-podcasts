@@ -95,8 +95,7 @@ class SyncConfiguration extends CompactMenu {
     }
     
     function onPodcastAdd(context){
-		// TODO
-		var subscribed = Utils.getSafeStorageArray(Constants.STORAGE_SUBSCRIBED); 
+		var subscribed = StorageHelper.get(Constants.STORAGE_SUBSCRIBED, []); 
 		var x = Utils.findArrayField(subscribed, Constants.PODCAST_ID, context[Constants.PODCAST_ID]);
 		if(x == null){
 			subscribed.add(context);
@@ -105,8 +104,7 @@ class SyncConfiguration extends CompactMenu {
     }
 
     function onPodcastRemove(context){
-		// TODO
-		var subscribed = Utils.getSafeStorageArray(Constants.STORAGE_SUBSCRIBED);	
+		var subscribed = StorageHelper.get(Constants.STORAGE_SUBSCRIBED, []);	
 		var x = Utils.findArrayField(subscribed, Constants.PODCAST_ID, context[Constants.PODCAST_ID]);
 		if(x != null){
 			subscribed.remove(x);
