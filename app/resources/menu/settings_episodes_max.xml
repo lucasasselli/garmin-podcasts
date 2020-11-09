@@ -1,0 +1,5 @@
+<menu2 id="SettingEpisodesMax" title="@Strings.settingEpisodesPerPodcastTitle">
+    <menu-item id="ten_episodes" label="10"></menu-item>
+    <menu-item id="twenty_episodes" label="20"></menu-item>
+    <menu-item id="fifty_episodes" label="50"></menu-item>
+</menu2>
