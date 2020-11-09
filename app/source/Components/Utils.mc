@@ -18,6 +18,12 @@ class Utils {
 		
 		return null;
 	}
+
+    function arraySwap(array, i, j){
+        var temp = array[i];
+        array[i] = array[j];
+        array = temp;
+    }
 	
 	function getArrayField(array, field){
 	

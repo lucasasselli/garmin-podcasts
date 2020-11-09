@@ -23,7 +23,14 @@ class PodcastsApp extends Application.AudioContentProviderApp {
 
     // Get the initial view for configuring sync
     function getSyncConfigurationView() {
-        return new SyncConfiguration().get();
+    	var service = Application.getApp().getProperty("settingService");
+        if(service == 0){
+            // Manual
+            return new SyncConfigurationManual().get();
+        }else{
+            // gPodder
+            return [];
+        }
     }
     
     // Get the provider icon

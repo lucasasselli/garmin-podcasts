@@ -32,4 +32,8 @@ class StringHelper {
             return WatchUi.loadResource(x);
         }
     }
+
+    function notNullOrEmpty(x){
+        return ((x != null) && (x != ""));
+    }
 }

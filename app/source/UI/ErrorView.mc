@@ -1,7 +1,7 @@
 using Toybox.Graphics;
 using Toybox.WatchUi;
 
-class ErrorView extends WatchUi.View {
+class AlertView extends WatchUi.View {
 
     private var msg;
 

@@ -1,4 +1,4 @@
-<menu2 id="SettingsEpisodes" title="@Strings.settingEpisodesPerPodcastTitle">
+<menu2 id="SettingEpisodes" title="@Strings.settingEpisodesPerPodcastTitle">
     <menu-item id="one_episodes" label="1"></menu-item>
     <menu-item id="two_episodes" label="2"></menu-item>
     <menu-item id="five_episodes" label="5"></menu-item>

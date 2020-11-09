@@ -27,7 +27,7 @@ class SyncDelegate extends Communications.SyncDelegate {
     }
     
     function throwSyncError(msg){
-		System.println("Sync Error: " + msg);
+		System.println(msg);
     	Communications.cancelAllRequests();
     	Communications.notifySyncComplete(msg);
     }

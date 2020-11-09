@@ -1,20 +1,28 @@
 <resources>
 	<properties>
+		<property id="settingService" type="number">0</property>
 		<property id="settingEpisodes" type="number">1</property>
-		<property id="settingGpodderEnable" type="boolean">0</property>
+		<property id="settingEpisodesMax" type="number">10</property>
 		<property id="settingUsername" type="string"></property>
 		<property id="settingPassword" type="string"></property>
+		<property id="settingDeviceid" type="string"></property>
 	</properties>
-
 	
 	<strings>
+	    <string id="settingServiceTitle">Subscription service</string>	    
 	    <string id="settingEpisodesPerPodcastTitle">Episodes per Podcast</string>	    
-	    <string id="settingGpodderEnableTitle">Use gPodder Subscriptions</string>	    
-	    <string id="settingUsernameTitle">gPodder Username</string>	    
-	    <string id="settingPasswordTitle">gPodder Password</string>	    
+	    <string id="settingEpisodesMaxTitle">Max. episodes</string>	    
+	    <string id="settingUsernameTitle">Username</string>	    
+	    <string id="settingPasswordTitle">Password</string>	    
+	    <string id="settingDeviceidTitle">Device ID</string>	    
+	    <string id="none">None</string>
+	    <string id="gPodder">gpodder.net</string>
 	    <string id="number1">1</string>
 	    <string id="number2">2</string>
 	    <string id="number5">5</string>
+	    <string id="number10">10</string>
+	    <string id="number20">20</string>
+	    <string id="number50">50</string>
     </strings>
 	
 	<settings>
@@ -26,16 +34,31 @@
 	        </settingConfig>
 	    </setting>
 
-		<setting propertyKey="@Properties.settingGpodderEnable" title="@Strings.settingGpodderEnableTitle">
-		<settingConfig type="boolean" />
+		<setting propertyKey="@Properties.settingEpisodesMax" title="@Strings.settingEpisodesMaxTitle">
+	        <settingConfig type="list">
+	            <listEntry value="10">@Strings.number10</listEntry>
+	            <listEntry value="20">@Strings.number20</listEntry>
+	            <listEntry value="50">@Strings.number50</listEntry>
+	        </settingConfig>
+	    </setting>
+
+		<setting propertyKey="@Properties.settingService" title="@Strings.settingServiceTitle">
+	        <settingConfig type="list">
+	            <listEntry value="0">@Strings.none</listEntry>
+	            <listEntry value="1">@Strings.gPodder</listEntry>
+	        </settingConfig>
 		</setting>
 
 		<setting propertyKey="@Properties.settingUsername" title="@Strings.settingUsernameTitle">
-		<settingConfig type="alphaNumeric" required="false" />
+            <settingConfig type="alphaNumeric" required="false" />
 		</setting>
 
 		<setting propertyKey="@Properties.settingPassword" title="@Strings.settingPasswordTitle">
-		<settingConfig type="password" required="false" />
+            <settingConfig type="password" required="false" />
+		</setting>
+
+		<setting propertyKey="@Properties.settingDeviceid" title="@Strings.settingDeviceidTitle">
+            <settingConfig type="alphaNumeric" required="false" />
 		</setting>
 	</settings>
 </resources>

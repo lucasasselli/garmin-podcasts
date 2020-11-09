@@ -13,6 +13,7 @@
     <string id="errorNoResults">No results!</string>
     <string id="errorNoSubscriptions">No subscriptions!</string>
     <string id="errorNoEpisodes">No episodes\ndownloaded!</string>
+    <string id="errorNoCredentials">gPodder credentials\nnot set!</string>
     
     <!-- Titles -->
     <string id="titlePlaybackMenu">Choose episodes</string>
@@ -22,6 +23,9 @@
     <!-- Confirm Dialog -->
     <string id="confirmSubscribe">Do you want to subscribe?</string>
     <string id="confirmUnsubscribe">Do you want to unsubscribe?</string>
+
+    <!-- Msg Dialog -->
+    <string id="msgCheckPhone">Check phone</string>
     
     <!-- Other -->
     <string id="settings">Settings</string>

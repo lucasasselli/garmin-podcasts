@@ -10,10 +10,7 @@ class MainMenu extends CompactMenu {
 
 	function build(){
 		add(Rez.Strings.menuQueue, method(:getQueueSize), method(:callbackQueue));
-    	var gpodderMode = Application.getApp().getProperty("settingGpodderEnable");
-        if(!gpodderMode){
-            add(Rez.Strings.menuPodcasts, null, method(:callbackPodcasts));
-        }
+        add(Rez.Strings.menuPodcasts, null, method(:callbackPodcasts));
 		add(Rez.Strings.menuSync, null, method(:callbackSync));
 		add(Rez.Strings.menuSettings, null, method(:callbackSettings));
 	}
@@ -32,24 +29,46 @@ class MainMenu extends CompactMenu {
             WatchUi.pushView(new ConfigurePlaybackMenu(), new ConfigurePlaybackMenuDelegate(), WatchUi.SLIDE_LEFT);
         } else {
             // No episodes
-            WatchUi.pushView(new ErrorView(Rez.Strings.errorNoEpisodes), null, WatchUi.SLIDE_LEFT);
+            WatchUi.pushView(new AlertView(Rez.Strings.errorNoEpisodes), null, WatchUi.SLIDE_LEFT);
         }
 	}
 
     // Podcast subscription management
 	function callbackPodcasts(){
-        new SyncConfiguration().show();
+    	var service = Application.getApp().getProperty("settingService");
+        if(service == 0){
+            // Manual
+            new SyncConfigurationManual().show();
+        } else {
+            // gPodder
+            WatchUi.pushView(new AlertView(Rez.Strings.msgCheckPhone), null, WatchUi.SLIDE_LEFT);
+            Communications.openWebPage(Constants.URL_GPODDER_ROOT, {}, null);
+        }
 	}
 
     // Sync
 	function callbackSync(){
-        var podcasts = Storage.getValue(Constants.STORAGE_SUBSCRIBED);
-        if ((podcasts != null) && (podcasts.size() != 0)) {
-            // Start sync
-            Communications.startSync();
-        } else {
-            // No podcasts
-            WatchUi.pushView(new ErrorView(Rez.Strings.errorNoSubscriptions), null, WatchUi.SLIDE_LEFT);
+    	var service = Application.getApp().getProperty("settingService");
+        if(service == 0){
+            // Manual
+            var podcasts = Storage.getValue(Constants.STORAGE_SUBSCRIBED);
+            if ((podcasts != null) && (podcasts.size() != 0)) {
+                // Start sync
+                Communications.startSync();
+            } else {
+                // No podcasts
+                WatchUi.pushView(new AlertView(Rez.Strings.errorNoSubscriptions), null, WatchUi.SLIDE_LEFT);
+            }
+        }else{
+            // gPodder
+            var gPodder = new GPodder();
+            if(gPodder.valid()){
+                // Start sync
+                Communications.startSync();
+            }else{
+                // No credentials
+                WatchUi.pushView(new AlertView(Rez.Strings.errorNoCredentials), null, WatchUi.SLIDE_LEFT);
+            }
         }
 	}
 
