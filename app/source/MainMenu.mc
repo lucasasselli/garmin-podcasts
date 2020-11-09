@@ -10,7 +10,10 @@ class MainMenu extends CompactMenu {
 
 	function build(){
 		add(Rez.Strings.menuQueue, method(:getQueueSize), method(:callbackQueue));
-		add(Rez.Strings.menuPodcasts, null, method(:callbackPodcasts));
+    	var gpodderMode = Application.getApp().getProperty("settingGpodderEnable");
+        if(!gpodderMode){
+            add(Rez.Strings.menuPodcasts, null, method(:callbackPodcasts));
+        }
 		add(Rez.Strings.menuSync, null, method(:callbackSync));
 		add(Rez.Strings.menuSettings, null, method(:callbackSettings));
 	}

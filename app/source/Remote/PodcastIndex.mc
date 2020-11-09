@@ -4,7 +4,7 @@ using Toybox.Communications;
 using Toybox.Cryptography;
 using Toybox.StringUtil;
 
-class Remote {
+class PodcastIndex {
 
     function request(url, params, callback){
    		

@@ -1,10 +1,17 @@
 <resources>
 	<properties>
 		<property id="settingEpisodes" type="number">1</property>
+		<property id="settingGpodderEnable" type="boolean">0</property>
+		<property id="settingUsername" type="string"></property>
+		<property id="settingPassword" type="string"></property>
 	</properties>
+
 	
 	<strings>
 	    <string id="settingEpisodesPerPodcastTitle">Episodes per Podcast</string>	    
+	    <string id="settingGpodderEnableTitle">Use gPodder Subscriptions</string>	    
+	    <string id="settingUsernameTitle">gPodder Username</string>	    
+	    <string id="settingPasswordTitle">gPodder Password</string>	    
 	    <string id="number1">1</string>
 	    <string id="number2">2</string>
 	    <string id="number5">5</string>
@@ -18,5 +25,17 @@
 	            <listEntry value="5">@Strings.number5</listEntry>
 	        </settingConfig>
 	    </setting>
+
+		<setting propertyKey="@Properties.settingGpodderEnable" title="@Strings.settingGpodderEnableTitle">
+		<settingConfig type="boolean" />
+		</setting>
+
+		<setting propertyKey="@Properties.settingUsername" title="@Strings.settingUsernameTitle">
+		<settingConfig type="alphaNumeric" required="false" />
+		</setting>
+
+		<setting propertyKey="@Properties.settingPassword" title="@Strings.settingPasswordTitle">
+		<settingConfig type="password" required="false" />
+		</setting>
 	</settings>
 </resources>

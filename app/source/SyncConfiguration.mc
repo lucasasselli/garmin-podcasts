@@ -51,7 +51,7 @@ class SyncConfiguration extends CompactMenu {
     }
 
     function onSearchQuery(query){
-		Remote.request(
+		PodcastIndex.request(
 			Constants.URL_SEARCH, 
 			{
 				"q"   => StringHelper.substringReplace(query, " ", "+"),

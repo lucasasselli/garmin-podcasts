@@ -4,41 +4,18 @@ using Toybox.Application.Storage;
 
 class SyncDelegate extends Communications.SyncDelegate {
 
-	var podcasts;
-	var podcastsIndex;
-	
-	var episodes;
-	var episodesUrl;
-	var episodesIndex;
-	
-	var saved;
-
-	var attempts;
-	
-	var settingEpisodesPerPodcast;
+	var dataHelper;
+	var artworkIterator;
+	var episodesIterator;
 
     function initialize() {
         SyncDelegate.initialize();
+
+		dataHelper = new DataHelper(method(:onEpisodeList), method(:throwSyncError));
     }
     
     function onStartSync() {
-    
-    	podcasts = StorageHelper.get(Constants.STORAGE_SUBSCRIBED, []);
-        podcastsIndex = 0;
-        
-        episodes = [];
-        episodesUrl = [];
-	    episodesIndex = 0;
-        
-    	saved = StorageHelper.get(Constants.STORAGE_SAVED, []);
-    	
-		attempts = 0;
-
-    	// Get settings
-    	settingEpisodesPerPodcast = Application.getApp().getProperty("settingEpisodes").toNumber();
-
-		// Start sync
-    	getNextPodcast();
+		dataHelper.start();
     }
 
     function isSyncNeeded() {
@@ -54,136 +31,54 @@ class SyncDelegate extends Communications.SyncDelegate {
     	Communications.cancelAllRequests();
     	Communications.notifySyncComplete(msg);
     }
-    
-    function cleanMedia(){
-    	for(var i=0; i<saved.size(); i++){
-			var x = Utils.findArrayField(episodes, Constants.EPISODE_ID, saved[i][Constants.EPISODE_ID]);
-    		if(x == null){  		
-    			System.println("Episode " + saved[i][Constants.EPISODE_ID] + " no longer needed!");
-    			    			
-            	var mediaObj = Utils.getSafeMedia(saved[i][Constants.EPISODE_MEDIA]);
-				if(mediaObj != null){
-					Media.deleteCachedItem(mediaObj.getContentRef());
-				}
-    		}
-    	}
-    }
-    
-    function getNextPodcast(){		
-    	if(podcastsIndex < podcasts.size()){	
-			var podcastId = podcasts[podcastsIndex][Constants.PODCAST_ID];
-			System.println("Downloading podcast " + podcastId);
-    		Remote.request(Constants.URL_EPISODES, {"id" => podcastId, "max" => settingEpisodesPerPodcast}, method(:onPodcast));
-    	} else {
-			// All episode info ready, remove old episodes
-			attempts = 0;
-			cleanMedia();		
-			getNextEpisode();
-		}
-    }
-    
-    function onPodcast(responseCode, data) {
-        if (responseCode == 200) { 
-        	var items = Utils.getSafeDictKey(data, "items");
-        	var artworkUrl = null;
-        	
-        	if(items != null){
-				for(var i=0; i<items.size(); i++){
-				
-					var episode = new [Constants.EPISODE_DATA_SIZE];
-					
-					if(items[0]["feedImage"] != null){
-						artworkUrl = items[0]["feedImage"];
-					}
-		    				
-					episode[Constants.EPISODE_ID] = items[i]["id"];
-					episode[Constants.EPISODE_PODCAST] = podcasts[podcastsIndex][Constants.PODCAST_ID];
-					
-					var match = Utils.findArrayField(saved, Constants.EPISODE_ID, episode[Constants.EPISODE_ID]);
-					if(match != null){
-						episode[Constants.EPISODE_MEDIA]= match[Constants.EPISODE_MEDIA];
-					}
-            		var mediaObj = Utils.getSafeMedia(episode[Constants.EPISODE_MEDIA]);
-		
-		    		if(mediaObj == null){				
-						episodes.add(episode);	
-						episodesUrl.add(items[i]["enclosureUrl"]);
-		    		}else{
-						episodes.add(episode);	
-		    			episodesUrl.add(null);
-		    			System.println("Episode " + episode[Constants.EPISODE_ID] + " already downloaded!");
-		    		}	  					
-				}
-				
-				// Request Artwork
-				if(artworkUrl != null && Storage.getValue(podcasts[podcastsIndex][Constants.PODCAST_ID]) == null){
-					System.println("Downloading artwork for  " + podcasts[podcastsIndex][Constants.PODCAST_ID] + " at " + artworkUrl);
-					
-					var options = {
-						:maxWidth => 127,
-						:maxHeight => 127
-					};
 
-				   	Communications.makeImageRequest(
-				   		artworkUrl,
-				   		null,
-				   		options,
-				   		method(:onArtwork));
-			   	}else{
-			   		// No Artwork
-					podcastsIndex++;
-					getNextPodcast();
-			   	}
-		   	}
-		} else if (responseCode == Communications.REQUEST_CANCELLED || responseCode == Communications.REQUEST_CONNECTION_DROPPED){
-			if(attempts < Constants.CONNECTION_ATTEMPTS){
-				attempts++;
-				getNextPodcast();
-			}else{
-				attempts = 0;
-				podcastsIndex++;
-				getNextPodcast();
-			}
-        } else {
-            throwSyncError("Error " + responseCode);
-        }
-    }
-    
+	function onEpisodeList(){
+		artworkIterator = new Iterator(dataHelper.artworkUrls, method(:getArtworks), method(:getArtworksDone));
+		artworkIterator.next();
+	}
+
+	function getArtworks(item){
+		if(item != null){
+		System.println("Downloading " + item);  	
+		Communications.makeImageRequest(
+			item,
+			null,
+			{
+				:maxWidth => 127,
+				:maxHeight => 127
+			},
+			method(:onArtwork));
+		}else{
+			artworkIterator.next();
+		}
+	}
+
     function onArtwork(responseCode, data) {
     	if (responseCode == 200) { 
-    		Storage.setValue(podcasts[podcastsIndex][Constants.PODCAST_ID], data);
+    		Storage.setValue(dataHelper.podcasts[artworkIterator.index()][Constants.PODCAST_ID], data);
     	} else {
     		System.println(responseCode);
     	}
-		podcastsIndex++;
-		getNextPodcast();
+		artworkIterator.next();
     }
-      
-    function getNextEpisode() {
-    	if(episodesIndex < episodes.size())
-    	{ 	
-    		if(episodesUrl[episodesIndex] != null){
-    		
-	            var options = {     
-	           		:method => Communications.HTTP_REQUEST_METHOD_GET,
-	           		:responseType => Communications.HTTP_RESPONSE_CONTENT_TYPE_AUDIO,
-	               	:mediaEncoding => Media.ENCODING_MP3,
-	               	:fileDownloadProgressCallback => method(:onFileProgress)
-	            };
-	               	
-	        	var episodeId = episodes[episodesIndex][Constants.EPISODE_ID];
-				var episodeUrl = episodesUrl[episodesIndex];
-				System.println("Downloading episode " + episodeId + " at " + episodeUrl);  	
-				Communications.makeWebRequest(episodeUrl, null, options, method(:onEpisode));	
-			} else {
-				// If url is null the episode wqas already downloaded
-				episodesIndex++;
-				getNextEpisode();
-			}		
+
+	function getArtworksDone(){
+		episodesIterator = new Iterator(dataHelper.episodesUrl, method(:getEpisodes), method(:getEpisodesDone));
+		episodesIterator.next();
+	}
+
+	function getEpisodes(item){
+		if(item != null){
+			var options = {     
+				:method => Communications.HTTP_REQUEST_METHOD_GET,
+				:responseType => Communications.HTTP_RESPONSE_CONTENT_TYPE_AUDIO,
+				:mediaEncoding => Media.ENCODING_MP3,
+				:fileDownloadProgressCallback => method(:onFileProgress)
+			};
+			System.println("Downloading " + item);  	
+			Communications.makeWebRequest(item, null, options, method(:onEpisode));	
 		}else{
-			// All episodes downloaded, get next podcast
-			System.println("Sync complete!");
-			Communications.notifySyncComplete(null);		
+			episodesIterator.next();
 		}
     }
 
@@ -192,10 +87,10 @@ class SyncDelegate extends Communications.SyncDelegate {
             var ref = new Media.ContentRef(data.getId(), Media.CONTENT_TYPE_AUDIO);
             var metadata = Media.getCachedContentObj(ref).getMetadata();
 
-	        episodes[episodesIndex][Constants.EPISODE_MEDIA] = data.getId();
+	        dataHelper.episodes[episodesIterator.index()][Constants.EPISODE_MEDIA] = data.getId();
             
 			// Fix metadata
-			var podcast = Utils.findArrayField(podcasts, Constants.PODCAST_ID, episodes[episodesIndex][Constants.EPISODE_PODCAST]);
+			var podcast = Utils.findArrayField(dataHelper.podcasts, Constants.PODCAST_ID, dataHelper.episodes[episodesIterator.index()][Constants.EPISODE_PODCAST]);
             if(metadata.title == null || metadata.title == ""){
 				// Title is empty
             	metadata.title = WatchUi.loadResource(Rez.Strings.emptyTitle);
@@ -204,28 +99,22 @@ class SyncDelegate extends Communications.SyncDelegate {
             Media.getCachedContentObj(ref).setMetadata(metadata);
             
 			// Update storage
-			Storage.setValue(Constants.STORAGE_SAVED, episodes);		
+			Storage.setValue(Constants.STORAGE_SAVED, dataHelper.episodes);		
 
-            episodesIndex++;
-            getNextEpisode();           
-		} else if (responseCode == Communications.REQUEST_CANCELLED || responseCode == Communications.REQUEST_CONNECTION_DROPPED){
-			if(attempts < Constants.CONNECTION_ATTEMPTS){
-				attempts++;
-				getNextEpisode();
-			}else{
-				attempts = 0;
-				episodesIndex++;
-				getNextEpisode();
-			}
+			episodesIterator.next();
         } else {
             throwSyncError("Error " + responseCode);
         }
     }
+
+	function getEpisodesDone(){
+    	Communications.notifySyncComplete(null);
+	}
     
     function onFileProgress(bytesTransferred, fileSize){
-    	var progress= episodesIndex/episodes.size().toFloat();
+    	var progress= episodesIterator.index()/episodesIterator.size().toFloat();
     	if(bytesTransferred != null && fileSize != null && fileSize != 0){
-    		progress += (bytesTransferred/fileSize.toFloat())/episodes.size().toFloat();
+    		progress += (bytesTransferred/fileSize.toFloat())/episodesIterator.size().toFloat();
     	}
 		Communications.notifySyncProgress((progress*100).toNumber());
     }
