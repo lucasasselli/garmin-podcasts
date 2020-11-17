@@ -1,4 +1,5 @@
 using Toybox.Communications;
+using Toybox.Application.Storage;
 
 class GPodder {
 
@@ -14,9 +15,9 @@ class GPodder {
     var errorCallback;
 
     function initialize(){
-        username = Application.getApp().getProperty("settingsGpodderUsername");
-        password = Application.getApp().getProperty("settingsGpodderPassword");
-        deviceid = Application.getApp().getProperty("settingsGpodderDeviceid");
+        username = Application.getApp().getProperty("settingUsername");
+        password = Application.getApp().getProperty("settingPassword");
+        deviceid = Application.getApp().getProperty("settingDeviceid");
     }
 
     function valid(){
@@ -95,6 +96,15 @@ class GPodder {
     }
 
     function getFeedsDone(){
+        // Remove artworks
+    	var subscribed = StorageHelper.get(Constants.STORAGE_SUBSCRIBED, []);
+        for(var i=0; i<subscribed.size(); i++){
+	        var found = Utils.findArrayField(podcasts, Constants.EPISODE_ID, subscribed[Constants.PODCAST_ID]);
+            if(found == null){
+                Storage.deleteValue(subscribed[i][Constants.PODCAST_ID]);
+            }
+        }
+        Storage.setValue(Constants.STORAGE_SUBSCRIBED, podcasts);
         doneCallback.invoke();
     }
 }

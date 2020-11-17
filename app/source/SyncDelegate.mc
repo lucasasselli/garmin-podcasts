@@ -100,11 +100,10 @@ class SyncDelegate extends Communications.SyncDelegate {
             
 			// Update storage
 			Storage.setValue(Constants.STORAGE_SAVED, dataHelper.episodes);		
-
-			episodesIterator.next();
-        } else {
-            throwSyncError("Error " + responseCode);
+        }else{
+            System.println("Download error" + responseCode);
         }
+		episodesIterator.next();
     }
 
 	function getEpisodesDone(){

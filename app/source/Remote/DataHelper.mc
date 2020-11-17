@@ -2,10 +2,6 @@ using Toybox.Communications;
 using Toybox.Media;
 using Toybox.Application.Storage;
 
-// TODO: Handle artwork cleanup
-// TODO: Implement gpodder sync configuration
-// TODO: Implement credentials validation
-
 class DataHelper {
 
     var podcastInfoIterator;
@@ -109,7 +105,7 @@ class DataHelper {
         do {
             swapped = false;
             for(var i=0; i<episodes.size()-1; i++){
-                if (episodes[i][EPISODE_DATE] < episodes[i][EPISODE_DATE]){
+                if (episodes[i][Constants.EPISODE_DATE] < episodes[i][Constants.EPISODE_DATE]){
                     Utils.arraySwap(episodes, i, i+1);
                     Utils.arraySwap(episodesUrl, i, i+1);
                     swapped = true;
