@@ -1,0 +1,4 @@
+<drawables>
+    <bitmap id="LauncherIcon" filename="launcher_icon.png" />
+    <bitmap id="PlayerIcon" filename="player_icon.png"/>
+</drawables>
