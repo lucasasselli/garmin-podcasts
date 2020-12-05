@@ -18,7 +18,12 @@ class SyncConfigurationManual extends CompactMenu {
 
 	// Search new podcast
 	function callbackSearch(){
-        WatchUi.pushView(new WatchUi.TextPicker(""), new PickerSearchDelegate(method(:onSearchQuery)), WatchUi.SLIDE_LEFT);
+        if (WatchUi has :TextPicker) {
+            WatchUi.pushView(new WatchUi.TextPicker(""), new PickerSearchDelegate(method(:onSearchQuery)), WatchUi.SLIDE_LEFT);
+        }else{
+            var fallbackPickerSearch = new FallbackPicker("");
+            WatchUi.pushView(fallbackPickerSearch, new FallbackPickerSearchDelegate(fallbackPickerSearch, method(:onSearchQuery)), WatchUi.SLIDE_LEFT);
+        }
 	}
 
 	// Return number of subscribed podcast strings
@@ -143,4 +148,30 @@ class PickerSearchDelegate extends WatchUi.TextPickerDelegate {
 		callback.invoke(text);
 		return true;
 	}
+}
+
+class FallbackPickerSearchDelegate extends WatchUi.PickerDelegate {
+
+    hidden var picker;
+    hidden var callback;
+
+    function initialize(picker, callback) {
+        PickerDelegate.initialize();
+        self.picker = picker;
+		self.callback = callback;
+    }
+
+    function onCancel() {
+        WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
+    }
+
+    function onAccept(values) {
+        if(!picker.isDone(values[0])) {
+            picker.addCharacter(values[0]);
+        } else {
+            var progressBar = new WatchUi.ProgressBar(WatchUi.loadResource(Rez.Strings.searching), null);
+            WatchUi.pushView(progressBar, new SearchProgressDelegate(), WatchUi.SLIDE_LEFT);
+            callback.invoke(picker.getText());
+        }
+    }
 }

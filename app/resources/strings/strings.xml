@@ -28,6 +28,7 @@
     <string id="msgCheckPhone">Check phone</string>
     
     <!-- Other -->
+    <string id="search">Search</string>
     <string id="settings">Settings</string>
     <string id="emptyTitle">(no title)</string>  
     <string id="searching">Searching...</string>  
