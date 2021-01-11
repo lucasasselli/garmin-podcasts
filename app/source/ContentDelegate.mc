@@ -29,13 +29,10 @@ class ContentDelegate extends Media.ContentDelegate {
 
         // Start
         if(songEvent == Media.SONG_EVENT_START){
+            var artwork;
             var episode = Utils.findArrayField(saved, Constants.EPISODE_MEDIA, refId);           	
-            if(episode == null){ 
-                return;
-            }
-            var artwork = Storage.getValue(episode[Constants.EPISODE_PODCAST]);
-            if(artwork == null){ 
-                return;
+            if(episode != null){ 
+                artwork = Storage.getValue(episode[Constants.EPISODE_PODCAST]);
             }
             Media.setAlbumArt(artwork);
         }
