@@ -22,12 +22,13 @@ module Constants {
         PODCAST_AUTHOR
     }
     
-    const EPISODE_DATA_SIZE = 4;   
+    const EPISODE_DATA_SIZE = 5;   
     enum {
     	EPISODE_ID,
     	EPISODE_PODCAST,
         EPISODE_MEDIA,
-        EPISODE_DATE
+        EPISODE_DATE,
+        EPISODE_TITLE
     }
 
     const NOWPLAYING_DATA_SIZE = 2;   

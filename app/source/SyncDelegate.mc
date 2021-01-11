@@ -94,10 +94,7 @@ class SyncDelegate extends Communications.SyncDelegate {
             
 			// Fix metadata
 			var podcast = Utils.findArrayField(dataHelper.podcasts, Constants.PODCAST_ID, dataHelper.episodes[episodesIterator.index()][Constants.EPISODE_PODCAST]);
-            if(metadata.title == null || metadata.title == ""){
-				// Title is empty
-            	metadata.title = WatchUi.loadResource(Rez.Strings.emptyTitle);
-            }     
+            metadata.title = dataHelper.episodes[episodesIterator.index()][Constants.EPISODE_TITLE];
             metadata.artist = podcast[Constants.PODCAST_TITLE];
             Media.getCachedContentObj(ref).setMetadata(metadata);
             

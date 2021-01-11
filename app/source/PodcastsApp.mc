@@ -3,16 +3,13 @@ using Toybox.Media;
 
 class PodcastsApp extends Application.AudioContentProviderApp {
 
-    var contentDelegate;
-
     function initialize() {
         AudioContentProviderApp.initialize();
-        contentDelegate = new ContentDelegate();
     }
     
     // Get a Media.ContentDelegate for use by the system to get and iterate through media on the device
     function getContentDelegate(arg) {
-        return contentDelegate;
+        return new ContentDelegate();
     }
 
     // Get a delegate that communicates sync status to the system for syncing media content to the device

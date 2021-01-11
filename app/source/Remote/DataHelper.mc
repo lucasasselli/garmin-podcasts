@@ -76,6 +76,7 @@ class DataHelper {
 					episode[Constants.EPISODE_ID] = items[i]["id"];
 					episode[Constants.EPISODE_PODCAST] = podcastEpisodesIterator.item()[Constants.PODCAST_ID];
 					episode[Constants.EPISODE_DATE] = items[i]["datePublished"];
+					episode[Constants.EPISODE_TITLE] = items[i]["title"];
                     
                     // Check if the media is already available
 					var match = Utils.findArrayField(saved, Constants.EPISODE_ID, episode[Constants.EPISODE_ID]);
