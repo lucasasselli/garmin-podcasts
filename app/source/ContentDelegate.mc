@@ -4,29 +4,30 @@ using Toybox.Application.Storage;
 class ContentDelegate extends Media.ContentDelegate {
 
     // Iterator for playing songs
-    private var mIterator;
+    private var iterator;
     
-    private var saved;
-
     // Constructor
     function initialize() {
         ContentDelegate.initialize();
         resetContentIterator();            
-        saved = StorageHelper.get(Constants.STORAGE_SAVED, []); // TODO: Reorganize
     }
 
     // Returns the iterator to play songs
     function getContentIterator() {
-        return mIterator;
+        return iterator;
     }
 
     // Returns the iterator to play songs
     function resetContentIterator() {
-        mIterator = new ContentIterator();
-        return mIterator;
+        iterator = new ContentIterator();
+        return iterator;
     }
     
     function onSong(refId, songEvent, playbackPosition) {
+
+        var saved = StorageHelper.get(Constants.STORAGE_SAVED, []);
+
+        // Start
         if(songEvent == Media.SONG_EVENT_START){
             var episode = Utils.findArrayField(saved, Constants.EPISODE_MEDIA, refId);           	
             if(episode == null){ 
@@ -37,6 +38,25 @@ class ContentDelegate extends Media.ContentDelegate {
                 return;
             }
             Media.setAlbumArt(artwork);
+        }
+
+        // Start/Stop
+        if(songEvent == Media.SONG_EVENT_STOP || songEvent == Media.SONG_EVENT_PAUSE){
+            // Save now playing item
+            var now = new [Constants.NOWPLAYING_DATA_SIZE];
+            now[Constants.NOWPLAYING_MEDIA] = refId;
+            now[Constants.NOWPLAYING_PROGRESS] = playbackPosition;
+            Storage.setValue(Constants.STORAGE_NOWPLAYING, now);
+        }
+
+        if(songEvent == Media.SONG_EVENT_START){
+            // Clear now playing item
+            Storage.setValue(Constants.STORAGE_NOWPLAYING, null);
+        }
+
+        if(songEvent == Media.SONG_EVENT_COMPLETE){
+            // Clear now playing item
+            Storage.setValue(Constants.STORAGE_NOWPLAYING, null);
         }
     }
 }

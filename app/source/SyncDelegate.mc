@@ -8,6 +8,8 @@ class SyncDelegate extends Communications.SyncDelegate {
 	var artworkIterator;
 	var episodesIterator;
 
+    var episodeErrors;
+
     function initialize() {
         SyncDelegate.initialize();
 
@@ -15,6 +17,7 @@ class SyncDelegate extends Communications.SyncDelegate {
     }
     
     function onStartSync() {
+        episodeErrors = 0;
 		dataHelper.start();
     }
 
@@ -44,8 +47,8 @@ class SyncDelegate extends Communications.SyncDelegate {
 			item,
 			null,
 			{
-				:maxWidth => 127,
-				:maxHeight => 127
+				:maxWidth  => 64,
+				:maxHeight => 64
 			},
 			method(:onArtwork));
 		}else{
@@ -101,13 +104,18 @@ class SyncDelegate extends Communications.SyncDelegate {
 			// Update storage
 			Storage.setValue(Constants.STORAGE_SAVED, dataHelper.episodes);		
         }else{
-            System.println("Download error" + responseCode);
+            episodeErrors++;
+            System.println("Download error " + responseCode);
         }
 		episodesIterator.next();
     }
 
 	function getEpisodesDone(){
-    	Communications.notifySyncComplete(null);
+        if(episodeErrors > 0){
+            throwSyncError(episodeErrors + " failed"); // TODO
+        }else{
+            Communications.notifySyncComplete(null);
+        }
 	}
     
     function onFileProgress(bytesTransferred, fileSize){

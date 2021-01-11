@@ -1,14 +1,18 @@
 using Toybox.Application;
+using Toybox.Media;
 
 class PodcastsApp extends Application.AudioContentProviderApp {
 
+    var contentDelegate;
+
     function initialize() {
         AudioContentProviderApp.initialize();
+        contentDelegate = new ContentDelegate();
     }
     
     // Get a Media.ContentDelegate for use by the system to get and iterate through media on the device
     function getContentDelegate(arg) {
-        return new ContentDelegate();
+        return contentDelegate;
     }
 
     // Get a delegate that communicates sync status to the system for syncing media content to the device
@@ -29,7 +33,7 @@ class PodcastsApp extends Application.AudioContentProviderApp {
             return new SyncConfigurationManual().get();
         }else{
             // gPodder
-            return [];
+            return []; // FIXME: Is this correct?
         }
     }
     

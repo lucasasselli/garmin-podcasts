@@ -123,10 +123,24 @@ class DataHelper {
     			    			
             	var mediaObj = Utils.getSafeMedia(saved[i][Constants.EPISODE_MEDIA]);
 				if(mediaObj != null){
-					Media.deleteCachedItem(mediaObj.getContentRef());
+                    var ref = mediaObj.getContentRef();
+					Media.deleteCachedItem(ref);
 				}
     		}
     	}
+        Storage.setValue(Constants.STORAGE_SAVED, episodes);		
+
+        // Clean playlist
+        var playlist = StorageHelper.get(Constants.STORAGE_PLAYLIST, []);
+        var temp = playlist;
+    	for(var i=0; i<temp.size(); i++){
+			var x = Utils.findArrayField(episodes, Constants.EPISODE_MEDIA, temp[i]);
+    		if(x == null){  		
+                playlist.remove(temp[i]);
+            }
+        }
+        Storage.setValue(Constants.STORAGE_PLAYLIST, []);
+
         doneCallback.invoke();
     }
 }

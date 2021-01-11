@@ -11,7 +11,8 @@ module Constants {
     enum {
         STORAGE_SUBSCRIBED,
         STORAGE_SAVED,
-        STORAGE_PLAYLIST
+        STORAGE_PLAYLIST,
+        STORAGE_NOWPLAYING
     }
     
     const PODCAST_DATA_SIZE = 3;   
@@ -27,5 +28,11 @@ module Constants {
     	EPISODE_PODCAST,
         EPISODE_MEDIA,
         EPISODE_DATE
+    }
+
+    const NOWPLAYING_DATA_SIZE = 2;   
+    enum {
+    	NOWPLAYING_MEDIA,
+        NOWPLAYING_PROGRESS
     }
 }

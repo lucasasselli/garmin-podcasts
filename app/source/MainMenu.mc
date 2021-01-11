@@ -1,6 +1,7 @@
 using Toybox.WatchUi;
 using Toybox.Application.Storage;
 using Toybox.Communications;
+using Toybox.Media;
 
 class MainMenu extends CompactMenu {
 
@@ -9,16 +10,36 @@ class MainMenu extends CompactMenu {
     }
 
 	function build(){
+		// add(Rez.Strings.menuPlayer, method(:getPlaybackInfo), method(:callbackPlayer));
 		add(Rez.Strings.menuQueue, method(:getQueueSize), method(:callbackQueue));
         add(Rez.Strings.menuPodcasts, null, method(:callbackPodcasts));
 		add(Rez.Strings.menuSync, null, method(:callbackSync));
 		add(Rez.Strings.menuSettings, null, method(:callbackSettings));
 	}
 
+    // Get playback info
+	function getPlaybackInfo(){
+        var now = StorageHelper.get(Constants.STORAGE_NOWPLAYING, null);
+        if(now != null){
+            var ref = new Media.ContentRef(now[Constants.NOWPLAYING_MEDIA], Media.CONTENT_TYPE_AUDIO);
+            if(ref != null){
+                var metadata = Media.getCachedContentObj(ref).getMetadata();
+                return metadata.title;
+            }
+        }
+
+        return "";
+	}
+
     // Return playback queue size string
 	function getQueueSize(){
         var playlist = StorageHelper.get(Constants.STORAGE_PLAYLIST, []);
         return playlist.size().toString() + " " + WatchUi.loadResource(Rez.Strings.episodes);
+	}
+
+    // Playback queue
+	function callbackPlayer(){
+    	WatchUi.popView(WatchUi.SLIDE_RIGHT);    	
 	}
 
     // Playback queue

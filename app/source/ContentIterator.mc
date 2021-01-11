@@ -11,23 +11,26 @@ class ContentIterator extends Media.ContentIterator {
     // The refIds of the songs to play
     private var playlist;
 
+    private var resumeDo;
+    private var resumeData;
+
     // Constructor
     function initialize() {
-        ContentIterator.initialize();
         playlistIndex = 0;
+        resumeDo = false;
 
         initializePlaylist();
+
+        ContentIterator.initialize();
     }
 
     // Returns the playback profile
     function getPlaybackProfile() {
-        var profile = new PlaybackProfile();
+        var profile = new Media.PlaybackProfile();
 
         profile.playbackControls = [
-           Media.PLAYBACK_CONTROL_PLAY,
-           Media.PLAYBACK_CONTROL_PAUSE,
-           Media.PLAYBACK_CONTROL_PREVIOUS,
            Media.PLAYBACK_CONTROL_NEXT,
+           Media.PLAYBACK_CONTROL_PREVIOUS,
            Media.PLAYBACK_CONTROL_SKIP_FORWARD,
            Media.PLAYBACK_CONTROL_SKIP_BACKWARD,
            Media.PLAYBACK_CONTROL_LIBRARY
@@ -36,7 +39,7 @@ class ContentIterator extends Media.ContentIterator {
         profile.playSpeedMultipliers = [Media.PLAYBACK_SPEED_NORMAL];
         profile.attemptSkipAfterThumbsDown = true;
         profile.supportsPlaylistPreview = true;
-        profile.requirePlaybackNotification = false;
+        profile.requirePlaybackNotification = true;
         profile.playbackNotificationThreshold = 30;
         profile.skipPreviousThreshold = 4;
 
@@ -70,8 +73,14 @@ class ContentIterator extends Media.ContentIterator {
     // Gets the current song to play
     function get() {
         var obj = null;
+        // FIXME: This looks ugly but works...
         if ((playlistIndex >= 0) && (playlistIndex < playlist.size())) {
-            obj = Media.getCachedContentObj(new Media.ContentRef(playlist[playlistIndex], Media.CONTENT_TYPE_AUDIO));
+            var ref = new Media.ContentRef(playlist[playlistIndex], Media.CONTENT_TYPE_AUDIO);
+            obj = Media.getCachedContentObj(ref);
+            if(resumeDo){
+                obj = new Media.ActiveContent(ref, obj.getMetadata(), resumeData[Constants.NOWPLAYING_PROGRESS]);
+                resumeDo = false;
+            }
         }
 
         return obj;
@@ -107,24 +116,41 @@ class ContentIterator extends Media.ContentIterator {
     // Gets the songs to play. If no playlist is available then all the songs in the
     // system are played.
     function initializePlaylist() {
+
+        // Read the playlist from storage
         var tempPlaylist = StorageHelper.get(Constants.STORAGE_PLAYLIST, null);
 
         if (tempPlaylist == null) {
-            var availableSongs = Media.getContentRefIter({:contentType => Media.CONTENT_TYPE_AUDIO});
-
+            // Add all the episodes in memory
+            var episodes = Media.getContentRefIter({:contentType => Media.CONTENT_TYPE_AUDIO});
             playlist = [];
-            if (availableSongs != null) {
-                var song = availableSongs.next();
-                while (song != null) {
-                    playlist.add(song.getId());
-                    song = availableSongs.next();
+            if (episodes != null) {
+                var episode = episodes.next();
+                while (episode != null) {
+                    playlist.add(episode.getId());
+                    episode = episodes.next();
                 }
             }
         } else {
+            // Add the episodes in storage
             playlist = new [tempPlaylist.size()];
-            for (var idx = 0; idx < playlist.size(); ++idx) {
-                playlist[idx] = tempPlaylist[idx];
+            for (var i = 0; i < playlist.size(); ++i) {
+                playlist[i] = tempPlaylist[i];
             }
+        }
+
+        // Match to now playing item
+        resumeData = StorageHelper.get(Constants.STORAGE_NOWPLAYING, null);
+        if(resumeData != null){
+            var ref = resumeData[Constants.NOWPLAYING_MEDIA];
+            for (var i = 0; i < playlist.size(); ++i) {
+                if(playlist[i] == ref) {
+                    playlistIndex = i;
+                    resumeDo = true;
+                    break;
+                }
+            }
+
         }
     }
 }
