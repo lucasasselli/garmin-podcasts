@@ -139,7 +139,7 @@ class DataHelper {
                 playlist.remove(temp[i]);
             }
         }
-        Storage.setValue(Constants.STORAGE_PLAYLIST, []);
+        Storage.setValue(Constants.STORAGE_PLAYLIST, playlist);
 
         doneCallback.invoke();
     }
