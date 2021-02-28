@@ -4,6 +4,9 @@
     <iq:application entry="PodcastsApp" id="987056a9-2b3d-4848-a44f-43ddf8a97da6" launcherIcon="@Drawables.LauncherIcon" minSdkVersion="3.2.0" name="@Strings.AppName" type="audio-content-provider-app" version="2.0.3">
         <iq:products>
             <iq:product id="d2air"/>
+            <iq:product id="fenix5plus"/>
+            <iq:product id="fenix5splus"/>
+            <iq:product id="fenix5xplus"/>
             <iq:product id="fenix6pro"/>
             <iq:product id="fenix6spro"/>
             <iq:product id="fenix6xpro"/>

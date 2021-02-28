@@ -25,11 +25,10 @@ class ContentDelegate extends Media.ContentDelegate {
     
     function onSong(refId, songEvent, playbackPosition) {
 
-        var saved = StorageHelper.get(Constants.STORAGE_SAVED, []);
-
-        // Start
+        // Handle artwork
         if(songEvent == Media.SONG_EVENT_START){
-            var artwork;
+            var saved = StorageHelper.get(Constants.STORAGE_SAVED, []);
+            var artwork = null;
             var episode = Utils.findArrayField(saved, Constants.EPISODE_MEDIA, refId);           	
             if(episode != null){ 
                 artwork = Storage.getValue(episode[Constants.EPISODE_PODCAST]);
@@ -37,23 +36,17 @@ class ContentDelegate extends Media.ContentDelegate {
             Media.setAlbumArt(artwork);
         }
 
-        // Start/Stop
+        // Handle progress...
         if(songEvent == Media.SONG_EVENT_STOP || songEvent == Media.SONG_EVENT_PAUSE){
-            // Save now playing item
+            // Stop/Pause
             var now = new [Constants.NOWPLAYING_DATA_SIZE];
-            now[Constants.NOWPLAYING_MEDIA] = refId;
+            now[Constants.NOWPLAYING_MEDIA]    = refId;
             now[Constants.NOWPLAYING_PROGRESS] = playbackPosition;
             Storage.setValue(Constants.STORAGE_NOWPLAYING, now);
-        }
-
-        if(songEvent == Media.SONG_EVENT_START){
-            // Clear now playing item
+            System.println("Progress saved...");
+        }else{
             Storage.setValue(Constants.STORAGE_NOWPLAYING, null);
-        }
-
-        if(songEvent == Media.SONG_EVENT_COMPLETE){
-            // Clear now playing item
-            Storage.setValue(Constants.STORAGE_NOWPLAYING, null);
+            System.println("Progress cleared...");
         }
     }
 }
