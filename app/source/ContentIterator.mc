@@ -8,16 +8,12 @@ class ContentIterator extends Media.ContentIterator {
     // The index of the current song in playlist
     private var playlistIndex;
     
-    // The refIds of the songs to play
     private var playlist;
-
-    private var resumeDo;
-    private var resumeData;
+    private var saved;
 
     // Constructor
     function initialize() {
         playlistIndex = 0;
-        resumeDo = false;
 
         initializePlaylist();
 
@@ -39,11 +35,21 @@ class ContentIterator extends Media.ContentIterator {
         profile.playSpeedMultipliers = [Media.PLAYBACK_SPEED_NORMAL];
         profile.attemptSkipAfterThumbsDown = true;
         profile.supportsPlaylistPreview = true;
-        profile.requirePlaybackNotification = true;
-        profile.playbackNotificationThreshold = 30;
-        profile.skipPreviousThreshold = 4;
+        profile.requirePlaybackNotification = false;
+        profile.skipPreviousThreshold = 30;
 
         return profile;
+    }
+
+    function getAtIndex(index){
+        var ref = new Media.ContentRef(playlist[index], Media.CONTENT_TYPE_AUDIO);
+        var episode = Utils.findArrayField(saved, Constants.EPISODE_MEDIA, playlist[index]);
+        var obj = Media.getCachedContentObj(ref);
+        if(episode != null && episode[Constants.EPISODE_PROGRESS] != null){
+            obj = new Media.ActiveContent(ref, obj.getMetadata(), episode[Constants.EPISODE_PROGRESS]);
+        }
+        
+        return obj;
     }
 
     // Returns the next song, or null if there is no next song. Also increments the current
@@ -51,8 +57,7 @@ class ContentIterator extends Media.ContentIterator {
     function next() {
         if (playlistIndex < (playlist.size() - 1)) {
             ++playlistIndex;
-            var obj = Media.getCachedContentObj(new Media.ContentRef(playlist[playlistIndex], Media.CONTENT_TYPE_AUDIO));
-            return obj;
+            return getAtIndex(playlistIndex);
         }
 
         return null;
@@ -63,8 +68,7 @@ class ContentIterator extends Media.ContentIterator {
     function previous() {
         if (playlistIndex > 0) {
             --playlistIndex;
-            var obj = Media.getCachedContentObj(new Media.ContentRef(playlist[playlistIndex], Media.CONTENT_TYPE_AUDIO));
-            return obj;
+            return getAtIndex(playlistIndex);
         }
 
         return null;
@@ -73,25 +77,17 @@ class ContentIterator extends Media.ContentIterator {
     // Gets the current song to play
     function get() {
         var obj = null;
-        // FIXME: This looks ugly but works...
         if ((playlistIndex >= 0) && (playlistIndex < playlist.size())) {
-            var ref = new Media.ContentRef(playlist[playlistIndex], Media.CONTENT_TYPE_AUDIO);
-            obj = Media.getCachedContentObj(ref);
-            if(resumeDo){
-                obj = new Media.ActiveContent(ref, obj.getMetadata(), resumeData[Constants.NOWPLAYING_PROGRESS]);
-                resumeDo = false;
-            }
+            return getAtIndex(playlistIndex);
         }
-
-        return obj;
+        return null;
     }
 
     // Returns the next song, or null if there is no next song, without decrementing the current song index.
     function peekNext() {
         var nextIndex = playlistIndex + 1;
         if (nextIndex < playlist.size()) {
-            var obj = Media.getCachedContentObj(new Media.ContentRef(playlist[nextIndex], Media.CONTENT_TYPE_AUDIO));
-            return obj;
+            return getAtIndex(nextIndex);
         }
 
         return null;
@@ -101,8 +97,7 @@ class ContentIterator extends Media.ContentIterator {
     function peekPrevious() {
         var previousIndex = playlistIndex - 1;
         if (previousIndex >= 0) {
-            var obj = Media.getCachedContentObj(new Media.ContentRef(playlist[previousIndex], Media.CONTENT_TYPE_AUDIO));
-            return obj;
+            return getAtIndex(previousIndex);
         }
 
         return null;
@@ -116,6 +111,8 @@ class ContentIterator extends Media.ContentIterator {
     // Gets the songs to play. If no playlist is available then all the songs in the
     // system are played.
     function initializePlaylist() {
+
+        saved = StorageHelper.get(Constants.STORAGE_SAVED, []);
 
         // Read the playlist from storage
         var tempPlaylist = StorageHelper.get(Constants.STORAGE_PLAYLIST, null);
@@ -137,20 +134,6 @@ class ContentIterator extends Media.ContentIterator {
             for (var i = 0; i < playlist.size(); ++i) {
                 playlist[i] = tempPlaylist[i];
             }
-        }
-
-        // Match to now playing item
-        resumeData = StorageHelper.get(Constants.STORAGE_NOWPLAYING, null);
-        if(resumeData != null){
-            var ref = resumeData[Constants.NOWPLAYING_MEDIA];
-            for (var i = 0; i < playlist.size(); ++i) {
-                if(playlist[i] == ref) {
-                    playlistIndex = i;
-                    resumeDo = true;
-                    break;
-                }
-            }
-
         }
     }
 }

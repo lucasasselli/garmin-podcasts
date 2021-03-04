@@ -42,15 +42,15 @@ class SyncDelegate extends Communications.SyncDelegate {
 
     function getArtworks(item){
         if(item != null){
-        System.println("Downloading " + item);      
-        Communications.makeImageRequest(
-            item,
-            null,
-            {
-                :maxWidth  => 64,
-                :maxHeight => 64
-            },
-            method(:onArtwork));
+            System.println("Downloading " + item);      
+            Communications.makeImageRequest(
+                item,
+                null,
+                {
+                    :maxWidth  => Constants.IMAGE_SIZE,
+                    :maxHeight => Constants.IMAGE_SIZE
+                },
+                method(:onArtwork));
         }else{
             artworkIterator.next();
         }
@@ -58,7 +58,7 @@ class SyncDelegate extends Communications.SyncDelegate {
 
     function onArtwork(responseCode, data) {
         if (responseCode == 200) { 
-            Storage.setValue(dataHelper.podcasts[artworkIterator.index()][Constants.PODCAST_ID], data);
+            Storage.setValue(Constants.ART_PREFIX + dataHelper.podcasts[artworkIterator.index()][Constants.PODCAST_ID], data);
         } else {
             System.println(responseCode);
         }

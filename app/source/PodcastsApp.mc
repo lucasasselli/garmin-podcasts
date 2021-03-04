@@ -4,6 +4,14 @@ using Toybox.Media;
 class PodcastsApp extends Application.AudioContentProviderApp {
 
     function initialize() {
+
+        // If the storage scheme as changed, delete the sotred data to avoid crashes
+        var storage_version = Storage.getValue(Constants.STORAGE_VERSION);
+        if(storage_version != Constants.STORAGE_VERSION_VALUE){
+            Storage.clearValues();
+            Storage.setValue(Constants.STORAGE_VERSION, Constants.STORAGE_VERSION_VALUE);
+        }
+
         AudioContentProviderApp.initialize();
     }
     

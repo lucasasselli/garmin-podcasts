@@ -61,7 +61,7 @@ class DataHelper {
 
                 // Get the podcast artwork from one of the episodes
                 var artworkUrl = items[0]["feedImage"];
-                if(Storage.getValue(podcasts[podcastEpisodesIterator.index()][Constants.PODCAST_ID]) == null){
+                if(Storage.getValue(Constants.ART_PREFIX + podcasts[podcastEpisodesIterator.index()][Constants.PODCAST_ID]) == null){
                     artworkUrls.add(artworkUrl);
                 }else{
                     artworkUrls.add(null);
@@ -77,6 +77,7 @@ class DataHelper {
 					episode[Constants.EPISODE_PODCAST] = podcastEpisodesIterator.item()[Constants.PODCAST_ID];
 					episode[Constants.EPISODE_DATE] = items[i]["datePublished"];
 					episode[Constants.EPISODE_TITLE] = items[i]["title"];
+					episode[Constants.EPISODE_DURATION] = items[i]["duration"];
                     
                     // Check if the media is already available
 					var match = Utils.findArrayField(saved, Constants.EPISODE_ID, episode[Constants.EPISODE_ID]);

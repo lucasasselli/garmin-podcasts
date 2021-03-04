@@ -24,6 +24,7 @@
     <!-- Confirm Dialog -->
     <string id="confirmSubscribe">Do you want to subscribe?</string>
     <string id="confirmUnsubscribe">Do you want to unsubscribe?</string>
+    <string id="confirmPlayback">Do you want to start playback?</string>
 
     <!-- Msg Dialog -->
     <string id="msgCheckPhone">Check phone</string>
