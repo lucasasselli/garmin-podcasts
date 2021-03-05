@@ -59,6 +59,9 @@ class PlaybackMenuItem extends WatchUi.CustomMenuItem {
     var mediaObj;
     var artwork;
 
+    var titleText;
+    var podcastText;
+
     const MARGIN = 8;
     const INNER_MARGIN = Constants.IMAGE_SIZE + MARGIN*2;
 
@@ -70,6 +73,12 @@ class PlaybackMenuItem extends WatchUi.CustomMenuItem {
 
         mediaObj = Utils.getSafeMedia(refId);
         artwork = Storage.getValue(Constants.ART_PREFIX + episode[Constants.EPISODE_PODCAST]);
+
+        var episodeTitle = mediaObj.getMetadata().title;
+        var episodePodcast = mediaObj.getMetadata().artist;
+
+        titleText = new ScrollText(episodeTitle, Graphics.FONT_SMALL, MARGIN);
+        podcastText = new ScrollText(episodePodcast, Graphics.FONT_TINY, MARGIN);
 
         CustomMenuItem.initialize(refId, {});
     }
@@ -98,20 +107,10 @@ class PlaybackMenuItem extends WatchUi.CustomMenuItem {
         dc.drawLine(0, 0, dc.getWidth(), 0);
 
         // Title
-        dc.drawText(
-            INNER_MARGIN,
-            centerY - 24,
-            Graphics.FONT_SMALL,
-            episodeTitle,
-            Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER);
+        titleText.draw(dc, INNER_MARGIN, centerY - 24, isFocused());
 
         // Podcast
-        dc.drawText(
-            INNER_MARGIN,
-            centerY + 4,
-            Graphics.FONT_TINY,
-            episodePodcast,
-            Graphics.TEXT_JUSTIFY_LEFT | Graphics.TEXT_JUSTIFY_VCENTER);
+        podcastText.draw(dc, INNER_MARGIN, centerY + 4, isFocused());
 
         var progress;
         if(episode[Constants.EPISODE_PROGRESS] != null){
