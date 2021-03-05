@@ -6,6 +6,7 @@ class ScrollText {
 
     const IDLE_TIME = 40;
     const CLIP_MARGIN = 10;
+    const SCROLL_STEP = 2;
 
     private var text;
     private var font;
@@ -14,11 +15,11 @@ class ScrollText {
     private var timer;
     private var idle;
     private var offset;
+    private var tripDone;
 
-    private var text_width;
-    private var text_height;
-    private var scroll_max;
-    private var scroll_base;
+    private var textWidth;
+    private var scrollMax;
+    private var scrollBase;
 
     private var init;
 
@@ -35,17 +36,16 @@ class ScrollText {
     function draw(dc, x, y, focused) {
 
         if(!init){
-            text_width = dc.getTextWidthInPixels(text, font);
-            text_height = dc.getFontHeight(font);
-            scroll_max = dc.getWidth();
-            scroll_base = x;
+            textWidth = dc.getTextWidthInPixels(text, font);
+            scrollMax = dc.getWidth();
+            scrollBase = x;
             init = true;
         }
 
         if(!focused){
             reset();
         }else{
-            if (text_width > (scroll_max - scroll_base)) {
+            if (textWidth > (scrollMax - scrollBase)) {
                 start();
             }
         }
@@ -67,16 +67,18 @@ class ScrollText {
         }else{
 
             // Scroll
-            offset += 1 ;
+            offset -= SCROLL_STEP ;
 
-            if (offset == 0){
+            if (offset < SCROLL_STEP && tripDone){
                 // Scroll complete, wait
                 idle = 0;
+                tripDone = false;
             }
 
-            if (offset > scroll_max){
+            if (offset < -textWidth){
                 // Exceeded screen... Back to beginning 
-                offset = -text_width;
+                offset = +textWidth;
+                tripDone = true;
             }
 
             WatchUi.requestUpdate();
@@ -97,5 +99,6 @@ class ScrollText {
         }
         offset = 0;
         idle = 0;
+        tripDone = false;
     }
 }
