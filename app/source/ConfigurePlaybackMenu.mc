@@ -22,10 +22,6 @@ class ConfigurePlaybackMenu extends WatchUi.CustomMenu {
             var mediaObj = Utils.getSafeMedia(refId);
 
             if(mediaObj != null){
-	            var episodeTitle = mediaObj.getMetadata().title;
-	            var episodePodcast = mediaObj.getMetadata().artist;
-	            
-	            // addItem(new WatchUi.CheckboxMenuItem(episodeTitle, episodePodcast, refId, currentPlaylist.hasKey(refId), {}));
                 addItem(new PlaybackMenuItem(episodes[i], currentPlaylist.hasKey(refId)));
             }
         }
@@ -52,27 +48,30 @@ class ConfigurePlaybackMenu extends WatchUi.CustomMenu {
 
 class PlaybackMenuItem extends WatchUi.CustomMenuItem {
 
-    private var checked = false;
-    private var episode;
-
-    var refId;
-    var mediaObj;
-    var artwork;
-
-    var titleText;
-    var podcastText;
-
     const MARGIN = 8;
     const INNER_MARGIN = Constants.IMAGE_SIZE + MARGIN*2;
 
+    private var checked;
+    private var episode;
+
+    private var centerX;
+    private var centerY;
+
+    var titleText;
+    var podcastText;
+    var progress;
+    var artworkBitmap;
+    var tickBitmap;
+
+    var init = false;
+
     function initialize(episode, checked) {
+
         self.episode = episode;
         self.checked = checked;
 
-        refId = episode[Constants.EPISODE_MEDIA];       	
-
-        mediaObj = Utils.getSafeMedia(refId);
-        artwork = Storage.getValue(Constants.ART_PREFIX + episode[Constants.EPISODE_PODCAST]);
+        var refId = episode[Constants.EPISODE_MEDIA];       	
+        var mediaObj = Utils.getSafeMedia(refId);
 
         var episodeTitle = mediaObj.getMetadata().title;
         var episodePodcast = mediaObj.getMetadata().artist;
@@ -85,17 +84,25 @@ class PlaybackMenuItem extends WatchUi.CustomMenuItem {
 
     function draw(dc){
 
-        var centerX = dc.getWidth()/2;
-        var centerY = dc.getHeight()/2;
+        if(!init){
+            centerX = dc.getWidth()/2;
+            centerY = dc.getHeight()/2;
 
-        var episodeTitle = mediaObj.getMetadata().title;
-        var episodePodcast = mediaObj.getMetadata().artist;
+            artworkBitmap = Storage.getValue(Constants.ART_PREFIX + episode[Constants.EPISODE_PODCAST]);
+            if(artworkBitmap == null){
+                artworkBitmap = WatchUi.loadResource(Rez.Drawables.MissingArtworkIcon);
+            }
 
-        var tickBitmap = new WatchUi.Bitmap({
-            :rezId=>Rez.Drawables.TickIcon,
-            :locX=> MARGIN + Constants.IMAGE_SIZE/2 - 16,
-            :locY=> centerY - 16
-        });
+            tickBitmap = WatchUi.loadResource(Rez.Drawables.TickIcon);
+
+            if(episode[Constants.EPISODE_PROGRESS] != null){
+                progress = episode[Constants.EPISODE_PROGRESS].toFloat()/episode[Constants.EPISODE_DURATION].toFloat();
+            }else{
+                progress = 0;
+            }
+
+            init = true;
+        }
 
         // Clear the screen
         dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_WHITE);
@@ -112,31 +119,18 @@ class PlaybackMenuItem extends WatchUi.CustomMenuItem {
         // Podcast
         podcastText.draw(dc, INNER_MARGIN, centerY + 4, isFocused());
 
-        var progress;
-        if(episode[Constants.EPISODE_PROGRESS] != null){
-            progress = episode[Constants.EPISODE_PROGRESS].toFloat()/episode[Constants.EPISODE_DURATION].toFloat();
-        }else{
-            progress = 0;
-        }
+        // Progress
         dc.setColor(Graphics.COLOR_DK_GRAY, Graphics.COLOR_WHITE);
         dc.drawLine(INNER_MARGIN, centerY +24, dc.getWidth() - 8, centerY + 24);
         dc.setPenWidth(3);
         dc.setColor(Graphics.COLOR_BLUE, Graphics.COLOR_WHITE);
         dc.drawLine(INNER_MARGIN, centerY +24, INNER_MARGIN + progress*(dc.getWidth() - INNER_MARGIN - 8), centerY + 24);
 
-        if(artwork != null){
-            dc.drawBitmap(MARGIN, centerY - Constants.IMAGE_SIZE/2, artwork);
-        }else{
-            var missingBitmap = new WatchUi.Bitmap({
-                :rezId=>Rez.Drawables.MissingArtworkIcon,
-                :locX=> MARGIN,
-                :locY=> centerY - Constants.IMAGE_SIZE/2
-            });
-            missingBitmap.draw(dc);
-        }
+        // Draw image
+        dc.drawBitmap(MARGIN, centerY - Constants.IMAGE_SIZE/2, artworkBitmap);
 
         if(checked){
-            tickBitmap.draw(dc);
+            dc.drawBitmap(MARGIN + Constants.IMAGE_SIZE/2 - 16, centerY - 16, tickBitmap);
         }
     }
 
