@@ -89,10 +89,11 @@ class GPodder {
                 podcast[Constants.PODCAST_AUTHOR] 	= feed["author"];
                 podcasts.add(podcast);
 	       	}
-            feedsIterator.next();
         } else {
             errorCallback.invoke("Feed error " + responseCode);
         }
+           
+        feedsIterator.next();
     }
 
     function getFeedsDone(){
@@ -101,7 +102,7 @@ class GPodder {
         for(var i=0; i<subscribed.size(); i++){
 	        var found = Utils.findArrayField(podcasts, Constants.EPISODE_ID, subscribed[Constants.PODCAST_ID]);
             if(found == null){
-                Storage.deleteValue(subscribed[i][Constants.PODCAST_ID]);
+                Storage.deleteValue(Constants.ART_PREFIX + subscribed[i][Constants.PODCAST_ID]);
             }
         }
         Storage.setValue(Constants.STORAGE_SUBSCRIBED, podcasts);

@@ -33,6 +33,9 @@ class SyncDelegate extends Communications.SyncDelegate {
         System.println(msg);
         Communications.cancelAllRequests();
         Communications.notifySyncComplete(msg);
+
+        // Clean media
+        Utils.purgeBadMedia();
     }
 
     function onEpisodeList(){
@@ -113,6 +116,9 @@ class SyncDelegate extends Communications.SyncDelegate {
         }else{
             Communications.notifySyncComplete(null);
         }
+
+        // Clean media
+        Utils.purgeBadMedia();
     }
     
     function onFileProgress(bytesTransferred, fileSize){

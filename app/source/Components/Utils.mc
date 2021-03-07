@@ -72,7 +72,8 @@ class Utils {
             while (media != null) {
                 if(Utils.findArrayField(episodes, Constants.EPISODE_MEDIA, media.getId()) == null){
                     System.println("Media " + media.getId() + " is not used by an episode. Deleting...");
-                    Media.deleteCachedItem(media.getContentRef());
+                    var ref = new Media.ContentRef(media.getId(), Media.CONTENT_TYPE_AUDIO);
+                    Media.deleteCachedItem(ref);
                 }
                 media = medias.next();
             }
