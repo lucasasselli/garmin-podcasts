@@ -116,32 +116,10 @@ class DataHelper {
         }while(swapped);
         episodes = episodes.slice(0, settingEpisodesMax);
         episodesUrl = episodesUrl.slice(0, settingEpisodesMax);
-
-        // Clean media
-    	for(var i=0; i<saved.size(); i++){
-			var x = Utils.findArrayField(episodes, Constants.EPISODE_ID, saved[i][Constants.EPISODE_ID]);
-    		if(x == null){  		
-    			System.println("Episode " + saved[i][Constants.EPISODE_ID] + " no longer needed!");
-    			    			
-            	var mediaObj = Utils.getSafeMedia(saved[i][Constants.EPISODE_MEDIA]);
-				if(mediaObj != null){
-                    var ref = mediaObj.getContentRef();
-					Media.deleteCachedItem(ref);
-				}
-    		}
-    	}
         Storage.setValue(Constants.STORAGE_SAVED, episodes);		
 
-        // Clean playlist
-        var playlist = StorageHelper.get(Constants.STORAGE_PLAYLIST, []);
-        var temp = playlist;
-    	for(var i=0; i<temp.size(); i++){
-			var x = Utils.findArrayField(episodes, Constants.EPISODE_MEDIA, temp[i]);
-    		if(x == null){  		
-                playlist.remove(temp[i]);
-            }
-        }
-        Storage.setValue(Constants.STORAGE_PLAYLIST, playlist);
+        // Clean media
+        Utils.purgeBadMedia();
 
         doneCallback.invoke();
     }

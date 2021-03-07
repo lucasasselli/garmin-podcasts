@@ -8,7 +8,7 @@ class SyncDelegate extends Communications.SyncDelegate {
     var artworkIterator;
     var episodesIterator;
 
-    var episodeErrors;
+    var episodeErrors = [];
 
     function initialize() {
         SyncDelegate.initialize();
@@ -17,7 +17,7 @@ class SyncDelegate extends Communications.SyncDelegate {
     }
     
     function onStartSync() {
-        episodeErrors = 0;
+        episodeErrors = [];
         dataHelper.start();
     }
 
@@ -101,15 +101,15 @@ class SyncDelegate extends Communications.SyncDelegate {
             // Update storage
             Storage.setValue(Constants.STORAGE_SAVED, dataHelper.episodes);        
         }else{
-            episodeErrors++;
+            episodeErrors.add(responseCode);
             System.println("Download error " + responseCode);
         }
         episodesIterator.next();
     }
 
     function getEpisodesDone(){
-        if(episodeErrors > 0){
-            throwSyncError(episodeErrors + " failed"); // TODO
+        if(episodeErrors.size() > 0){
+            throwSyncError("Error! " + episodeErrors.toString());
         }else{
             Communications.notifySyncComplete(null);
         }

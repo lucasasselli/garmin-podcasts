@@ -12,6 +12,9 @@ class PodcastsApp extends Application.AudioContentProviderApp {
             Storage.setValue(Constants.STORAGE_VERSION, Constants.STORAGE_VERSION_VALUE);
         }
 
+        // Ensure media sanity!
+        Utils.purgeBadMedia();
+
         AudioContentProviderApp.initialize();
     }
     
