@@ -33,7 +33,7 @@ class DataHelper {
     }
 
     function start(){
-    	var service = Application.getApp().getProperty("settingService");
+    	var service = Application.getApp().getProperty("settingPodcastService");
         if(service == 1){ 
             var gPodder = new GPodder();
             gPodder.getPodcasts(podcasts, method(:startEpisodesIterator), errorCallback);

@@ -17,7 +17,7 @@
     <string id="errorNoCredentials">gPodder credentials\nnot set!</string>
     
     <!-- Titles -->
-    <string id="titlePlaybackMenu">Choose episodes</string>
+    <string id="titlePlaybackQueue">Choose episodes</string>
     <string id="titleSubscriptionMenu">Subscribed</string>
     <string id="titleResultsMenu">Results</string>
     

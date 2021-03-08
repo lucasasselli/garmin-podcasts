@@ -7,13 +7,14 @@ class Settings extends CompactMenu {
 	}
 	
 	function build(){
-		add(Rez.Strings.settingServiceTitle, method(:getService), method(:callbackService));
+		add(Rez.Strings.settingPodcastServiceTitle, method(:getPodcastService), method(:callbackPodcastService));
+		add(Rez.Strings.settingSyncModeTitle, method(:getSyncMode), method(:callbackSyncMode));
 		add(Rez.Strings.settingEpisodesPerPodcastTitle, method(:getEpisodesPerPodcast), method(:callbackEpisodesPerPodcast));
 		add(Rez.Strings.settingEpisodesMaxTitle, method(:getEpisodesMax), method(:callbackEpisodesMax));
 	}
 
-	function getService(){
-        var service = Application.getApp().getProperty("settingService");
+	function getPodcastService(){
+        var service = Application.getApp().getProperty("settingPodcastService");
         if(service == 0){
     	    return WatchUi.loadResource(Rez.Strings.none);
         }else{
@@ -21,9 +22,23 @@ class Settings extends CompactMenu {
         }
 	}
 
-	function callbackService(){
-		var menu = new Rez.Menus.SettingService();
-		WatchUi.pushView(menu, new SettingsServiceDelegate(), WatchUi.SLIDE_LEFT); 
+	function getSyncMode(){
+        var mode = Application.getApp().getProperty("settingSyncMode");
+        if(mode == 0){
+    	    return WatchUi.loadResource(Rez.Strings.manual);
+        }else{
+    	    return WatchUi.loadResource(Rez.Strings.mostRecent);
+        }
+	}
+
+	function callbackPodcastService(){
+		var menu = new Rez.Menus.SettingPodcastService();
+		WatchUi.pushView(menu, new SettingsPodcastServiceDelegate(), WatchUi.SLIDE_LEFT); 
+	}
+
+	function callbackSyncMode(){
+		var menu = new Rez.Menus.SettingSyncMode();
+		WatchUi.pushView(menu, new SettingsSyncModeDelegate(), WatchUi.SLIDE_LEFT); 
 	}
 
 	function getEpisodesPerPodcast(){
@@ -46,7 +61,7 @@ class Settings extends CompactMenu {
 
 }
 
-class SettingsServiceDelegate extends WatchUi.Menu2InputDelegate {
+class SettingsPodcastServiceDelegate extends WatchUi.Menu2InputDelegate {
 
 	function initialize() {
         Menu2InputDelegate.initialize();
@@ -55,9 +70,27 @@ class SettingsServiceDelegate extends WatchUi.Menu2InputDelegate {
     function onSelect(item) {
        	var app = Application.getApp();
         if (item.getId() == :gPodder) {
-       		app.setProperty("settingService", 1);
+       		app.setProperty("settingPodcastService", 1);
 		} else {
-			app.setProperty("settingService", 0);
+			app.setProperty("settingPodcastService", 0);
+		}
+		
+		WatchUi.popView(WatchUi.SLIDE_RIGHT);
+    }
+}
+
+class SettingsSyncModeDelegate extends WatchUi.Menu2InputDelegate {
+
+	function initialize() {
+        Menu2InputDelegate.initialize();
+    }
+
+    function onSelect(item) {
+       	var app = Application.getApp();
+        if (item.getId() == :manual) {
+       		app.setProperty("settingSyncMode", 0);
+		} else {
+			app.setProperty("settingSyncMode", 1);
 		}
 		
 		WatchUi.popView(WatchUi.SLIDE_RIGHT);

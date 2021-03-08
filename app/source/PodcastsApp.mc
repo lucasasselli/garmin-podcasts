@@ -35,10 +35,10 @@ class PodcastsApp extends Application.AudioContentProviderApp {
 
     // Get the initial view for configuring sync
     function getSyncConfigurationView() {
-    	var service = Application.getApp().getProperty("settingService");
+    	var service = Application.getApp().getProperty("settingPodcastService");
         if(service == 0){
             // Manual
-            return new SyncConfigurationManual().get();
+            return new SubscriptionEditor().get();
         }else{
             // gPodder
             return []; // FIXME: Is this correct?

@@ -1,6 +1,7 @@
 <resources>
 	<properties>
-		<property id="settingService" type="number">0</property>
+		<property id="settingPodcastService" type="number">0</property>
+		<property id="settingSyncMode" type="number">0</property>
 		<property id="settingEpisodes" type="number">1</property>
 		<property id="settingEpisodesMax" type="number">10</property>
 		<property id="settingUsername" type="string"></property>
@@ -9,7 +10,8 @@
 	</properties>
 	
 	<strings>
-	    <string id="settingServiceTitle">Subscription service</string>	    
+	    <string id="settingSyncModeTitle">Sync Mode</string>	    
+	    <string id="settingPodcastServiceTitle">Subscription service</string>	    
 	    <string id="settingEpisodesPerPodcastTitle">Episodes per Podcast</string>	    
 	    <string id="settingEpisodesMaxTitle">Max. episodes</string>	    
 	    <string id="settingUsernameTitle">Username</string>	    
@@ -17,6 +19,8 @@
 	    <string id="settingDeviceidTitle">Device ID</string>	    
 	    <string id="none">None</string>
 	    <string id="gPodder">gpodder.net</string>
+	    <string id="manual">Manual</string>
+	    <string id="mostRecent">Most recent</string>
 	    <string id="number1">1</string>
 	    <string id="number2">2</string>
 	    <string id="number5">5</string>
@@ -26,6 +30,20 @@
     </strings>
 	
 	<settings>
+		<setting propertyKey="@Properties.settingPodcastService" title="@Strings.settingPodcastServiceTitle">
+	        <settingConfig type="list">
+	            <listEntry value="0">@Strings.none</listEntry>
+	            <listEntry value="1">@Strings.gPodder</listEntry>
+	        </settingConfig>
+		</setting>
+
+		<setting propertyKey="@Properties.settingSyncMode" title="@Strings.settingSyncModeTitle">
+	        <settingConfig type="list">
+	            <listEntry value="0">@Strings.manual</listEntry>
+	            <listEntry value="1">@Strings.mostRecent</listEntry>
+	        </settingConfig>
+		</setting>
+
 		<setting propertyKey="@Properties.settingEpisodes" title="@Strings.settingEpisodesPerPodcastTitle">
 	        <settingConfig type="list">
 	            <listEntry value="1">@Strings.number1</listEntry>
@@ -41,13 +59,6 @@
 	            <listEntry value="50">@Strings.number50</listEntry>
 	        </settingConfig>
 	    </setting>
-
-		<setting propertyKey="@Properties.settingService" title="@Strings.settingServiceTitle">
-	        <settingConfig type="list">
-	            <listEntry value="0">@Strings.none</listEntry>
-	            <listEntry value="1">@Strings.gPodder</listEntry>
-	        </settingConfig>
-		</setting>
 
 		<setting propertyKey="@Properties.settingUsername" title="@Strings.settingUsernameTitle">
             <settingConfig type="alphaNumeric" required="false" />

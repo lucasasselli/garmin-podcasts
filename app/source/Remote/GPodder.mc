@@ -89,6 +89,8 @@ class GPodder {
                 podcast[Constants.PODCAST_AUTHOR] 	= feed["author"];
                 podcasts.add(podcast);
 	       	}
+        } else if (responseCode == 400) {
+            // Feed not found!
         } else {
             errorCallback.invoke("Feed error " + responseCode);
         }
