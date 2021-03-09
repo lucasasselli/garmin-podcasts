@@ -1,22 +1,21 @@
 using Toybox.Communications;
 using Toybox.Application.Storage;
 
-class PodcastProvider_Local extends PodcastProvider {
+class PodcastProvider_Local {
 
     private var podcasts;
 
     function initialize(){
         self.podcasts = StorageHelper.get(Constants.STORAGE_SUBSCRIBED, []);
-        PodcastProvider.initialize();
     }
 
     function valid(){
         return (podcasts.size() != 0);
     }
 
-    function getPodcasts(podcasts, doneCallback, errorCallback){
-        podcasts = self.podcasts;
-        doneCallback.invoke();
+    function getPodcasts(doneCallback, errorCallback){
+        doneCallback.invoke(self.podcasts);
+        return false;
     }
 
 }

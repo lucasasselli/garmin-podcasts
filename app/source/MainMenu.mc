@@ -39,7 +39,7 @@ class MainMenu extends CompactMenu {
     	var service = Application.getApp().getProperty("settingPodcastService");
         if(service == 0){
             // Manual
-            new SubscriptionEditor().show();
+            new SubscriptionManager().show();
         } else {
             // gPodder
             WatchUi.pushView(new AlertView(Rez.Strings.msgCheckPhone), null, WatchUi.SLIDE_LEFT);
@@ -50,29 +50,30 @@ class MainMenu extends CompactMenu {
 
     // Sync
 	function callbackSync(){
-        // TODO:
-    	var service = Application.getApp().getProperty("settingPodcastService");
-        if(service == 0){
-            // Manual
-            var podcasts = Storage.getValue(Constants.STORAGE_SUBSCRIBED);
-            if ((podcasts != null) && (podcasts.size() != 0)) {
-                // Start sync
-                Communications.startSync();
-            } else {
-                // No podcasts
-                WatchUi.pushView(new AlertView(Rez.Strings.errorNoSubscriptions), null, WatchUi.SLIDE_LEFT);
-            }
-        }else{
-            // gPodder
-            var gPodder = new GPodder();
-            if(gPodder.valid()){
-                // Start sync
-                Communications.startSync();
-            }else{
-                // No credentials
-                WatchUi.pushView(new AlertView(Rez.Strings.errorNoCredentials), null, WatchUi.SLIDE_LEFT);
-            }
-        }
+        new EpisodeManager().show();
+        // // TODO:
+    	// var service = Application.getApp().getProperty("settingPodcastService");
+        // if(service == 0){
+        //     // Manual
+        //     var podcasts = Storage.getValue(Constants.STORAGE_SUBSCRIBED);
+        //     if ((podcasts != null) && (podcasts.size() != 0)) {
+        //         // Start sync
+        //         Communications.startSync();
+        //     } else {
+        //         // No podcasts
+        //         WatchUi.pushView(new AlertView(Rez.Strings.errorNoSubscriptions), null, WatchUi.SLIDE_LEFT);
+        //     }
+        // }else{
+        //     // gPodder
+        //     var gPodder = new GPodder();
+        //     if(gPodder.valid()){
+        //         // Start sync
+        //         Communications.startSync();
+        //     }else{
+        //         // No credentials
+        //         WatchUi.pushView(new AlertView(Rez.Strings.errorNoCredentials), null, WatchUi.SLIDE_LEFT);
+        //     }
+        // }
 	}
 
     // Settings

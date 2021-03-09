@@ -1,7 +1,7 @@
 using Toybox.Communications;
 using Toybox.Application.Storage;
 
-class ProviderWrapper extends PodcastProvider {
+class PodcastsProviderWrapper {
 
     private var provider;
 
@@ -11,18 +11,17 @@ class ProviderWrapper extends PodcastProvider {
             // GPodder
             provider = new PodcastProvider_GPodder();
         }else{
-            // Local provider
+            // Local
             provider = new PodcastProvider_Local();
         }
-        PodcastProvider.initialize();
     }
 
     function valid(){
         return provider.valid();
     }
 
-    function getPodcasts(podcasts, doneCallback, errorCallback){
-        provider.getPodcasts(podcasts, doneCallback, errorCallback);
+    function getPodcasts(doneCallback, errorCallback){
+        return provider.getPodcasts(doneCallback, errorCallback);
     }
 
 }

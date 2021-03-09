@@ -63,6 +63,8 @@ class Utils {
 
     function purgeBadMedia(){
 
+        // TODO: Delete STORAGE_DOWNLOADS
+
         var episodes = StorageHelper.get(Constants.STORAGE_SAVED, []);
 
         // Purge medias without episode

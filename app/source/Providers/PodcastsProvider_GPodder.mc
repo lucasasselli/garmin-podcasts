@@ -1,7 +1,7 @@
 using Toybox.Communications;
 using Toybox.Application.Storage;
 
-class PodcastProvider_GPodder extends PodcastProvider {
+class PodcastProvider_GPodder {
 
     var feedsIterator;
 
@@ -18,7 +18,6 @@ class PodcastProvider_GPodder extends PodcastProvider {
         username = Application.getApp().getProperty("settingUsername");
         password = Application.getApp().getProperty("settingPassword");
         deviceid = Application.getApp().getProperty("settingDeviceid");
-        PodcastProvider.initialize();
     }
 
     function valid(){
@@ -45,6 +44,8 @@ class PodcastProvider_GPodder extends PodcastProvider {
 		    	:responseType => Communications.HTTP_RESPONSE_CONTENT_TYPE_JSON
 	   		},
 	   		method(:onLogin));
+        
+        return true;
     }
 
     function onLogin(responseCode, data){
@@ -109,6 +110,6 @@ class PodcastProvider_GPodder extends PodcastProvider {
             }
         }
         Storage.setValue(Constants.STORAGE_SUBSCRIBED, podcasts);
-        doneCallback.invoke();
+        doneCallback.invoke(podcasts);
     }
 }

@@ -38,7 +38,7 @@ class PodcastsApp extends Application.AudioContentProviderApp {
     	var service = Application.getApp().getProperty("settingPodcastService");
         if(service == 0){
             // Manual
-            return new SubscriptionEditor().get();
+            return new SubscriptionManager().get();
         }else{
             // gPodder
             return []; // FIXME: Is this correct?

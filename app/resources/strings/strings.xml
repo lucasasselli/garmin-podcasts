@@ -34,6 +34,8 @@
     <string id="settings">Settings</string>
     <string id="emptyTitle">(no title)</string>  
     <string id="searching">Searching...</string>  
+    <string id="loading">Loading...</string>  
     <string id="episodes">episodes</string>  
     <string id="podcasts">podcasts</string>  
+    <string id="selectEpisodes">Select Episodes</string>
 </strings>

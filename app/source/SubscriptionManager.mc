@@ -5,7 +5,7 @@ using Toybox.Cryptography;
 using Toybox.StringUtil;
 using Toybox.Application.Storage;
 
-class SubscriptionEditor extends CompactMenu {
+class SubscriptionManager extends CompactMenu {
 
     function initialize(){
 		CompactMenu.initialize(Rez.Strings.AppName);
