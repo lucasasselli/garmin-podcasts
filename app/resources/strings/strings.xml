@@ -20,14 +20,18 @@
     <string id="titlePlaybackQueue">Choose episodes</string>
     <string id="titleSubscriptionMenu">Subscribed</string>
     <string id="titleResultsMenu">Results</string>
+    <string id="titleQueueMenu">Queue</string>
+    <string id="titleSelectEpisodesMenu">Select episodes</string>
     
     <!-- Confirm Dialog -->
     <string id="confirmSubscribe">Do you want to subscribe?</string>
     <string id="confirmUnsubscribe">Do you want to unsubscribe?</string>
     <string id="confirmPlayback">Do you want to start playback?</string>
+    <string id="confirmSync">Do you want to sync?</string>
 
     <!-- Msg Dialog -->
     <string id="msgCheckPhone">Check phone</string>
+    <string id="msgNoEpisodes">No Episodes</string>
     
     <!-- Other -->
     <string id="search">Search</string>

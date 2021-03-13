@@ -36,7 +36,7 @@ class PlaybackQueue extends WatchUi.CustomMenu {
             dc.getWidth()/2,
             dc.getHeight()/2,
             Graphics.FONT_SMALL,
-            "Queue", // FIXME
+            WatchUi.loadResource(Rez.Strings.titleQueueMenu),
             Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
     }
 

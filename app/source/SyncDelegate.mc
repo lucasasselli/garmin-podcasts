@@ -8,9 +8,8 @@ class SyncDelegate extends Communications.SyncDelegate {
     var downloadsIterator;
     var downloads;
 
-    var episodes;
+    var saved;
     var downloadErrors = [];
-
 
     function initialize() {
         SyncDelegate.initialize();
@@ -19,7 +18,7 @@ class SyncDelegate extends Communications.SyncDelegate {
     
     function onStartSync() {
         downloadErrors = [];
-        episodes = StorageHelper.get(Constants.STORAGE_SAVED, []);
+        saved = StorageHelper.get(Constants.STORAGE_SAVED, []);
         downloadsProvider.get(method(:onDownloads), method(:throwSyncError));
     }
 
@@ -47,18 +46,10 @@ class SyncDelegate extends Communications.SyncDelegate {
     }
 
     function download(item){
-        if(item == null){
-            downloadsIterator.next();
-        }
-
         var url = item[Constants.DOWNLOAD_URL];
-        if(url == null){
-            downloadsIterator.next();
-        }
-
-        System.println("Downloading " + url);
         if(item[Constants.DOWNLOAD_TYPE] == Constants.DOWNLOAD_TYPE_ARTWORK){
             // Artwork
+            System.println("Downloading artwork " + url);
             var options = {
                 :maxWidth  => Constants.IMAGE_SIZE,
                 :maxHeight => Constants.IMAGE_SIZE,
@@ -66,7 +57,15 @@ class SyncDelegate extends Communications.SyncDelegate {
             };
             Communications.makeImageRequest(url, null, options, method(:onArtwork));
         }else{
+
             // Episode
+            if(Utils.findArrayField(saved, Constants.EPISODE_ID, item[Constants.DOWNLOAD_DATA][Constants.EPISODE_ID]) != null){
+                downloadsIterator.next();
+                return;
+            }
+
+            System.println("Downloading episode " + url);
+
             var options = {     
                 :method => Communications.HTTP_REQUEST_METHOD_GET,
                 :responseType => Communications.HTTP_RESPONSE_CONTENT_TYPE_AUDIO,
@@ -91,25 +90,31 @@ class SyncDelegate extends Communications.SyncDelegate {
         if (responseCode == 200) {
             var episode = downloadsIterator.item()[Constants.DOWNLOAD_DATA];
             episode[Constants.EPISODE_MEDIA] = data.getId();
-            Storage.setValue(Constants.STORAGE_SAVED, episodes.add(episode));        
+            saved.add(episode);
+            Storage.setValue(Constants.STORAGE_SAVED, saved);        
         }else{
             downloadErrors.add(responseCode);
             System.println("Download error " + responseCode);
         }
+        // FIXME: Remove downloaded elements
         downloadsIterator.next();
     }
 
     function onDownloadsDone(){
+
+        Storage.setValue(Constants.STORAGE_DOWNLOADS, []);
+
         if(downloadErrors.size() > 0){
             throwSyncError("Error! " + downloadErrors.toString());
         }else{
+            System.println("Sync done!");
             Communications.notifySyncComplete(null);
         }
 
         // Clean media
         Utils.purgeBadMedia();
     }
-    
+
     function onFileProgress(bytesTransferred, fileSize){
         var progress= downloadsIterator.index()/downloadsIterator.size().toFloat();
         if(bytesTransferred != null && fileSize != null && fileSize != 0){

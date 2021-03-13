@@ -16,11 +16,13 @@ class EpisodeManager {
 
     var progressBar;
 
+    var saved;
     var downloads = [];
 
     function initialize(){
         provider = new PodcastsProviderWrapper();
         progressBar = new WatchUi.ProgressBar(WatchUi.loadResource(Rez.Strings.loading), null);
+        saved = StorageHelper.get(Constants.STORAGE_SAVED, []);
     }
 
     function showLoading(){
@@ -32,11 +34,6 @@ class EpisodeManager {
         if(provider.getPodcasts(method(:podcastsDone), method(:podcastsError))){
             // Remote request, show progress bar
             showLoading();
-        }
-
-        var saved = StorageHelper.get(Constants.STORAGE_SAVED, []);
-        for(var i=0; i<saved.size(); i++){
-            downloads.add([Constants.DOWNLOAD_TYPE_EPISODE, null, saved]);
         }
 	}
 
@@ -79,25 +76,37 @@ class EpisodeManager {
         if(items != null && items.size() > 0){
             var episodesMenu = new WatchUi.CheckboxMenu({});
             for(var i=0; i<items.size(); i++){
+
                 var downloadItem = PodcastIndex.itemToDownload(items[i], podcast);
+
                 var found = false;
+                for(var i=0; i<saved.size(); i++){
+                    if(downloadItem[Constants.DOWNLOAD_DATA][Constants.EPISODE_ID] == saved[i][Constants.EPISODE_ID]){
+                        found = true;
+                        break;
+                    }
+                }
                 for(var i=0; i<downloads.size(); i++){
                     if(downloadItem[Constants.DOWNLOAD_DATA][Constants.EPISODE_ID] == downloads[i][Constants.DOWNLOAD_DATA][Constants.EPISODE_ID]){
                         found = true;
+                        break;
                     }
                 }
+
                 episodesMenu.addItem(new WatchUi.CheckboxMenuItem(downloadItem[Constants.DOWNLOAD_DATA][Constants.EPISODE_TITLE], "", downloadItem, found, {}));
             }
             WatchUi.switchToView(episodesMenu, new EpisodeSelectDelegate(self.weak()), WatchUi.SLIDE_LEFT); 
         }else{
-	        WatchUi.pushView(new AlertView("No episodes!"), null, WatchUi.SLIDE_LEFT); // FIXME:
+	        WatchUi.pushView(new AlertView(Rez.Strings.msgNoEpisodes), null, WatchUi.SLIDE_LEFT);
         }
 
     }
 
     function onPodcastBack(){
         Storage.setValue(Constants.STORAGE_DOWNLOADS, downloads);
-        Communications.startSync();
+        // Episode
+        WatchUi.pushView(new WatchUi.Confirmation(WatchUi.loadResource(Rez.Strings.confirmSync)), new ConfirmSyncDelegate(), WatchUi.SLIDE_LEFT);
+        return true;
     }
 }
 
@@ -113,6 +122,7 @@ class EpisodeSelectDelegate extends WatchUi.Menu2InputDelegate {
     function onSelect(item) {
         if(main.stillAlive()){
             var mainStrong = main.get();
+            var episode = item.getId();
             if (item.isChecked()) {
                 mainStrong.downloads.add(item.getId());
             } else {
@@ -120,4 +130,18 @@ class EpisodeSelectDelegate extends WatchUi.Menu2InputDelegate {
             }
         }
     }
+}
+
+class ConfirmSyncDelegate extends WatchUi.ConfirmationDelegate {
+
+    function initialize() {
+        ConfirmationDelegate.initialize();
+    }
+
+    function onResponse(response) {    	
+		if(response == CONFIRM_YES){		
+            Communications.startSync();
+		}
+        WatchUi.popView(WatchUi.SLIDE_LEFT);
+	}
 }

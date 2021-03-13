@@ -13,8 +13,6 @@ module Constants {
     const IMAGE_SIZE = 64;
     const CUSTOM_MENU_HEIGHT = 100;
 
-    const CONNECTION_ATTEMPTS = 3; // FIXME: Is this still needed?
-
     // Data structure values
     const STORAGE_VERSION_VALUE = 1;
 
