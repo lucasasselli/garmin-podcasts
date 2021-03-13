@@ -83,18 +83,13 @@ class DownloadsProvider_Recent {
         do {
             swapped = false;
             for(var i=0; i<downloadEpisodes.size()-1; i++){
-                if (downloadEpisodes[Constants.DOWNLOAD_DATA][i][Constants.EPISODE_DATE] < downloadEpisodes[Constants.DOWNLOAD_DATA][i+1][Constants.EPISODE_DATE]){
+                if (downloadEpisodes[i][Constants.DOWNLOAD_DATA][Constants.EPISODE_DATE] < downloadEpisodes[i][Constants.DOWNLOAD_DATA][Constants.EPISODE_DATE]){
                     Utils.arraySwap(downloadEpisodes, i, i+1);
                     swapped = true;
                 }
             }
         }while(swapped);
         downloadEpisodes = downloadEpisodes.slice(0, settingEpisodesMax);
-
-        // Storage.setValue(Constants.STORAGE_SAVED, episodes);		
-
-        // Clean media
-        // Utils.purgeBadMedia();
-        doneCallback.invoke();
+        doneCallback.invoke(downloadEpisodes);
     }
 }

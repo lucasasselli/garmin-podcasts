@@ -104,7 +104,6 @@ class EpisodeManager {
 
     function onPodcastBack(){
         Storage.setValue(Constants.STORAGE_DOWNLOADS, downloads);
-        // Episode
         WatchUi.pushView(new WatchUi.Confirmation(WatchUi.loadResource(Rez.Strings.confirmSync)), new ConfirmSyncDelegate(), WatchUi.SLIDE_LEFT);
         return true;
     }

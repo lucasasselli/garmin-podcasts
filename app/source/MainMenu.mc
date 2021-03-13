@@ -50,30 +50,14 @@ class MainMenu extends CompactMenu {
 
     // Sync
 	function callbackSync(){
-        new EpisodeManager().show();
-        // // TODO:
-    	// var service = Application.getApp().getProperty("settingPodcastService");
-        // if(service == 0){
-        //     // Manual
-        //     var podcasts = Storage.getValue(Constants.STORAGE_SUBSCRIBED);
-        //     if ((podcasts != null) && (podcasts.size() != 0)) {
-        //         // Start sync
-        //         Communications.startSync();
-        //     } else {
-        //         // No podcasts
-        //         WatchUi.pushView(new AlertView(Rez.Strings.errorNoSubscriptions), null, WatchUi.SLIDE_LEFT);
-        //     }
-        // }else{
-        //     // gPodder
-        //     var gPodder = new GPodder();
-        //     if(gPodder.valid()){
-        //         // Start sync
-        //         Communications.startSync();
-        //     }else{
-        //         // No credentials
-        //         WatchUi.pushView(new AlertView(Rez.Strings.errorNoCredentials), null, WatchUi.SLIDE_LEFT);
-        //     }
-        // }
+    	var mode = Application.getApp().getProperty("settingSyncMode");
+        if(mode == 1){ 
+            // Recent
+            Communications.startSync();
+        }else{
+            // Manual
+            new EpisodeManager().show();
+        }
 	}
 
     // Settings
