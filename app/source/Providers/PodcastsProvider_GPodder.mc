@@ -101,15 +101,6 @@ class PodcastProvider_GPodder {
     }
 
     function getFeedsDone(){
-        // Remove artworks
-    	var subscribed = StorageHelper.get(Constants.STORAGE_SUBSCRIBED, []);
-        for(var i=0; i<subscribed.size(); i++){
-	        var found = Utils.findArrayField(podcasts, Constants.EPISODE_ID, subscribed[Constants.PODCAST_ID]);
-            if(found == null){
-                Storage.deleteValue(Constants.ART_PREFIX + subscribed[i][Constants.PODCAST_ID]);
-            }
-        }
-        Storage.setValue(Constants.STORAGE_SUBSCRIBED, podcasts);
         doneCallback.invoke(podcasts);
     }
 }

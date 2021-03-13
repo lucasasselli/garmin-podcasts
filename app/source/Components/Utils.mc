@@ -106,5 +106,19 @@ class Utils {
             }
         }
         Storage.setValue(Constants.STORAGE_PLAYLIST, purgedPlaylist);
+
+        // Purge Artworks without podcast
+        var artworks = StorageHelper.get(Constants.STORAGE_ARTWORKS, []);
+        var purgedArtworks = [];
+    	for(var i=0; i<artworks.size(); i++){
+			var x = Utils.findArrayField(purgedEpisodes, Constants.EPISODE_PODCAST, artworks[i]);
+    		if(x != null){  		
+                purgedArtworks.add(artworks[i]);
+            }else{
+                Storage.deleteValue(Constants.ART_PREFIX + artworks[i]);
+                System.println("Artwork " + artworks[i] + " no longer needed. Deleting...");
+            }
+        }
+        Storage.setValue(Constants.STORAGE_ARTWORKS, purgedArtworks);
     }
 }

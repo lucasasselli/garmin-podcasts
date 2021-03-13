@@ -9,6 +9,7 @@ class DownloadsProvider_Recent {
     var podcastProvider;
     var podcasts = [];
 
+    var downloadArtwork = [];
     var downloadEpisodes = [];
 
 	var settingEpisodesPerPodcast;
@@ -59,13 +60,9 @@ class DownloadsProvider_Recent {
         var items = Utils.getSafeDictKey(data, "items");
         if(items != null && items.size() > 0){
 
-            // // Get the podcast artwork from one of the episodes
-            // var artworkUrl = items[0]["feedImage"];
-            // if(Storage.getValue(Constants.ART_PREFIX + podcasts[podcastEpisodesIterator.index()][Constants.PODCAST_ID]) == null){
-            //     artworkUrls.add(artworkUrl);
-            // }else{
-            //     artworkUrls.add(null);
-            // }
+            // Get the podcast artwork from one of the episodes
+            var artworkUrl = items[0]["feedImage"];
+            downloadArtwork.add([Constants.DOWNLOAD_TYPE_ARTWORK, artworkUrl, podcastEpisodesIterator.item()[Constants.PODCAST_ID]]);
 
             // Parse the episodes
             for(var i=0; i<items.size(); i++){
@@ -90,6 +87,6 @@ class DownloadsProvider_Recent {
             }
         }while(swapped);
         downloadEpisodes = downloadEpisodes.slice(0, settingEpisodesMax);
-        doneCallback.invoke(downloadEpisodes);
+        doneCallback.invoke(downloadEpisodes.addAll(downloadArtwork));
     }
 }

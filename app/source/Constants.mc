@@ -27,6 +27,7 @@ module Constants {
         STORAGE_SUBSCRIBED,
         STORAGE_SAVED,
         STORAGE_PLAYLIST,
+        STORAGE_ARTWORKS,
         STORAGE_DOWNLOADS
     }
     

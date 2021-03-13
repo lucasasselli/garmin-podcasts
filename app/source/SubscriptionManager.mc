@@ -113,7 +113,6 @@ class SubscriptionManager extends CompactMenu {
 		var x = Utils.findArrayField(subscribed, Constants.PODCAST_ID, context[Constants.PODCAST_ID]);
 		if(x != null){
 			subscribed.remove(x);
-            Storage.deleteValue(Constants.ART_PREFIX + x[Constants.PODCAST_ID]);
 			Storage.setValue(Constants.STORAGE_SUBSCRIBED, subscribed);
 		} 
     }

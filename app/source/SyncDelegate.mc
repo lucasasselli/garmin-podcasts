@@ -9,6 +9,7 @@ class SyncDelegate extends Communications.SyncDelegate {
     var downloads;
 
     var saved;
+    var artworks;
     var downloadErrors = [];
 
     function initialize() {
@@ -19,6 +20,7 @@ class SyncDelegate extends Communications.SyncDelegate {
     function onStartSync() {
         downloadErrors = [];
         saved = StorageHelper.get(Constants.STORAGE_SAVED, []);
+        artworks = StorageHelper.get(Constants.STORAGE_ARTWORKS, []);
         downloadsProvider.get(method(:onDownloads), method(:throwSyncError));
     }
 
@@ -49,6 +51,11 @@ class SyncDelegate extends Communications.SyncDelegate {
         var url = item[Constants.DOWNLOAD_URL];
         if(item[Constants.DOWNLOAD_TYPE] == Constants.DOWNLOAD_TYPE_ARTWORK){
             // Artwork
+            if(artworks.indexOf(item[Constants.DOWNLOAD_DATA]) >= 0){
+                System.println("Skipping artwork " + url);
+                downloadsIterator.next();
+                return;
+            }
             System.println("Downloading artwork " + url);
             var options = {
                 :maxWidth  => Constants.IMAGE_SIZE,
@@ -57,15 +64,13 @@ class SyncDelegate extends Communications.SyncDelegate {
             };
             Communications.makeImageRequest(url, null, options, method(:onArtwork));
         }else{
-
             // Episode
             if(Utils.findArrayField(saved, Constants.EPISODE_ID, item[Constants.DOWNLOAD_DATA][Constants.EPISODE_ID]) != null){
+                System.println("Skipping episode " + url);
                 downloadsIterator.next();
                 return;
             }
-
             System.println("Downloading episode " + url);
-
             var options = {     
                 :method => Communications.HTTP_REQUEST_METHOD_GET,
                 :responseType => Communications.HTTP_RESPONSE_CONTENT_TYPE_AUDIO,
@@ -78,8 +83,9 @@ class SyncDelegate extends Communications.SyncDelegate {
 
     function onArtwork(responseCode, data) {
         if (responseCode == 200) { 
-            // FIXME:
-            // Storage.setValue(Constants.ART_PREFIX + dataHelper.podcasts[artworkIterator.index()][Constants.PODCAST_ID], data);
+            artworks.add(downloadsIterator.item()[Constants.DOWNLOAD_DATA]);
+            Storage.setValue(Constants.STORAGE_ARTWORKS, artworks);
+            Storage.setValue(Constants.ART_PREFIX + downloadsIterator.item()[Constants.DOWNLOAD_DATA], data);
         } else {
             System.println(responseCode);
         }
@@ -96,7 +102,6 @@ class SyncDelegate extends Communications.SyncDelegate {
             downloadErrors.add(responseCode);
             System.println("Download error " + responseCode);
         }
-        // FIXME: Remove downloaded elements
         downloadsIterator.next();
     }
 

@@ -138,9 +138,9 @@ class ConfirmSyncDelegate extends WatchUi.ConfirmationDelegate {
     }
 
     function onResponse(response) {    	
+        WatchUi.popView(WatchUi.SLIDE_LEFT);
 		if(response == CONFIRM_YES){		
             Communications.startSync();
 		}
-        WatchUi.popView(WatchUi.SLIDE_LEFT);
 	}
 }
