@@ -4,24 +4,26 @@ using Toybox.Application.Storage;
 
 class SyncDelegate extends Communications.SyncDelegate {
 
-    var downloadsProvider;
-    var downloadsIterator;
-    var downloads;
-
-    var saved;
+    var episodes = [];
     var artworks;
+
+    var episodesIterator;
+
+    var artworkUrl;
+    var episodeUrl;
+    var podcastTitle;
+
     var downloadErrors = [];
 
     function initialize() {
         SyncDelegate.initialize();
-        downloadsProvider = new DownloadsProviderWrapper();
     }
     
     function onStartSync() {
-        downloadErrors = [];
-        saved = StorageHelper.get(Constants.STORAGE_SAVED, []);
         artworks = StorageHelper.get(Constants.STORAGE_ARTWORKS, []);
-        downloadsProvider.get(method(:onDownloads), method(:throwSyncError));
+
+        var episodesProvider = new EpisodesProviderWrapper();
+        episodesProvider.get(method(:onEpisodes), method(:throwSyncError));
     }
 
     function isSyncNeeded() {
@@ -41,89 +43,128 @@ class SyncDelegate extends Communications.SyncDelegate {
         Utils.purgeBadMedia();
     }
 
-    function onDownloads(downloads){
-        self.downloads = downloads;
-        downloadsIterator = new Iterator(downloads, method(:download), method(:onDownloadsDone));
-        downloadsIterator.next();
+    function needsMedia(episode){
+        return (episode[Constants.EPISODE_MEDIA] == null);
     }
 
-    function download(item){
-        var url = item[Constants.DOWNLOAD_URL];
-        if(item[Constants.DOWNLOAD_TYPE] == Constants.DOWNLOAD_TYPE_ARTWORK){
-            // Artwork
-            if(artworks.indexOf(item[Constants.DOWNLOAD_DATA]) >= 0){
-                System.println("Skipping artwork " + url);
-                downloadsIterator.next();
-                return;
+    function needsArtwork(episode){
+        return (artworks.indexOf(episode[Constants.EPISODE_PODCAST]) < 0);
+    }
+
+    function onEpisodes(episodes){
+
+        self.episodes = episodes;
+
+        var downloadEpisodes = [];
+        for(var i=0; i<episodes.size(); i++){
+            if(needsMedia(episodes[i]) || needsArtwork(episodes[i])){
+                downloadEpisodes.add(episodes[i]);
             }
-            System.println("Downloading artwork " + url);
+        }
+
+        episodesIterator = new Iterator(downloadEpisodes, method(:downloadEpisode), method(:onDownloadEpisodesDone));
+        episodesIterator.next();
+    }
+
+    function downloadEpisode(item){
+        System.println("Getting info for episode " + item[Constants.EPISODE_ID]);
+    	PodcastIndex.request(Constants.URL_PODCASTINDEX_EPISODE, {"id" => item[Constants.EPISODE_ID] }, method(:onInfo));
+    }
+
+    function onInfo(responseCode, data) {
+        if (responseCode == 200) {
+	       	var episode = Utils.getSafeDictKey(data, "episode");
+	       	if(episode != null){
+                artworkUrl = episode["feedImage"];
+                podcastTitle = episode["feedTitle"];
+                episodeUrl = episode["enclosureUrl"];
+                downloadArtwork();
+                return;
+	       	}
+        }else{
+            downloadErrors.add(responseCode);
+            System.println("Info error " + responseCode);
+        }
+        episodesIterator.next();
+    }
+
+    function downloadArtwork(){
+        if(!needsArtwork(episodesIterator.item())){
+            System.println("Skipping artwork " + artworkUrl);
+            downloadMedia();
+        }else{
+            System.println("Downloading artwork " + artworkUrl);
             var options = {
                 :maxWidth  => Constants.IMAGE_SIZE,
                 :maxHeight => Constants.IMAGE_SIZE,
                 :fileDownloadProgressCallback => method(:onFileProgress)
             };
-            Communications.makeImageRequest(url, null, options, method(:onArtwork));
+            Communications.makeImageRequest(artworkUrl, null, options, method(:onArtwork));
+        }
+    }
+
+    function onArtwork(responseCode, data) {
+        if (responseCode == 200) { 
+            artworks.add(episodesIterator.item()[Constants.EPISODE_PODCAST]);
+            Storage.setValue(Constants.STORAGE_ARTWORKS, artworks);
+            Storage.setValue(Constants.ART_PREFIX + episodesIterator.item()[Constants.EPISODE_PODCAST], data);
+        } else {
+            System.println(responseCode);
+        }
+        downloadMedia();
+    }
+
+    function downloadMedia(){
+        if(!needsMedia(episodesIterator.item())){
+            System.println("Skipping episode " + episodeUrl);
+            episodesIterator.next();
         }else{
-            // Episode
-            if(Utils.findArrayField(saved, Constants.EPISODE_ID, item[Constants.DOWNLOAD_DATA][Constants.EPISODE_ID]) != null){
-                System.println("Skipping episode " + url);
-                downloadsIterator.next();
-                return;
-            }
-            System.println("Downloading episode " + url);
+            System.println("Downloading episode " + episodeUrl);
             var options = {     
                 :method => Communications.HTTP_REQUEST_METHOD_GET,
                 :responseType => Communications.HTTP_RESPONSE_CONTENT_TYPE_AUDIO,
                 :mediaEncoding => Media.ENCODING_MP3,
                 :fileDownloadProgressCallback => method(:onFileProgress)
             };
-            Communications.makeWebRequest(url, null, options, method(:onEpisode));    
+            Communications.makeWebRequest(episodeUrl, null, options, method(:onMedia));    
         }
     }
 
-    function onArtwork(responseCode, data) {
-        if (responseCode == 200) { 
-            artworks.add(downloadsIterator.item()[Constants.DOWNLOAD_DATA]);
-            Storage.setValue(Constants.STORAGE_ARTWORKS, artworks);
-            Storage.setValue(Constants.ART_PREFIX + downloadsIterator.item()[Constants.DOWNLOAD_DATA], data);
-        } else {
-            System.println(responseCode);
-        }
-        downloadsIterator.next();
-    }
-
-    function onEpisode(responseCode, data) {       
+    function onMedia(responseCode, data) {       
         if (responseCode == 200) {
-            var episode = downloadsIterator.item()[Constants.DOWNLOAD_DATA];
+
+            var episode = Utils.findArrayField(episodes, Constants.EPISODE_ID, episodesIterator.item()[Constants.EPISODE_ID]);
             episode[Constants.EPISODE_MEDIA] = data.getId();
-            saved.add(episode);
-            Storage.setValue(Constants.STORAGE_SAVED, saved);        
+
+            var mediaObj = Utils.getSafeMedia(data.getId());
+            var metadata = mediaObj.getMetadata();
+            metadata.title = episode[Constants.EPISODE_TITLE];
+            metadata.artist = podcastTitle;
+            mediaObj.setMetadata(metadata);
+
+            Storage.setValue(Constants.STORAGE_SAVED, episodes);        
         }else{
             downloadErrors.add(responseCode);
             System.println("Download error " + responseCode);
         }
-        downloadsIterator.next();
+        episodesIterator.next();
     }
 
-    function onDownloadsDone(){
-
-        Storage.setValue(Constants.STORAGE_DOWNLOADS, []);
-
+    function onDownloadEpisodesDone(){
         if(downloadErrors.size() > 0){
             throwSyncError("Error! " + downloadErrors.toString());
         }else{
             System.println("Sync done!");
+            Storage.setValue(Constants.STORAGE_SAVED, episodes);        
+            Utils.purgeBadMedia();
             Communications.notifySyncComplete(null);
         }
-
-        // Clean media
-        Utils.purgeBadMedia();
     }
 
     function onFileProgress(bytesTransferred, fileSize){
-        var progress= downloadsIterator.index()/downloadsIterator.size().toFloat();
+        var progress= episodesIterator.index()/episodesIterator.size().toFloat();
         if(bytesTransferred != null && fileSize != null && fileSize != 0){
-            progress += (bytesTransferred/fileSize.toFloat())/downloadsIterator.size().toFloat();
+            progress += (bytesTransferred/fileSize.toFloat())/episodesIterator.size().toFloat();
         }
         Communications.notifySyncProgress((progress*100).toNumber());
     }

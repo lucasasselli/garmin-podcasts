@@ -41,11 +41,12 @@ class Utils {
 	}
 	
 	function getSafeDictKey(dict, key){
-        if(dict.hasKey(key)) {
-        	return dict[key];
-        }else{
-        	return null;
+        if(dict != null){
+            if(dict.hasKey(key)) {
+                return dict[key];
+            }
         }
+        return null;
 	}
 
 	function getSafeMedia(refId){

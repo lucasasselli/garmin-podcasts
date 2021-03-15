@@ -13,7 +13,7 @@ class PodcastProvider_Local {
         return (podcasts.size() != 0);
     }
 
-    function getPodcasts(doneCallback, errorCallback){
+    function get(doneCallback, errorCallback){
         doneCallback.invoke(self.podcasts);
         return false;
     }

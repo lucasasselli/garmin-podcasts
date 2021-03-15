@@ -6,7 +6,7 @@ class PodcastsProviderWrapper {
     private var provider;
 
     function initialize(){
-    	var service = Application.getApp().getProperty("settingPodcstService");
+    	var service = Application.getApp().getProperty("settingPodcastService");
         if(service == 1){ 
             // GPodder
             provider = new PodcastProvider_GPodder();
@@ -20,8 +20,8 @@ class PodcastsProviderWrapper {
         return provider.valid();
     }
 
-    function getPodcasts(doneCallback, errorCallback){
-        return provider.getPodcasts(doneCallback, errorCallback);
+    function get(doneCallback, errorCallback){
+        return provider.get(doneCallback, errorCallback);
     }
 
 }

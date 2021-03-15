@@ -1,12 +1,12 @@
 using Toybox.Communications;
 using Toybox.Application.Storage;
 
-class DownloadsProvider_Manual {
+class EpisodesProvider_Manual {
 
     private var downloads;
 
     function initialize(){
-        self.downloads = StorageHelper.get(Constants.STORAGE_DOWNLOADS, []);
+        self.downloads = StorageHelper.get(Constants.STORAGE_SAVED, []);
     }
 
     function valid(){

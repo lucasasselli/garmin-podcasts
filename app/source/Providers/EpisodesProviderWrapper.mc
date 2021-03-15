@@ -1,7 +1,7 @@
 using Toybox.Communications;
 using Toybox.Application.Storage;
 
-class DownloadsProviderWrapper {
+class EpisodesProviderWrapper {
 
     var provider;
 
@@ -9,10 +9,10 @@ class DownloadsProviderWrapper {
     	var mode = Application.getApp().getProperty("settingSyncMode");
         if(mode == 1){ 
             // Recent
-            provider = new DownloadsProvider_Recent();
+            provider = new EpisodesProvider_Recent();
         }else{
             // Manual
-            provider = new DownloadsProvider_Manual();
+            provider = new EpisodesProvider_Manual();
         }
     }
 

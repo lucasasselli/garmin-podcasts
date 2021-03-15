@@ -4,6 +4,7 @@ module Constants {
 	
     const URL_PODCASTINDEX_SEARCH   = URL_PODCASTINDEX_ROOT + "/api/1.0/search/byterm";
     const URL_PODCASTINDEX_EPISODES = URL_PODCASTINDEX_ROOT + "/api/1.0/episodes/byfeedid";
+    const URL_PODCASTINDEX_EPISODE  = URL_PODCASTINDEX_ROOT + "/api/1.0/episodes/byid";
     const URL_PODCASTINDEX_FEED     = URL_PODCASTINDEX_ROOT + "/api/1.0/podcasts/byfeedurl";
 
     const URL_GPODDER_ROOT = "https://gpodder.net/";
@@ -13,13 +14,7 @@ module Constants {
     const IMAGE_SIZE = 64;
     const CUSTOM_MENU_HEIGHT = 100;
 
-    // Data structure values
     const STORAGE_VERSION_VALUE = 1;
-
-    enum {
-        DOWNLOAD_TYPE_EPISODE,
-        DOWNLOAD_TYPE_ARTWORK
-    }
 
     // Data structures
     enum {
@@ -27,8 +22,7 @@ module Constants {
         STORAGE_SUBSCRIBED,
         STORAGE_SAVED,
         STORAGE_PLAYLIST,
-        STORAGE_ARTWORKS,
-        STORAGE_DOWNLOADS
+        STORAGE_ARTWORKS
     }
     
     enum {
@@ -47,12 +41,5 @@ module Constants {
         EPISODE_DURATION,
         EPISODE_PROGRESS,
         EPISODE_DATA_SIZE
-    }
-
-    enum {
-        DOWNLOAD_TYPE,
-        DOWNLOAD_URL,
-        DOWNLOAD_DATA,
-        DOWNLOAD_DATA_SIZE
     }
 }

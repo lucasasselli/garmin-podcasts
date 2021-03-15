@@ -2,15 +2,14 @@ using Toybox.Communications;
 using Toybox.Media;
 using Toybox.Application.Storage;
 
-class DownloadsProvider_Recent {
+class EpisodesProvider_Recent {
 
     var podcastEpisodesIterator;
 
     var podcastProvider;
     var podcasts = [];
 
-    var downloadArtwork = [];
-    var downloadEpisodes = [];
+    var episodes = [];
 
 	var settingEpisodesPerPodcast;
 	var settingEpisodesMax;
@@ -35,7 +34,7 @@ class DownloadsProvider_Recent {
     	settingEpisodesMax = Application.getApp().getProperty("settingEpisodesMax").toNumber();
 
         // Get podcasts
-        podcastProvider.getPodcasts(method(:onPodcastGet), errorCallback);
+        podcastProvider.get(method(:onPodcastGet), errorCallback);
     }
 
     function onPodcastGet(podcasts){
@@ -59,15 +58,10 @@ class DownloadsProvider_Recent {
 
         var items = Utils.getSafeDictKey(data, "items");
         if(items != null && items.size() > 0){
-
-            // Get the podcast artwork from one of the episodes
-            var artworkUrl = items[0]["feedImage"];
-            downloadArtwork.add([Constants.DOWNLOAD_TYPE_ARTWORK, artworkUrl, podcastEpisodesIterator.item()[Constants.PODCAST_ID]]);
-
             // Parse the episodes
             for(var i=0; i<items.size(); i++){
-                var downloadItem = PodcastIndex.itemToDownload(items[i], podcastEpisodesIterator.item());
-                downloadEpisodes.add(downloadItem);	
+                var episode = PodcastIndex.itemToEpisode(items[i], podcastEpisodesIterator.item());
+                episodes.add(episode);	
             }
         }
 
@@ -79,14 +73,14 @@ class DownloadsProvider_Recent {
         var swapped;
         do {
             swapped = false;
-            for(var i=0; i<downloadEpisodes.size()-1; i++){
-                if (downloadEpisodes[i][Constants.DOWNLOAD_DATA][Constants.EPISODE_DATE] < downloadEpisodes[i][Constants.DOWNLOAD_DATA][Constants.EPISODE_DATE]){
-                    Utils.arraySwap(downloadEpisodes, i, i+1);
+            for(var i=0; i<episodes.size()-1; i++){
+                if (episodes[i][Constants.EPISODE_DATE] < episodes[i+1][Constants.EPISODE_DATE]){
+                    Utils.arraySwap(episodes, i, i+1);
                     swapped = true;
                 }
             }
         }while(swapped);
-        downloadEpisodes = downloadEpisodes.slice(0, settingEpisodesMax);
-        doneCallback.invoke(downloadEpisodes.addAll(downloadArtwork));
+        episodes = episodes.slice(0, settingEpisodesMax);
+        doneCallback.invoke(episodes);
     }
 }

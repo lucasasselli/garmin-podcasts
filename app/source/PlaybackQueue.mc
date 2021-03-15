@@ -79,7 +79,7 @@ class PlaybackQueueItem extends WatchUi.CustomMenuItem {
         titleText = new ScrollText(episodeTitle, Graphics.FONT_SMALL, MARGIN);
         podcastText = new ScrollText(episodePodcast, Graphics.FONT_TINY, MARGIN);
 
-        CustomMenuItem.initialize(refId, {});
+        CustomMenuItem.initialize(episode[Constants.EPISODE_MEDIA], {});
     }
 
     function draw(dc){

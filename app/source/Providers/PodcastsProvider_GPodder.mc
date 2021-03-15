@@ -5,7 +5,7 @@ class PodcastProvider_GPodder {
 
     var feedsIterator;
 
-    var podcasts;
+    var podcasts = [];
 
     var username;
     var password;
@@ -14,34 +14,34 @@ class PodcastProvider_GPodder {
     var doneCallback;
     var errorCallback;
 
+    var headers;
+
     function initialize(){
         username = Application.getApp().getProperty("settingUsername");
         password = Application.getApp().getProperty("settingPassword");
-        deviceid = Application.getApp().getProperty("settingDeviceid");
+		headers = {
+			"Content-Type" => Communications.REQUEST_CONTENT_TYPE_URL_ENCODED,
+			"Authorization" => "Basic " + StringUtil.encodeBase64(username + ":" + password),
+		};
     }
 
     function valid(){
-        return (StringHelper.notNullOrEmpty(username) && StringHelper.notNullOrEmpty(password) && StringHelper.notNullOrEmpty(deviceid));
+        return (StringHelper.notNullOrEmpty(username) && StringHelper.notNullOrEmpty(password));
     }
 
-    function getPodcasts(podcasts, doneCallback, errorCallback){
+    function get(doneCallback, errorCallback){
         self.podcasts = podcasts;
         self.errorCallback = errorCallback;
         self.doneCallback = doneCallback;
 
         // Login to gPodder
-		var headers = {
-			"Content-Type" => Communications.REQUEST_CONTENT_TYPE_URL_ENCODED,
-			"Authorization" => "Basic " + StringUtil.encodeBase64(username + ":" + password),
-		};
-	
 	   	Communications.makeWebRequest(
 	   		Constants.URL_GPODDER_ROOT + "api/2/auth/" + username + "/login.json", 
 	   		null, 
 	   		{
 		    	:method => Communications.HTTP_REQUEST_METHOD_POST,
 		    	:headers => headers,
-		    	:responseType => Communications.HTTP_RESPONSE_CONTENT_TYPE_JSON
+		    	:responseType => Communications.HTTP_RESPONSE_CONTENT_TYPE_TEXT_PLAIN
 	   		},
 	   		method(:onLogin));
         
@@ -49,13 +49,9 @@ class PodcastProvider_GPodder {
     }
 
     function onLogin(responseCode, data){
-        if (responseCode == 200) { 
-            var headers = {
-                "Content-Type" => Communications.REQUEST_CONTENT_TYPE_URL_ENCODED
-            };
-        
+        if (responseCode == 200 || responseCode == -400) { 
             Communications.makeWebRequest(
-                Constants.URL_GPODDER_ROOT + "subscriptions/" + username + "/" + deviceid + ".json", 
+                Constants.URL_GPODDER_ROOT + "subscriptions/" + username + ".json", 
                 null, 
                 {
                     :method => Communications.HTTP_REQUEST_METHOD_GET,
@@ -70,7 +66,11 @@ class PodcastProvider_GPodder {
 
     function onSubscriptions(responseCode, data){
         if (responseCode == 200) { 
-            feedsIterator = new Iterator(data, method(:getFeeds), method(:getFeedsDone));
+            var urls = [];
+            for(var i=0; i<data.size(); i++){
+                urls.add(data[i]["url"]);
+            }
+            feedsIterator = new Iterator(urls, method(:getFeeds), method(:getFeedsDone));
             feedsIterator.next();
         } else {
             errorCallback.invoke("List error " + responseCode);
@@ -85,10 +85,7 @@ class PodcastProvider_GPodder {
         if (responseCode == 200) {
 	       	var feed = Utils.getSafeDictKey(data, "feed");
 	       	if(feed != null){
-                var podcast = new [Constants.PODCAST_DATA_SIZE];
-                podcast[Constants.PODCAST_ID] 		= feed["id"];
-                podcast[Constants.PODCAST_TITLE] 	= feed["title"];
-                podcast[Constants.PODCAST_AUTHOR] 	= feed["author"];
+                var podcast = PodcastIndex.feedToPodcast(feed);
                 podcasts.add(podcast);
 	       	}
         } else if (responseCode == 400) {
