@@ -9,7 +9,7 @@ class EpisodesProvider_Recent {
     var podcastProvider;
     var podcasts = [];
 
-    var episodes = [];
+    var episodes = {};
 
 	var settingEpisodesPerPodcast;
 	var settingEpisodesMax;
@@ -57,11 +57,10 @@ class EpisodesProvider_Recent {
         }
 
         var items = Utils.getSafeDictKey(data, "items");
-        if(items != null && items.size() > 0){
+        if(items != null){
             // Parse the episodes
             for(var i=0; i<items.size(); i++){
-                var episode = PodcastIndex.itemToEpisode(items[i], podcastEpisodesIterator.item());
-                episodes.add(episode);	
+                episodes.put(items[i]["id"], PodcastIndex.itemToEpisode(items[i], podcastEpisodesIterator.item()));
             }
         }
 
@@ -70,17 +69,24 @@ class EpisodesProvider_Recent {
 
     function getEpisodesDone(){
         // Sort and trim episodes
+        var keys = episodes.keys();
         var swapped;
         do {
             swapped = false;
-            for(var i=0; i<episodes.size()-1; i++){
-                if (episodes[i][Constants.EPISODE_DATE] < episodes[i+1][Constants.EPISODE_DATE]){
-                    Utils.arraySwap(episodes, i, i+1);
+            for(var i=0; i<keys.size()-1; i++){
+                if (episodes[keys[i]][Constants.EPISODE_DATE] < episodes[keys[i+1]][Constants.EPISODE_DATE]){
+                    Utils.arraySwap(keys, i, i+1);
                     swapped = true;
                 }
             }
         }while(swapped);
-        episodes = episodes.slice(0, settingEpisodesMax);
+
+        keys = keys.slice(settingEpisodesMax-1, keys.size());
+
+        for(var i=0; i<keys.size()-1; i++){
+            episodes.remove(keys[i]);
+        }
+
         doneCallback.invoke(episodes);
     }
 }

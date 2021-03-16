@@ -18,11 +18,12 @@ class EpisodeManager {
 
     var saved;
     var episodes;
+    var menuEpisodes;
 
     function initialize(){
         provider = new PodcastsProviderWrapper();
-        saved = StorageHelper.get(Constants.STORAGE_SAVED, []);
-        episodes = StorageHelper.get(Constants.STORAGE_SAVED, []);
+        saved = StorageHelper.get(Constants.STORAGE_EPISODES, {});
+        episodes = StorageHelper.get(Constants.STORAGE_EPISODES, {});
     }
 
     function showLoading(){
@@ -42,7 +43,7 @@ class EpisodeManager {
 		    podcastsMenu = new CompactMenu(Rez.Strings.selectEpisodes);
             podcastsMenu.setBackCallback(method(:onPodcastBack));
 			for(var i=0; i<podcasts.size(); i++){
-                podcastsMenu.add(podcasts[i][Constants.PODCAST_TITLE], podcasts[i][Constants.PODCAST_AUTHOR], method(:getEpisodes)); 
+                podcastsMenu.add(podcasts[i][Constants.PODCAST_TITLE], method(:getSelected), method(:getEpisodes)); 
 			}
 
             if(progressBar == null){
@@ -54,6 +55,18 @@ class EpisodeManager {
         }else{
 			showError(Rez.Strings.errorNoSubscriptions);
         }
+    }
+
+    function getSelected(){
+        var podcastId = podcasts[podcastsMenu.getSelected()][Constants.PODCAST_ID];
+        var count = 0;
+        for(var i=0; i<episodes.size(); i++){
+            if(episodes.values()[i][Constants.EPISODE_PODCAST] == podcastId){
+                count++;
+            }
+        }
+
+        return count + " selected";
     }
 
     function showError(msg){
@@ -68,10 +81,12 @@ class EpisodeManager {
     function getEpisodes(){
         var podcast = podcasts[podcastsMenu.getSelected()];
         showLoading();
-    	PodcastIndex.request(Constants.URL_PODCASTINDEX_EPISODES, {"id" => podcast[Constants.PODCAST_ID], "max" => "100"}, method(:onEpisodes));
+    	PodcastIndex.request(Constants.URL_PODCASTINDEX_EPISODES, {"id" => podcast[Constants.PODCAST_ID], "max" => "300"}, method(:onEpisodes));
     }
 
     function onEpisodes(responseCode, data) {
+        menuEpisodes = {};
+
         var podcast = podcasts[podcastsMenu.getSelected()];
 
         if (responseCode != 200) { 
@@ -82,15 +97,10 @@ class EpisodeManager {
         if(items != null && items.size() > 0){
             var episodesMenu = new WatchUi.CheckboxMenu({:title => podcast[Constants.PODCAST_TITLE]});
             for(var i=0; i<items.size(); i++){
-
+                var id = items[i]["id"];
                 var episode = PodcastIndex.itemToEpisode(items[i], podcast);
-
-                var match = Utils.findArrayField(episodes, Constants.EPISODE_ID, episode[Constants.EPISODE_ID]);
-                if(match != null){
-                    episodesMenu.addItem(new WatchUi.CheckboxMenuItem(episode[Constants.EPISODE_TITLE], "", match, true, {}));
-                }else{
-                    episodesMenu.addItem(new WatchUi.CheckboxMenuItem(episode[Constants.EPISODE_TITLE], "", episode, false, {}));
-                }
+                menuEpisodes.put(id, episode);
+                episodesMenu.addItem(new WatchUi.CheckboxMenuItem(episode[Constants.EPISODE_TITLE], "", id, episodes.hasKey(id), {}));
             }
                 
             WatchUi.switchToView(episodesMenu, new EpisodeSelectDelegate(self.weak()), WatchUi.SLIDE_LEFT); 
@@ -101,7 +111,7 @@ class EpisodeManager {
     }
 
     function onPodcastBack(){
-        Storage.setValue(Constants.STORAGE_SAVED, episodes);
+        Storage.setValue(Constants.STORAGE_EPISODES, episodes);
         new CompactPrompt(Rez.Strings.confirmSync, method(:startSync), null).show();
         return true;
     }
@@ -123,9 +133,14 @@ class EpisodeSelectDelegate extends WatchUi.Menu2InputDelegate {
     function onSelect(item) {
         if(main.stillAlive()){
             var mainStrong = main.get();
-            var episode = item.getId();
+            var id = item.getId();
             if (item.isChecked()) {
-                mainStrong.episodes.add(item.getId());
+                if(mainStrong.saved.hasKey(id)){
+                    // If the episode is saved, use it to avoid loosing media
+                    mainStrong.episodes.put(id, mainStrong.saved[id]);
+                }else{
+                    mainStrong.episodes.put(id, mainStrong.menuEpisodes[id]);
+                }
             } else {
                 mainStrong.episodes.remove(item.getId());
             }

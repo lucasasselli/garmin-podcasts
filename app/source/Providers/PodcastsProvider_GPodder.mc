@@ -100,4 +100,10 @@ class PodcastProvider_GPodder {
     function getFeedsDone(){
         doneCallback.invoke(podcasts);
     }
+
+
+    function manage(){
+        WatchUi.pushView(new AlertView(Rez.Strings.msgCheckPhone), null, WatchUi.SLIDE_LEFT);
+        Communications.openWebPage(Constants.URL_GPODDER_ROOT, {}, null);
+    }
 }

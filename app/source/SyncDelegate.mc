@@ -4,10 +4,10 @@ using Toybox.Application.Storage;
 
 class SyncDelegate extends Communications.SyncDelegate {
 
-    var episodes = [];
+    var episodes;
     var artworks;
 
-    var episodesIterator;
+    var downloadsIterator;
 
     var artworkUrl;
     var episodeUrl;
@@ -43,12 +43,12 @@ class SyncDelegate extends Communications.SyncDelegate {
         Utils.purgeBadMedia();
     }
 
-    function needsMedia(episode){
-        return (episode[Constants.EPISODE_MEDIA] == null);
+    function needsMedia(id){
+        return (episodes[id][Constants.EPISODE_MEDIA] == null);
     }
 
-    function needsArtwork(episode){
-        return (artworks.indexOf(episode[Constants.EPISODE_PODCAST]) < 0);
+    function needsArtwork(id){
+        return (artworks.indexOf(episodes[id][Constants.EPISODE_PODCAST]) < 0);
     }
 
     function onEpisodes(episodes){
@@ -56,19 +56,20 @@ class SyncDelegate extends Communications.SyncDelegate {
         self.episodes = episodes;
 
         var downloadEpisodes = [];
-        for(var i=0; i<episodes.size(); i++){
-            if(needsMedia(episodes[i]) || needsArtwork(episodes[i])){
-                downloadEpisodes.add(episodes[i]);
+        var ids = episodes.keys();
+        for(var i=0; i<ids.size(); i++){
+            if(needsMedia(ids[i]) || needsArtwork(ids[i])){
+                downloadEpisodes.add(ids[i]);
             }
         }
 
-        episodesIterator = new Iterator(downloadEpisodes, method(:downloadEpisode), method(:onDownloadEpisodesDone));
-        episodesIterator.next();
+        downloadsIterator = new Iterator(downloadEpisodes, method(:downloadEpisode), method(:onDownloadEpisodesDone));
+        downloadsIterator.next();
     }
 
     function downloadEpisode(item){
-        System.println("Getting info for episode " + item[Constants.EPISODE_ID]);
-    	PodcastIndex.request(Constants.URL_PODCASTINDEX_EPISODE, {"id" => item[Constants.EPISODE_ID] }, method(:onInfo));
+        System.println("Getting info for episode " + item);
+    	PodcastIndex.request(Constants.URL_PODCASTINDEX_EPISODE, {"id" => item }, method(:onInfo));
     }
 
     function onInfo(responseCode, data) {
@@ -85,11 +86,11 @@ class SyncDelegate extends Communications.SyncDelegate {
             downloadErrors.add(responseCode);
             System.println("Info error " + responseCode);
         }
-        episodesIterator.next();
+        downloadsIterator.next();
     }
 
     function downloadArtwork(){
-        if(!needsArtwork(episodesIterator.item())){
+        if(!needsArtwork(downloadsIterator.item())){
             System.println("Skipping artwork " + artworkUrl);
             downloadMedia();
         }else{
@@ -105,9 +106,10 @@ class SyncDelegate extends Communications.SyncDelegate {
 
     function onArtwork(responseCode, data) {
         if (responseCode == 200) { 
-            artworks.add(episodesIterator.item()[Constants.EPISODE_PODCAST]);
+            var podcastId = episodes[downloadsIterator.item()][Constants.EPISODE_PODCAST];
+            artworks.add(podcastId);
             Storage.setValue(Constants.STORAGE_ARTWORKS, artworks);
-            Storage.setValue(Constants.ART_PREFIX + episodesIterator.item()[Constants.EPISODE_PODCAST], data);
+            Storage.setValue(Constants.ART_PREFIX + podcastId, data);
         } else {
             System.println(responseCode);
         }
@@ -115,9 +117,9 @@ class SyncDelegate extends Communications.SyncDelegate {
     }
 
     function downloadMedia(){
-        if(!needsMedia(episodesIterator.item())){
+        if(!needsMedia(downloadsIterator.item())){
             System.println("Skipping episode " + episodeUrl);
-            episodesIterator.next();
+            downloadsIterator.next();
         }else{
             System.println("Downloading episode " + episodeUrl);
             var options = {     
@@ -133,7 +135,7 @@ class SyncDelegate extends Communications.SyncDelegate {
     function onMedia(responseCode, data) {       
         if (responseCode == 200) {
 
-            var episode = Utils.findArrayField(episodes, Constants.EPISODE_ID, episodesIterator.item()[Constants.EPISODE_ID]);
+            var episode = episodes[downloadsIterator.item()];
             episode[Constants.EPISODE_MEDIA] = data.getId();
 
             var mediaObj = Utils.getSafeMedia(data.getId());
@@ -142,12 +144,12 @@ class SyncDelegate extends Communications.SyncDelegate {
             metadata.artist = podcastTitle;
             mediaObj.setMetadata(metadata);
 
-            Storage.setValue(Constants.STORAGE_SAVED, episodes);        
+            Storage.setValue(Constants.STORAGE_EPISODES, episodes);        
         }else{
             downloadErrors.add(responseCode);
             System.println("Download error " + responseCode);
         }
-        episodesIterator.next();
+        downloadsIterator.next();
     }
 
     function onDownloadEpisodesDone(){
@@ -155,16 +157,16 @@ class SyncDelegate extends Communications.SyncDelegate {
             throwSyncError("Error! " + downloadErrors.toString());
         }else{
             System.println("Sync done!");
-            Storage.setValue(Constants.STORAGE_SAVED, episodes);        
+            Storage.setValue(Constants.STORAGE_EPISODES, episodes);        
             Utils.purgeBadMedia();
             Communications.notifySyncComplete(null);
         }
     }
 
     function onFileProgress(bytesTransferred, fileSize){
-        var progress= episodesIterator.index()/episodesIterator.size().toFloat();
+        var progress= downloadsIterator.index()/downloadsIterator.size().toFloat();
         if(bytesTransferred != null && fileSize != null && fileSize != 0){
-            progress += (bytesTransferred/fileSize.toFloat())/episodesIterator.size().toFloat();
+            progress += (bytesTransferred/fileSize.toFloat())/downloadsIterator.size().toFloat();
         }
         Communications.notifySyncProgress((progress*100).toNumber());
     }

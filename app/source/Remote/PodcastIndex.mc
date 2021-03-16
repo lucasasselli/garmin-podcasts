@@ -51,7 +51,6 @@ class PodcastIndex {
 
     function itemToEpisode(item, podcast){
         var episode = new [Constants.EPISODE_DATA_SIZE];
-        episode[Constants.EPISODE_ID] = item["id"];
         episode[Constants.EPISODE_PODCAST] = podcast[Constants.PODCAST_ID];
         episode[Constants.EPISODE_DATE] = item["datePublished"];
         episode[Constants.EPISODE_TITLE] = item["title"];

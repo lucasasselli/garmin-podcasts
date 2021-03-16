@@ -15,7 +15,7 @@ class PlaybackQueue extends WatchUi.CustomMenu {
         }
 
         // For each song in the playlist, precheck the item when adding it to the menu
-        var episodes = StorageHelper.get(Constants.STORAGE_SAVED, []);
+        var episodes = StorageHelper.get(Constants.STORAGE_EPISODES, {}).values();
 
         for (var i = 0; i < episodes.size(); i++) {
             var refId = episodes[i][Constants.EPISODE_MEDIA];       	

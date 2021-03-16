@@ -18,4 +18,7 @@ class PodcastProvider_Local {
         return false;
     }
 
+    function manage(){
+        new SubscriptionManager().show();
+    }
 }

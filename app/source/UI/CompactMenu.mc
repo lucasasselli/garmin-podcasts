@@ -2,11 +2,11 @@ using Toybox.WatchUi;
 
 class CompactMenu {
 
+    var selected;
+
     hidden var items;
     hidden var title;
     hidden var menu;
-
-    hidden var selected;
 
     hidden var backCallback;
 
@@ -23,19 +23,16 @@ class CompactMenu {
 
     }
 
-    function get(){
-        if(menu == null){
-            menu = new CompactMenuView({:title=> StringHelper.get(title)}, items);
-            build();
-        }
-        return [menu, new CompactMenuDelegate(method(:onSelect), backCallback)];
-    }
-
     function preShow(){
         if(menu == null){
-            menu = new CompactMenuView({:title=> StringHelper.get(title)}, items);
+            menu = new CompactMenuView({:title=> StringHelper.get(title)}, items, self.weak());
             build();
         }
+    }
+
+    function get(){
+        preShow();
+        return [menu, new CompactMenuDelegate(method(:onSelect), backCallback)];
     }
 
     function show(){
@@ -66,15 +63,19 @@ class CompactMenuView extends WatchUi.Menu2 {
 
     hidden var items;
     hidden var init;
+    hidden var main;
 
-    function initialize(options, items){
+    function initialize(options, items, main){
         self.items = items;
+        if(main.stillAlive()){
+            self.main = main.get();
+        }
         Menu2.initialize(options);
-
     }
 
     function onShow() {
         for(var i=0; i<items.size(); i++){
+            main.selected = i;
             var item = new WatchUi.MenuItem(
                 StringHelper.get(items[i][0]),
                 StringHelper.get(items[i][1]),

@@ -25,11 +25,11 @@ class ContentDelegate extends Media.ContentDelegate {
     
     function onSong(refId, songEvent, playbackPosition) {
 
-        var saved = StorageHelper.get(Constants.STORAGE_SAVED, []);
-        var index = null;
-        for(var i=0; i<saved.size(); i++){
-            if(saved[i][Constants.EPISODE_MEDIA] == refId){
-                index = i;
+        var episodes = StorageHelper.get(Constants.STORAGE_EPISODES, {});
+        var id = null;
+        for(var i=0; i<episodes.size(); i++){
+            if(episodes.values()[i][Constants.EPISODE_MEDIA] == refId){
+                id = episodes.keys()[i];
                 break;
             }
         }
@@ -37,19 +37,19 @@ class ContentDelegate extends Media.ContentDelegate {
         // Handle artwork
         if(songEvent == Media.SONG_EVENT_START){
             var artwork = null;
-            if(index != null){
-                artwork = Storage.getValue(Constants.ART_PREFIX + saved[index][Constants.EPISODE_PODCAST]);
+            if(id != null){
+                artwork = Storage.getValue(Constants.ART_PREFIX + episodes[id][Constants.EPISODE_PODCAST]);
             }
             Media.setAlbumArt(artwork);
         }
 
         // Handle progress...
         if(songEvent != Media.SONG_EVENT_SKIP_PREVIOUS){
-            if(index != null){
-                var progress = saved[index][Constants.EPISODE_PROGRESS];
+            if(id != null){
+                var progress = episodes[id][Constants.EPISODE_PROGRESS];
                 if(playbackPosition > 0){
-                    saved[index][Constants.EPISODE_PROGRESS] = playbackPosition;
-                    Storage.setValue(Constants.STORAGE_SAVED, saved);
+                    episodes[id][Constants.EPISODE_PROGRESS] = playbackPosition;
+                    Storage.setValue(Constants.STORAGE_EPISODES, episodes);
                     System.println("Progress saved @ " + playbackPosition);
                 }
             }

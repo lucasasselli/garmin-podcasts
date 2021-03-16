@@ -24,7 +24,7 @@ class MainMenu extends CompactMenu {
 
     // Playback queue
 	function callbackQueue(){
-        var episodes = Storage.getValue(Constants.STORAGE_SAVED);
+        var episodes = Storage.getValue(Constants.STORAGE_EPISODES);
         if ((episodes != null) && (episodes.size() != 0)) {
             // Episodes downloaded
             WatchUi.pushView(new PlaybackQueue(), new PlaybackQueueDelegate(), WatchUi.SLIDE_LEFT);
@@ -36,16 +36,7 @@ class MainMenu extends CompactMenu {
 
     // Podcast subscription management
 	function callbackPodcasts(){
-    	var service = Application.getApp().getProperty("settingPodcastService");
-        if(service == 0){
-            // Manual
-            new SubscriptionManager().show();
-        } else {
-            // gPodder
-            WatchUi.pushView(new AlertView(Rez.Strings.msgCheckPhone), null, WatchUi.SLIDE_LEFT);
-            Communications.openWebPage(Constants.URL_GPODDER_ROOT, {}, null);
-        }
-        // TODO: 
+        new PodcastsProviderWrapper().manage();
 	}
 
     // Sync

@@ -112,7 +112,7 @@ class ContentIterator extends Media.ContentIterator {
     // system are played.
     function initializePlaylist() {
 
-        saved = StorageHelper.get(Constants.STORAGE_SAVED, []);
+        saved = (StorageHelper.get(Constants.STORAGE_EPISODES, {})).values();
 
         // Read the playlist from storage
         var tempPlaylist = StorageHelper.get(Constants.STORAGE_PLAYLIST, null);
