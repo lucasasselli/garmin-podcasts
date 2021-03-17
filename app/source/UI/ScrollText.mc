@@ -152,8 +152,6 @@ class ScrollText {
                 offset = +textWidth;
                 tripDone = true;
             }
-
-            WatchUi.requestUpdate();
         }
     }
 
