@@ -103,7 +103,7 @@ class PodcastProvider_GPodder {
 
 
     function manage(){
-        WatchUi.pushView(new AlertView(Rez.Strings.msgCheckPhone), null, WatchUi.SLIDE_LEFT);
         Communications.openWebPage(Constants.URL_GPODDER_ROOT, {}, null);
+        WatchUi.pushView(new AlertView(Rez.Strings.msgCheckPhone), null, WatchUi.SLIDE_LEFT);
     }
 }

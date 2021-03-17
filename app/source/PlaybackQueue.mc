@@ -165,7 +165,9 @@ class PlaybackQueueDelegate extends WatchUi.Menu2InputDelegate {
     }
 
 	function onBack(){
-        new CompactPrompt(Rez.Strings.confirmPlayback, method(:startPlayback), null).show();
+        var prompt = new CompactPrompt(Rez.Strings.confirmPlayback, method(:startPlayback), null);
+        prompt.show();
+        return false;
 	}
 
     function startPlayback(){

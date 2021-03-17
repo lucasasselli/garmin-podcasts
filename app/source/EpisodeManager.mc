@@ -115,7 +115,8 @@ class EpisodeManager {
 
     function onPodcastBack(){
         Storage.setValue(Constants.STORAGE_EPISODES, episodes);
-        new CompactPrompt(Rez.Strings.confirmSync, method(:startSync), null).show();
+        var prompt = new CompactPrompt(Rez.Strings.confirmSync, method(:startSync), null);
+        prompt.show();
         return true;
     }
 

@@ -19,6 +19,7 @@ class PodcastProvider_Local {
     }
 
     function manage(){
-        new SubscriptionManager().show();
+        var manager = new SubscriptionManager();
+        manager.show();
     }
 }

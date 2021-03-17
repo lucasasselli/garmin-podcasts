@@ -36,24 +36,28 @@ class MainMenu extends CompactMenu {
 
     // Podcast subscription management
 	function callbackPodcasts(){
-        new PodcastsProviderWrapper().manage();
+        var podcastProvider = new PodcastsProviderWrapper();
+        podcastProvider.manage();
 	}
 
     // Sync
 	function callbackSync(){
-        // TODO:
     	var mode = Application.getApp().getProperty("settingSyncMode");
-        if(mode == 1){ 
-            // Recent
+        switch(mode){
+            case EpisodesProviderWrapper.EPISODE_MODE_RECENT:
             Communications.startSync();
-        }else{
-            // Manual
-            new EpisodeManager().show();
+            break;
+
+            case EpisodesProviderWrapper.EPISODE_MODE_MANUAL:
+            var manager = new EpisodeManager();
+            manager.show();
+            break;
         }
 	}
 
     // Settings
     function callbackSettings() {
-        new Settings().show();
+        var settings = new Settings();
+        settings.show();
     }
 }

@@ -3,18 +3,18 @@ using Toybox.Application.Storage;
 
 class EpisodesProvider_Manual {
 
-    private var downloads;
+    private var episodes;
 
     function initialize(){
-        self.downloads = StorageHelper.get(Constants.STORAGE_EPISODES, {});
+        self.episodes = StorageHelper.get(Constants.STORAGE_EPISODES, {});
     }
 
     function valid(){
-        return (downloads.size() != 0);
+        return (episodes.size() != 0);
     }
 
     function get(doneCallback, errorCallback){
-        doneCallback.invoke(downloads);
+        doneCallback.invoke(episodes);
         return false;
     }
 

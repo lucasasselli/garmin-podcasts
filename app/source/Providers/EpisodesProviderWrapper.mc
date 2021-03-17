@@ -3,16 +3,21 @@ using Toybox.Application.Storage;
 
 class EpisodesProviderWrapper {
 
+    const EPISODE_MODE_MANUAL = 0;
+    const EPISODE_MODE_RECENT = 1;
+
     var provider;
 
     function initialize(){
     	var mode = Application.getApp().getProperty("settingSyncMode");
-        if(mode == 1){ 
-            // Recent
+        switch(mode){
+            case EPISODE_MODE_RECENT:
             provider = new EpisodesProvider_Recent();
-        }else{
-            // Manual
+            break;
+
+            case EPISODE_MODE_MANUAL:
             provider = new EpisodesProvider_Manual();
+            break;
         }
     }
 
