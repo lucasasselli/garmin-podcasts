@@ -161,22 +161,10 @@ class PlaybackQueueDelegate extends WatchUi.Menu2InputDelegate {
     }
 
 	function onBack(){
-		WatchUi.pushView(new WatchUi.Confirmation(WatchUi.loadResource(Rez.Strings.confirmPlayback)), new ConfirmPlaybackBackDelegate(), WatchUi.SLIDE_LEFT);
-        return false;
+        new CompactPrompt(Rez.Strings.confirmPlayback, method(:startPlayback), null).show();
 	}
-}
 
-class ConfirmPlaybackBackDelegate extends WatchUi.ConfirmationDelegate {
-
-    function initialize() {
-        ConfirmationDelegate.initialize();
+    function startPlayback(){
+        Media.startPlayback(null);
     }
-
-    function onResponse(response) {    	
-		if(response == CONFIRM_YES){		
-            Media.startPlayback(null);
-		}else{
-            WatchUi.popView(WatchUi.SLIDE_LEFT);
-        }
-	}
 }

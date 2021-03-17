@@ -81,7 +81,10 @@ class EpisodeManager {
     function getEpisodes(){
         var podcast = podcasts[podcastsMenu.getSelected()];
         showLoading();
-    	PodcastIndex.request(Constants.URL_PODCASTINDEX_EPISODES, {"id" => podcast[Constants.PODCAST_ID], "max" => "300"}, method(:onEpisodes));
+    	PodcastIndex.request(
+            Constants.URL_PODCASTINDEX_EPISODES, 
+            {"id" => podcast[Constants.PODCAST_ID], "max" => Constants.PODCASTINDEX_MAX_EPISODES}, 
+            method(:onEpisodes));
     }
 
     function onEpisodes(responseCode, data) {

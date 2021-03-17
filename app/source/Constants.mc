@@ -7,6 +7,9 @@ module Constants {
     const URL_PODCASTINDEX_EPISODE  = URL_PODCASTINDEX_ROOT + "/api/1.0/episodes/byid";
     const URL_PODCASTINDEX_FEED     = URL_PODCASTINDEX_ROOT + "/api/1.0/podcasts/byfeedurl";
 
+    const PODCASTINDEX_MAX_PODCASTS = 30;
+    const PODCASTINDEX_MAX_EPISODES = 300;
+
     const URL_GPODDER_ROOT = "https://gpodder.net/";
 
     const ART_PREFIX = "art_";

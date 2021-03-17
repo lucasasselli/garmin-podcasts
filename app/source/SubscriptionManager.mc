@@ -60,7 +60,7 @@ class SubscriptionManager extends CompactMenu {
 			Constants.URL_PODCASTINDEX_SEARCH, 
 			{
 				"q"   => StringHelper.substringReplace(query, " ", "+"),
-				"max" => "5" // Safe number to avoid using all the memory
+				"max" => Constants.PODCASTINDEX_MAX_PODCASTS
 			}, 
 			method(:onSearchResults));
     }
