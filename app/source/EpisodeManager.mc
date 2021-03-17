@@ -126,26 +126,26 @@ class EpisodeManager {
 
 class EpisodeSelectDelegate extends WatchUi.Menu2InputDelegate {
 
-    private var main;
+    private var parentRef;
 
-    function initialize(main) {
-        self.main = main;
+    function initialize(parentRef) {
+        self.parentRef = parentRef;
         Menu2InputDelegate.initialize();
     }
 
     function onSelect(item) {
-        if(main.stillAlive()){
-            var mainStrong = main.get();
+        if(parentRef.stillAlive()){
+            var parent = parentRef.get();
             var id = item.getId();
             if (item.isChecked()) {
-                if(mainStrong.saved.hasKey(id)){
+                if(parent.saved.hasKey(id)){
                     // If the episode is saved, use it to avoid loosing media
-                    mainStrong.episodes.put(id, mainStrong.saved[id]);
+                    parent.episodes.put(id, parent.saved[id]);
                 }else{
-                    mainStrong.episodes.put(id, mainStrong.menuEpisodes[id]);
+                    parent.episodes.put(id, parent.menuEpisodes[id]);
                 }
             } else {
-                mainStrong.episodes.remove(item.getId());
+                parent.episodes.remove(item.getId());
             }
         }
     }

@@ -63,31 +63,32 @@ class CompactMenuView extends WatchUi.Menu2 {
 
     hidden var items;
     hidden var init;
-    hidden var main;
+    hidden var parentRef;
 
-    function initialize(options, items, main){
+    function initialize(options, items, parentRef){
         self.items = items;
-        if(main.stillAlive()){
-            self.main = main.get();
-        }
+        self.parentRef = parentRef;
         Menu2.initialize(options);
     }
 
     function onShow() {
-        for(var i=0; i<items.size(); i++){
-            main.selected = i;
-            var item = new WatchUi.MenuItem(
-                StringHelper.get(items[i][0]),
-                StringHelper.get(items[i][1]),
-                i,
-                {});
-            if(init){
-                updateItem(item, i);     	
-            } else {
-                addItem(item);
+        if(parentRef.stillAlive()){
+            var parent = parentRef.get();
+            for(var i=0; i<items.size(); i++){
+                parent.selected = i;
+                var item = new WatchUi.MenuItem(
+                    StringHelper.get(items[i][0]),
+                    StringHelper.get(items[i][1]),
+                    i,
+                    {});
+                if(init){
+                    updateItem(item, i);     	
+                } else {
+                    addItem(item);
+                }
             }
+            init = true;
         }
-        init = true;
     }
 }
 

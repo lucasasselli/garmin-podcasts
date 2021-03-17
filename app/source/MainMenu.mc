@@ -41,6 +41,7 @@ class MainMenu extends CompactMenu {
 
     // Sync
 	function callbackSync(){
+        // TODO:
     	var mode = Application.getApp().getProperty("settingSyncMode");
         if(mode == 1){ 
             // Recent

@@ -57,13 +57,16 @@ class PlaybackQueueItem extends WatchUi.CustomMenuItem {
     private var centerX;
     private var centerY;
 
-    var titleText;
-    var podcastText;
-    var progress;
-    var artworkBitmap;
-    var tickBitmap;
+    private var titleText;
+    private var podcastText;
+    private var progress;
+    private var artworkBitmap;
+    private var tickBitmap;
+
+    var scrollTimer;
 
     var init = false;
+
 
     function initialize(episode, checked) {
 
@@ -76,14 +79,15 @@ class PlaybackQueueItem extends WatchUi.CustomMenuItem {
         var episodeTitle = mediaObj.getMetadata().title;
         var episodePodcast = mediaObj.getMetadata().artist;
 
-        titleText = new ScrollText(episodeTitle, Graphics.FONT_SMALL, MARGIN);
-        podcastText = new ScrollText(episodePodcast, Graphics.FONT_TINY, MARGIN);
+        scrollTimer = new ScrollTimer();
+
+        titleText = new ScrollText(self.weak(), episodeTitle, Graphics.FONT_SMALL, MARGIN);
+        podcastText = new ScrollText(self.weak(), episodePodcast, Graphics.FONT_TINY, MARGIN);
 
         CustomMenuItem.initialize(episode[Constants.EPISODE_MEDIA], {});
     }
 
     function draw(dc){
-
         if(!init){
             centerX = dc.getWidth()/2;
             centerY = dc.getHeight()/2;

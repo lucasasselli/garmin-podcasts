@@ -2,6 +2,64 @@ using Toybox.Graphics;
 using Toybox.WatchUi;
 using Toybox.Timer;
 
+class ScrollTimer {
+
+    private var timer;
+    private var subscribers = [];
+
+    function initialize(){
+
+    }
+
+    function register(ref){
+        if(subscribers.indexOf(ref) < 0){
+            subscribers.add(ref);
+        }
+        
+        start();
+    }
+
+    function unregister(ref){
+        if(subscribers.indexOf(ref) >= 0){
+            subscribers.remove(ref);
+        }
+    }
+
+    function start() {
+        if (timer == null) {
+            timer = new Timer.Timer();
+            timer.start(method(:trigger), 50, true);
+        }
+    }
+
+    function trigger(){
+        for(var i=0; i<subscribers.size(); i++){
+            if(subscribers[i].stillAlive()){
+                (subscribers[i].get()).scroll();
+            }else{
+                // Remove dead subscriber
+                subscribers.remove(subscribers[i]);
+            }
+        }
+
+        // Kill the timer if all subscribers are gone!
+        if(subscribers.size() == 0){
+            reset();
+        }
+
+        // Update GUI only once
+        WatchUi.requestUpdate();
+    }
+
+    function reset() {
+        if (timer != null) {
+            timer.stop(); 
+            timer = null;
+        }
+    }
+
+}
+
 class ScrollText {
 
     const IDLE_TIME = 40;
@@ -12,7 +70,6 @@ class ScrollText {
     private var font;
     private var margin;
 
-    private var timer;
     private var idle;
     private var offset;
     private var tripDone;
@@ -23,11 +80,14 @@ class ScrollText {
 
     private var init;
 
-    function initialize(text, font, margin) {
+    private var parentRef;
+
+    function initialize(parentRef, text, font, margin) {
 
         init = false;
         reset();
 
+        self.parentRef = parentRef;
         self.text = text;
         self.font = font;
         self.margin = margin;
@@ -43,10 +103,15 @@ class ScrollText {
         }
 
         if(!focused){
+            if(parentRef.stillAlive()){
+                (parentRef.get()).scrollTimer.unregister(self.weak());
+            }
             reset();
         }else{
             if (textWidth > (scrollMax - scrollBase)) {
-                start();
+                if(parentRef.stillAlive()){
+                    (parentRef.get()).scrollTimer.register(self.weak());
+                }
             }
         }
 
@@ -61,6 +126,13 @@ class ScrollText {
     }
 
     function scroll() {
+
+        // If parent is gone, kill timers!
+        if(!parentRef.stillAlive()){
+            reset();
+            return;
+        }
+
         if(idle < IDLE_TIME){
             // Wating to start scrolling
             idle++;
@@ -85,18 +157,7 @@ class ScrollText {
         }
     }
 
-    function start() {
-        if (timer == null) {
-            timer = new Timer.Timer();
-            timer.start(method(:scroll), 50, true);
-        }
-    }
-
     function reset() {
-        if (timer != null) {
-            timer.stop(); 
-            timer = null;
-        }
         offset = 0;
         idle = 0;
         tripDone = false;
