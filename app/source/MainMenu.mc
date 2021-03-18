@@ -24,8 +24,14 @@ class MainMenu extends CompactMenu {
 
     // Playback queue
 	function callbackQueue(){
-        var episodes = Storage.getValue(Constants.STORAGE_EPISODES);
-        if ((episodes != null) && (episodes.size() != 0)) {
+        var episodes = StorageHelper.get(Constants.STORAGE_EPISODES, {});
+        var downloadedCount = 0;
+        for(var i=0; i<episodes.size(); i++){
+            if(episodes.values()[i][Constants.EPISODE_MEDIA] != null){
+                downloadedCount++;
+            }
+        }
+        if (downloadedCount > 0) {
             // Episodes downloaded
             WatchUi.pushView(new PlaybackQueue(), new PlaybackQueueDelegate(), WatchUi.SLIDE_LEFT);
         } else {

@@ -8,11 +8,7 @@ class PlaybackQueue extends WatchUi.CustomMenu {
         CustomMenu.initialize(Constants.CUSTOM_MENU_HEIGHT, Graphics.COLOR_WHITE, {});
         
         // Get the current stored playlist.
-        var currentPlaylist = {};
         var playlist = StorageHelper.get(Constants.STORAGE_PLAYLIST, []);
-        for (var i = 0; i < playlist.size(); ++i) {
-            currentPlaylist[playlist[i]] = true;
-        }
 
         // For each song in the playlist, precheck the item when adding it to the menu
         var episodes = StorageHelper.get(Constants.STORAGE_EPISODES, {}).values();
@@ -22,7 +18,7 @@ class PlaybackQueue extends WatchUi.CustomMenu {
             var mediaObj = Utils.getSafeMedia(refId);
 
             if(mediaObj != null){
-                addItem(new PlaybackQueueItem(episodes[i], currentPlaylist.hasKey(refId)));
+                addItem(new PlaybackQueueItem(episodes[i], (playlist.indexOf(refId) >= 0)));
             }
         }
     }

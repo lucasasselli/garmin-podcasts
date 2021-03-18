@@ -14,7 +14,7 @@
     <string id="errorNoResults">No results!</string>
     <string id="errorNoSubscriptions">No subscriptions!</string>
     <string id="errorNoEpisodes">No episodes\ndownloaded!</string>
-    <string id="errorNoCredentials">gPodder credentials\nnot set!</string>
+    <string id="errorNoCredentials">Login credentials\nnot set!</string>
     
     <!-- Titles -->
     <string id="titlePlaybackQueue">Choose episodes</string>

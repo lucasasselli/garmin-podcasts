@@ -87,7 +87,7 @@ class Utils {
 
             if(mediaObj == null){
                 episodes.remove(episodeIds[i]);
-                System.println("Episode " + episodeIds[Constants.EPISODE_ID] + " doesn't have a media. Deleting...");
+                System.println("Episode " + episodeIds[i] + " doesn't have a media. Deleting...");
             }
         }
         Storage.setValue(Constants.STORAGE_EPISODES, episodes);

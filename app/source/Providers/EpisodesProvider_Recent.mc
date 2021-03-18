@@ -21,8 +21,8 @@ class EpisodesProvider_Recent {
         podcastProvider = new PodcastsProviderWrapper();
     }
 
-    function valid(){
-        return podcastProvider.valid();
+    function valid(displayError){
+        return podcastProvider.valid(displayError);
     }
 
     function get(doneCallback, errorCallback){

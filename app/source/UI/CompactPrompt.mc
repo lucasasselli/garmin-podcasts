@@ -30,10 +30,12 @@ class CompactPromptDelegate extends WatchUi.ConfirmationDelegate {
 
     function onResponse(response) {    	
 		if(response == CONFIRM_YES){		
+    	    WatchUi.popView(WatchUi.SLIDE_RIGHT);    	
             if(yesCallback != null){
                 yesCallback.invoke();
             }
 		}else{
+    	    WatchUi.popView(WatchUi.SLIDE_RIGHT);    	
             if(noCallback != null){
                 noCallback.invoke();
             }

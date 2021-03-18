@@ -25,8 +25,12 @@ class PodcastProvider_GPodder {
 		};
     }
 
-    function valid(){
-        return (StringHelper.notNullOrEmpty(username) && StringHelper.notNullOrEmpty(password));
+    function valid(displayError){
+        var validLogin = !(StringHelper.notNullOrEmpty(username) && StringHelper.notNullOrEmpty(password));
+        if(!validLogin && displayError){
+            WatchUi.pushView(new AlertView(Rez.Strings.errorNoCredentials), null, WatchUi.SLIDE_LEFT); 
+        }
+        return validLogin;
     }
 
     function get(doneCallback, errorCallback){

@@ -17,7 +17,7 @@ module Constants {
     const IMAGE_SIZE = 64;
     const CUSTOM_MENU_HEIGHT = 100;
 
-    const STORAGE_VERSION_VALUE = 2;
+    const STORAGE_VERSION_VALUE = 3;
 
     // Data structures
     enum {
@@ -36,7 +36,6 @@ module Constants {
     }
     
     enum {
-    	EPISODE_ID,
     	EPISODE_PODCAST,
         EPISODE_MEDIA,
         EPISODE_DATE,

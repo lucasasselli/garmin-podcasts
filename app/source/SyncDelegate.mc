@@ -23,7 +23,20 @@ class SyncDelegate extends Communications.SyncDelegate {
         artworks = StorageHelper.get(Constants.STORAGE_ARTWORKS, []);
 
         var episodesProvider = new EpisodesProviderWrapper();
-        episodesProvider.get(method(:onEpisodes), method(:throwSyncError));
+        if(episodesProvider.valid(false)){
+            episodesProvider.get(method(:onEpisodes), method(:throwSyncError));
+        }else{
+            var service = Application.getApp().getProperty("settingPodcastService");
+            switch(service){
+                case PODCAST_SERVICE_LOCAL:
+                throwSyncError("Error: Unknown");
+                break;
+
+                case PODCAST_SERVICE_GPODDER:
+                throwSyncError(StringHelper.get(Rez.Strings.errorNoCredentials));
+                break;
+            }
+        }
     }
 
     function isSyncNeeded() {
@@ -135,12 +148,11 @@ class SyncDelegate extends Communications.SyncDelegate {
     function onMedia(responseCode, data) {       
         if (responseCode == 200) {
 
-            var episode = episodes[downloadsIterator.item()];
-            episode[Constants.EPISODE_MEDIA] = data.getId();
+            episodes[downloadsIterator.item()][Constants.EPISODE_MEDIA] = data.getId();
 
             var mediaObj = Utils.getSafeMedia(data.getId());
             var metadata = mediaObj.getMetadata();
-            metadata.title = episode[Constants.EPISODE_TITLE];
+            metadata.title = episodes[downloadsIterator.item()][Constants.EPISODE_TITLE];
             metadata.artist = podcastTitle;
             mediaObj.setMetadata(metadata);
 

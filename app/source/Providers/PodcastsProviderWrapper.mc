@@ -21,8 +21,8 @@ class PodcastsProviderWrapper {
         }
     }
 
-    function valid(){
-        return provider.valid();
+    function valid(displayError){
+        return provider.valid(displayError);
     }
 
     function get(doneCallback, errorCallback){

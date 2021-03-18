@@ -9,8 +9,8 @@ class EpisodesProvider_Manual {
         self.episodes = StorageHelper.get(Constants.STORAGE_EPISODES, {});
     }
 
-    function valid(){
-        return (episodes.size() != 0);
+    function valid(displayError){
+        return true;
     }
 
     function get(doneCallback, errorCallback){

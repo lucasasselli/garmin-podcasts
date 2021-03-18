@@ -32,8 +32,10 @@ class EpisodeManager {
     }
 
 	function show(){
-        if(provider.get(method(:podcastsDone), method(:showError))){
-            showLoading();
+        if(provider.valid(true)){
+            if(provider.get(method(:podcastsDone), method(:showError))){
+                showLoading();
+            }
         }
 	}
 
@@ -54,19 +56,34 @@ class EpisodeManager {
             progressBar = null;
         }else{
 			showError(Rez.Strings.errorNoSubscriptions);
-        }
-    }
-
+        } } 
     function getSelected(){
         var podcastId = podcasts[podcastsMenu.getSelected()][Constants.PODCAST_ID];
-        var count = 0;
+        var selected = 0;
+        var downloaded = 0;
         for(var i=0; i<episodes.size(); i++){
-            if(episodes.values()[i][Constants.EPISODE_PODCAST] == podcastId){
-                count++;
+            var episode = episodes.values()[i];
+            if(episode[Constants.EPISODE_PODCAST] == podcastId){
+                if(episode[Constants.EPISODE_MEDIA] != null){
+                    downloaded++;
+                }
+                selected++;
             }
         }
 
-        return count + " selected";
+        if(downloaded > 0){
+            if(selected > 0){
+                return selected + " S " + downloaded  + " D";
+            }else{
+                return downloaded + " downloaded";
+            }
+        }else{
+            if(selected > 0){
+                return selected + " selected";
+            }else{
+                return null;
+            }
+        }
     }
 
     function showError(msg){
@@ -117,7 +134,6 @@ class EpisodeManager {
         Storage.setValue(Constants.STORAGE_EPISODES, episodes);
         var prompt = new CompactPrompt(Rez.Strings.confirmSync, method(:startSync), null);
         prompt.show();
-        return true;
     }
 
     function startSync(){

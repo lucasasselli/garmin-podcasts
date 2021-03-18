@@ -110,9 +110,9 @@ class CompactMenuDelegate extends WatchUi.Menu2InputDelegate {
 	function onBack(){
         if(backCallback == null){
     	    WatchUi.popView(WatchUi.SLIDE_RIGHT);    	
+		    return true;
         }else{
-            backCallback.invoke();
+            return backCallback.invoke();
         }
-		return true;
 	}
 }
