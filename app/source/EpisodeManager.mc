@@ -56,7 +56,9 @@ class EpisodeManager {
             progressBar = null;
         }else{
 			showError(Rez.Strings.errorNoSubscriptions);
-        } } 
+        } 
+    } 
+
     function getSelected(){
         var podcastId = podcasts[podcastsMenu.getSelected()][Constants.PODCAST_ID];
         var selected = 0;
@@ -105,29 +107,31 @@ class EpisodeManager {
     }
 
     function onEpisodes(responseCode, data) {
-        menuEpisodes = {};
 
-        var podcast = podcasts[podcastsMenu.getSelected()];
+        if (responseCode == 200) { 
 
-        if (responseCode != 200) { 
+            menuEpisodes = {};
+            var podcast = podcasts[podcastsMenu.getSelected()];
+
+            var items = Utils.getSafeDictKey(data, "items");
+            if(items != null && items.size() > 0){
+                var episodesMenu = new WatchUi.CheckboxMenu({:title => podcast[Constants.PODCAST_TITLE]});
+                for(var i=0; i<items.size(); i++){
+                    var id = items[i]["id"];
+                    var episode = PodcastIndex.itemToEpisode(items[i], podcast);
+                    menuEpisodes.put(id, episode);
+                    episodesMenu.addItem(new WatchUi.CheckboxMenuItem(episode[Constants.EPISODE_TITLE], "", id, episodes.hasKey(id), {}));
+                }
+                    
+                WatchUi.switchToView(episodesMenu, new EpisodeSelectDelegate(self.weak()), WatchUi.SLIDE_LEFT); 
+            }else{
+                showError(Rez.Strings.msgNoEpisodes);
+            }
+        }else if(responseCode == null || responseCode == Communications.REQUEST_CANCELLED){
+            // Request cancelled... Do nothing!
+        }else{
             showError("Error" + responseCode);
         }
-
-        var items = Utils.getSafeDictKey(data, "items");
-        if(items != null && items.size() > 0){
-            var episodesMenu = new WatchUi.CheckboxMenu({:title => podcast[Constants.PODCAST_TITLE]});
-            for(var i=0; i<items.size(); i++){
-                var id = items[i]["id"];
-                var episode = PodcastIndex.itemToEpisode(items[i], podcast);
-                menuEpisodes.put(id, episode);
-                episodesMenu.addItem(new WatchUi.CheckboxMenuItem(episode[Constants.EPISODE_TITLE], "", id, episodes.hasKey(id), {}));
-            }
-                
-            WatchUi.switchToView(episodesMenu, new EpisodeSelectDelegate(self.weak()), WatchUi.SLIDE_LEFT); 
-        }else{
-	        showError(Rez.Strings.msgNoEpisodes);
-        }
-
     }
 
     function onPodcastBack(){

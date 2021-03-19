@@ -92,9 +92,10 @@ class SubscriptionManager extends CompactMenu {
 					{}
 					));
 	        }
-	        
 	        WatchUi.switchToView(menu, new ConfirmMenuDelegate(Rez.Strings.confirmSubscribe, method(:onPodcastAdd)), WatchUi.SLIDE_LEFT);
-        } else {
+        }else if(responseCode == null || responseCode == Communications.REQUEST_CANCELLED){
+            // Request cancelled... Do nothing!
+        }else{
             WatchUi.switchToView(new AlertView(responseCode), null, WatchUi.SLIDE_LEFT);
         }
     }
