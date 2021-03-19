@@ -23,7 +23,7 @@ class StringHelper {
 
     function get(x){
         if(x == null){
-            return null;
+            return "";
         } else if(x instanceof String){
             return x;
         } else if(x instanceof Method){

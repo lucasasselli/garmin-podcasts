@@ -113,6 +113,7 @@ class CompactMenuDelegate extends WatchUi.Menu2InputDelegate {
 		    return true;
         }else{
             return backCallback.invoke();
+            return false;
         }
 	}
 }

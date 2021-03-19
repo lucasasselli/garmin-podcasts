@@ -26,7 +26,7 @@ class PodcastProvider_GPodder {
     }
 
     function valid(displayError){
-        var validLogin = !(StringHelper.notNullOrEmpty(username) && StringHelper.notNullOrEmpty(password));
+        var validLogin = (StringHelper.notNullOrEmpty(username) && StringHelper.notNullOrEmpty(password));
         if(!validLogin && displayError){
             WatchUi.pushView(new AlertView(Rez.Strings.errorNoCredentials), null, WatchUi.SLIDE_LEFT); 
         }

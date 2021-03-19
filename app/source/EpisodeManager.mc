@@ -137,6 +137,7 @@ class EpisodeManager {
     }
 
     function startSync(){
+    	WatchUi.popView(WatchUi.SLIDE_RIGHT);    	
         Communications.startSync();
     }
 }

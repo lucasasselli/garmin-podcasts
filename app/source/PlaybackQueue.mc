@@ -167,6 +167,7 @@ class PlaybackQueueDelegate extends WatchUi.Menu2InputDelegate {
 	}
 
     function startPlayback(){
+        // NOTE: Popping the view before starting playback causes problems...
         Media.startPlayback(null);
     }
 }
