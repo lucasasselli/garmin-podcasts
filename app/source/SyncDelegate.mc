@@ -40,7 +40,11 @@ class SyncDelegate extends Communications.SyncDelegate {
     }
 
     function isSyncNeeded() {
-        return true;
+        // BUG: WERETECH-10485 Garmin Device starts Sync while in
+        // charge and hangs. :-( 
+        // Returning false politely declines the Sync, but should still
+        // allow the manual one.
+        return false;
     }
 
     function onStopSync() {

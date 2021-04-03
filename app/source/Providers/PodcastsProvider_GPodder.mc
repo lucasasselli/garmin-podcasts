@@ -19,10 +19,12 @@ class PodcastProvider_GPodder {
     function initialize(){
         username = Application.getApp().getProperty("settingUsername");
         password = Application.getApp().getProperty("settingPassword");
+        deviceid = Application.getApp().getProperty("settingDeviceId");
 		headers = {
 			"Content-Type" => Communications.REQUEST_CONTENT_TYPE_URL_ENCODED,
 			"Authorization" => "Basic " + StringUtil.encodeBase64(username + ":" + password),
 		};
+        
     }
 
     function valid(displayError){
@@ -54,8 +56,17 @@ class PodcastProvider_GPodder {
 
     function onLogin(responseCode, data){
         if (responseCode == 200 || responseCode == -400) { 
+
+            var url;
+
+            if(StringHelper.notNullOrEmpty(deviceid)){
+                url = Constants.URL_GPODDER_ROOT + "subscriptions/" + username + "/" + deviceid + ".json";
+            }else{
+                url = Constants.URL_GPODDER_ROOT + "subscriptions/" + username + ".json";
+            }
+
             Communications.makeWebRequest(
-                Constants.URL_GPODDER_ROOT + "subscriptions/" + username + ".json", 
+                url, 
                 null, 
                 {
                     :method => Communications.HTTP_REQUEST_METHOD_GET,
@@ -78,6 +89,8 @@ class PodcastProvider_GPodder {
             }
             feedsIterator = new Iterator(urls, method(:getFeeds), method(:getFeedsDone));
             feedsIterator.next();
+        } else if (responseCode == Communications.NETWORK_RESPONSE_TOO_LARGE){
+            errorCallback.invoke(WatchUi.loadResource(Rez.Strings.errorTooManySubs));
         } else {
             errorCallback.invoke("List error " + responseCode);
         }

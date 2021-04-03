@@ -6,6 +6,7 @@
 		<property id="settingEpisodesMax" type="number">10</property>
 		<property id="settingUsername" type="string"></property>
 		<property id="settingPassword" type="string"></property>
+        <property id="settingDeviceId" type="string"></property>
 	</properties>
 	
 	<strings>
@@ -15,6 +16,7 @@
 	    <string id="settingEpisodesMaxTitle">Max. episodes</string>	    
 	    <string id="settingUsernameTitle">Username</string>	    
 	    <string id="settingPasswordTitle">Password</string>	    
+        <string id="settingDeviceIdTitle">Device ID (optional)</string>
 	    <string id="none">None</string>
 	    <string id="gPodder">gpodder.net</string>
 	    <string id="manual">Manual</string>
@@ -63,6 +65,10 @@
 		</setting>
 
 		<setting propertyKey="@Properties.settingPassword" title="@Strings.settingPasswordTitle">
+            <settingConfig type="password" required="false" />
+		</setting>
+
+		<setting propertyKey="@Properties.settingDeviceId" title="@Strings.settingDeviceIdTitle">
             <settingConfig type="password" required="false" />
 		</setting>
 	</settings>

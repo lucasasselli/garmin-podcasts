@@ -26,7 +26,7 @@ class PodcastsProviderWrapper {
     }
 
     function get(doneCallback, errorCallback){
-        return provider.get(doneCallback, errorCallback);
+        provider.get(doneCallback, errorCallback);
     }
 
     function manage(){

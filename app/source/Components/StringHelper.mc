@@ -34,6 +34,18 @@ class StringHelper {
     }
 
     function notNullOrEmpty(x){
-        return ((x != null) && (x != ""));
+        if(x == null){
+            return false;
+        }else if(x.length() == 0){
+            return false;
+        }else{
+            for(var i=0; i<x.size(); i++){
+                if(x[i] != " "){
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
 }

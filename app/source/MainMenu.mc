@@ -49,9 +49,13 @@ class MainMenu extends CompactMenu {
     // Sync
 	function callbackSync(){
     	var mode = Application.getApp().getProperty("settingSyncMode");
+        var provider = new EpisodesProviderWrapper();
+
         switch(mode){
             case EpisodesProviderWrapper.EPISODE_MODE_RECENT:
-            Communications.startSync();
+            if(provider.valid(true)){
+                Communications.startSync();
+            }
             break;
 
             case EpisodesProviderWrapper.EPISODE_MODE_MANUAL:
