@@ -28,14 +28,13 @@ class EpisodeManager {
 
     function showLoading(){
         progressBar = new WatchUi.ProgressBar(WatchUi.loadResource(Rez.Strings.loading), null);
-        WatchUi.pushView(progressBar, new RemoteProgressDelegate(), WatchUi.SLIDE_IMMEDIATE);
+        WatchUi.pushView(progressBar, new RemoteProgressDelegate(), WatchUi.SLIDE_LEFT);
     }
 
 	function show(){
         if(provider.valid(true)){
-            if(provider.get(method(:podcastsDone), method(:showError))){
-                showLoading();
-            }
+            showLoading();
+            provider.get(method(:podcastsDone), method(:showError));
         }
 	}
 

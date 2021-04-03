@@ -15,6 +15,7 @@
     <string id="errorNoSubscriptions">No subscriptions!</string>
     <string id="errorNoEpisodes">No episodes\ndownloaded!</string>
     <string id="errorNoCredentials">Login credentials\nnot set!</string>
+    <string id="errorNoInternet">No internet\nconnection!</string>
     
     <!-- Titles -->
     <string id="titlePlaybackQueue">Choose episodes</string>

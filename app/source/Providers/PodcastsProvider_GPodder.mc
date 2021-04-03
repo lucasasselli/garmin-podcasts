@@ -63,6 +63,8 @@ class PodcastProvider_GPodder {
                     :responseType => Communications.HTTP_RESPONSE_CONTENT_TYPE_JSON
                 },
                 method(:onSubscriptions));
+        } else if(responseCode == Communications.BLE_CONNECTION_UNAVAILABLE){
+            errorCallback.invoke(WatchUi.loadResource(Rez.Strings.errorNoInternet));
         } else {
             errorCallback.invoke("Login error " + responseCode);
         }

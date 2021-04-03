@@ -93,10 +93,13 @@ class SubscriptionManager extends CompactMenu {
 					));
 	        }
 	        WatchUi.switchToView(menu, new ConfirmMenuDelegate(Rez.Strings.confirmSubscribe, method(:onPodcastAdd)), WatchUi.SLIDE_LEFT);
+        }else if(responseCode == Communications.BLE_CONNECTION_UNAVAILABLE){
+            // Not connected!!!
+			WatchUi.switchToView(new AlertView(Rez.Strings.errorNoInternet), null, WatchUi.SLIDE_LEFT); 
         }else if(responseCode == null || responseCode == Communications.REQUEST_CANCELLED){
             // Request cancelled... Do nothing!
         }else{
-            WatchUi.switchToView(new AlertView(responseCode), null, WatchUi.SLIDE_LEFT);
+            WatchUi.switchToView(new AlertView("Error " + responseCode), null, WatchUi.SLIDE_LEFT);
         }
     }
     
@@ -144,9 +147,8 @@ class PickerSearchDelegate extends WatchUi.TextPickerDelegate {
 	{
 		var progressBar = new WatchUi.ProgressBar(WatchUi.loadResource(Rez.Strings.searching), null);
     	WatchUi.switchToView(progressBar, new SearchProgressDelegate(), WatchUi.SLIDE_IMMEDIATE);
-    	WatchUi.pushView(progressBar, new SearchProgressDelegate(), WatchUi.SLIDE_LEFT); // Ugly fix
 		callback.invoke(text);
-		return true;
+    	WatchUi.pushView(progressBar, new SearchProgressDelegate(), WatchUi.SLIDE_LEFT); // Ugly fix
 	}
 }
 
