@@ -20,3 +20,11 @@ If you like this app and you want to show your support you can [pay me a beer](h
 - Configurable playback queue
 - Episode progress tracking, resume from where you left
 - gpodder.net support
+
+## Screeshots
+
+<p align="center">
+  <img src="img/screenshots/screenshot0.png" width="200" />
+  <img src="img/screenshots/screenshot1.png" width="200" /> 
+  <img src="img/screenshots/screenshot2.png" width="200" />
+</p>

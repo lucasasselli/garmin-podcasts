@@ -23,9 +23,9 @@ In order to start using _Podcast_, you need to set it as your device Music Provi
 5. Select **Podcasts**
 
 <p align="center">
-  <img src="img/start0.bmp" width="200" />
-  <img src="img/start1.bmp" width="200" /> 
-  <img src="img/start2.bmp" width="200" />
+  <img src="img/how-to/start0.bmp" width="200" />
+  <img src="img/how-to/start1.bmp" width="200" /> 
+  <img src="img/how-to/start2.bmp" width="200" />
 </p>
 
 ## Downloading episodes
@@ -39,9 +39,9 @@ First of all, to listen to podcasts, you need podcasts to listen! To subscribe t
 5. Select yes when prompted
 
 <p align="center">
-  <img src="img/podcast1.bmp" width="200" /> 
-  <img src="img/podcast2.bmp" width="200" />
-  <img src="img/podcast3.bmp" width="200" />
+  <img src="img/how-to/podcast1.bmp" width="200" /> 
+  <img src="img/how-to/podcast2.bmp" width="200" />
+  <img src="img/how-to/podcast3.bmp" width="200" />
 </p>
 
 To download episodes, from the main menu:
@@ -53,8 +53,8 @@ To download episodes, from the main menu:
 6. To start the download, from the podcast menu, press back and select yes when prompted
 
 <p align="center">
-  <img src="img/sync0.bmp" width="200" /> 
-  <img src="img/sync1.bmp" width="200" />
+  <img src="img/how-to/sync0.bmp" width="200" /> 
+  <img src="img/how-to/sync1.bmp" width="200" />
 </p>
 
 {% include note.html content="Downloading many episodes might take a long time, be patient!" %}
