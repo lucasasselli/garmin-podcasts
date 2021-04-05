@@ -1,6 +1,6 @@
 # Garmin IQ Podcasts
 
-<img src="graphics/icon.png" align="left" width="200" hspace="10" vspace="10">
+<img src="docs/img/icon.png" align="left" width="200" hspace="10" vspace="10">
    
 *Podcast* is a Garmin Connect IQ podcast app powered by [Podcast Index](https://podcastindex.org).  No external service or subscription required: all you need is you watch! 
 

@@ -4,7 +4,7 @@
     <!-- Menu Items -->
     <string id="menuPlayer">Now playing</string>
     <string id="menuQueue">Playback queue</string>
-    <string id="menuPodcasts">Podcasts</string>
+    <string id="menuPodcasts">Manage Podcasts</string>
     <string id="menuSync">Sync</string>
     <string id="menuSettings">Settings</string>  
     <string id="menuSearch">Search</string>
