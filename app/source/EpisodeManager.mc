@@ -141,6 +141,9 @@ class EpisodeManager {
 
     function startSync(){
     	WatchUi.popView(WatchUi.SLIDE_RIGHT);    	
+
+        // Start sync
+        Storage.setValue(Constants.STORAGE_MANUAL_SYNC, true);
         Communications.startSync();
     }
 }

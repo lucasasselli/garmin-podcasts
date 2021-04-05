@@ -20,6 +20,9 @@ class SyncDelegate extends Communications.SyncDelegate {
     }
     
     function onStartSync() {
+        // Reset Manual flag
+        Storage.setValue(Constants.STORAGE_MANUAL_SYNC, false);
+
         artworks = StorageHelper.get(Constants.STORAGE_ARTWORKS, []);
 
         var episodesProvider = new EpisodesProviderWrapper();
@@ -40,14 +43,11 @@ class SyncDelegate extends Communications.SyncDelegate {
     }
 
     function isSyncNeeded() {
-        // BUG: WERETECH-10485 Garmin Device starts Sync while in
-        // charge and hangs. :-( 
-        // Returning false politely declines the Sync, but should still
-        // allow the manual one.
         return false;
     }
 
     function onStopSync() {
+
         throwSyncError(null);
     }
     
@@ -173,8 +173,13 @@ class SyncDelegate extends Communications.SyncDelegate {
             throwSyncError("Error! " + downloadErrors.toString());
         }else{
             System.println("Sync done!");
+
+            // Save episodes
             Storage.setValue(Constants.STORAGE_EPISODES, episodes);        
+
+            // Clean data
             Utils.purgeBadMedia();
+
             Communications.notifySyncComplete(null);
         }
     }

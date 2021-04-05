@@ -1,4 +1,4 @@
-# Garmin IQ Podcasts
+# Garmin Podcasts
 
 <img src="docs/img/icon.png" align="left" width="200" hspace="10" vspace="10">
    
@@ -26,3 +26,11 @@ If you like this app and you want to show your support you can [pay me a beer](h
 1. Download the latest version of [Garmin Connect IQ SDK](https://developer.garmin.com/connect-iq/sdk/);
 2. Get a [Podcast Index API token](https://api.podcastindex.org/);
 3. Set the API token and secret in `app/source/Secrets.mc.example` and save it as `app/source/Secrets.mc`.
+
+## Screeshots
+
+<p align="center">
+  <img src="docs/img/screenshots/screenshot0.png" width="200" />
+  <img src="docs/img/screenshots/screenshot1.png" width="200" /> 
+  <img src="docs/img/screenshots/screenshot2.png" width="200" />
+</p>

@@ -25,7 +25,12 @@ class PodcastsApp extends Application.AudioContentProviderApp {
 
     // Get a delegate that communicates sync status to the system for syncing media content to the device
     function getSyncDelegate() {
-        return new SyncDelegate();
+        var is_manual = Storage.getValue(Constants.STORAGE_MANUAL_SYNC);
+        if(is_manual == true){
+            return new SyncDelegate();
+        }else{
+            return new SyncDummy();
+        }
     }
 
     // Get the initial view for configuring playback

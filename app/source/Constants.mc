@@ -25,7 +25,8 @@ module Constants {
         STORAGE_SUBSCRIBED,
         STORAGE_EPISODES,
         STORAGE_PLAYLIST,
-        STORAGE_ARTWORKS
+        STORAGE_ARTWORKS,
+        STORAGE_MANUAL_SYNC
     }
     
     enum {

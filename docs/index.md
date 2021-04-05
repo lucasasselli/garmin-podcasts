@@ -1,6 +1,6 @@
 ---
 layout: page
-title: "Podcasts Connect IQ"
+title: "Garmin Podcasts"
 ---
 
 <img src="img/icon.png" align="left" width="200" hspace="10" vspace="10">

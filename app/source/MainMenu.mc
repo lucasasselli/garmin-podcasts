@@ -54,6 +54,8 @@ class MainMenu extends CompactMenu {
         switch(mode){
             case EpisodesProviderWrapper.EPISODE_MODE_RECENT:
             if(provider.valid(true)){
+                // Start sync
+                Storage.setValue(Constants.STORAGE_MANUAL_SYNC, true);
                 Communications.startSync();
             }
             break;
