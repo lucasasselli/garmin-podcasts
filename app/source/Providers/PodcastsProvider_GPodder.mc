@@ -36,7 +36,6 @@ class PodcastProvider_GPodder {
     }
 
     function get(doneCallback, errorCallback){
-        self.podcasts = podcasts;
         self.errorCallback = errorCallback;
         self.doneCallback = doneCallback;
 

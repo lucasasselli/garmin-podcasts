@@ -39,7 +39,7 @@ class StringHelper {
         }else if(x.length() == 0){
             return false;
         }else{
-            for(var i=0; i<x.size(); i++){
+            for(var i=0; i<x.length(); i++){
                 if(x[i] != " "){
                     return true;
                 }

@@ -69,7 +69,7 @@
 		</setting>
 
 		<setting propertyKey="@Properties.settingDeviceId" title="@Strings.settingDeviceIdTitle">
-            <settingConfig type="password" required="false" />
+            <settingConfig type="alphaNumeric" required="false" />
 		</setting>
 	</settings>
 </resources>
