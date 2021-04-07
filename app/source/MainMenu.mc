@@ -6,24 +6,24 @@ using Toybox.Media;
 class MainMenu extends CompactMenu {
 
     function initialize(){
-		CompactMenu.initialize(Rez.Strings.AppName);
+        CompactMenu.initialize(Rez.Strings.AppName);
     }
 
-	function build(){
-		add(Rez.Strings.menuQueue, method(:getQueueSize), method(:callbackQueue));
+    function build(){
+        add(Rez.Strings.menuQueue, method(:getQueueSize), method(:callbackQueue));
         add(Rez.Strings.menuPodcasts, null, method(:callbackPodcasts));
-		add(Rez.Strings.menuSync, null, method(:callbackSync));
-		add(Rez.Strings.menuSettings, null, method(:callbackSettings));
-	}
+        add(Rez.Strings.menuSync, null, method(:callbackSync));
+        add(Rez.Strings.menuSettings, null, method(:callbackSettings));
+    }
 
     // Return playback queue size string
-	function getQueueSize(){
+    function getQueueSize(){
         var playlist = StorageHelper.get(Constants.STORAGE_PLAYLIST, []);
         return playlist.size().toString() + " " + WatchUi.loadResource(Rez.Strings.episodes);
-	}
+    }
 
     // Playback queue
-	function callbackQueue(){
+    function callbackQueue(){
         var episodes = StorageHelper.get(Constants.STORAGE_EPISODES, {});
         var downloadedCount = 0;
         for(var i=0; i<episodes.size(); i++){
@@ -38,17 +38,17 @@ class MainMenu extends CompactMenu {
             // No episodes
             WatchUi.pushView(new AlertView(Rez.Strings.errorNoEpisodes), null, WatchUi.SLIDE_LEFT);
         }
-	}
+    }
 
     // Podcast subscription management
-	function callbackPodcasts(){
+    function callbackPodcasts(){
         var podcastProvider = new PodcastsProviderWrapper();
         podcastProvider.manage();
-	}
+    }
 
     // Sync
-	function callbackSync(){
-    	var mode = Application.getApp().getProperty("settingSyncMode");
+    function callbackSync(){
+        var mode = Application.getApp().getProperty("settingSyncMode");
         var provider = new EpisodesProviderWrapper();
 
         switch(mode){
@@ -65,7 +65,7 @@ class MainMenu extends CompactMenu {
             manager.show();
             break;
         }
-	}
+    }
 
     // Settings
     function callbackSettings() {

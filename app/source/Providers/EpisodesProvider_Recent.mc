@@ -11,8 +11,8 @@ class EpisodesProvider_Recent {
 
     var episodes = {};
 
-	var settingEpisodesPerPodcast;
-	var settingEpisodesMax;
+    var settingEpisodesPerPodcast;
+    var settingEpisodesMax;
 
     var doneCallback;
     var errorCallback;
@@ -30,8 +30,8 @@ class EpisodesProvider_Recent {
         self.doneCallback = doneCallback;
 
         // Get settings
-    	settingEpisodesPerPodcast = Application.getApp().getProperty("settingEpisodes").toNumber();
-    	settingEpisodesMax = Application.getApp().getProperty("settingEpisodesMax").toNumber();
+        settingEpisodesPerPodcast = Application.getApp().getProperty("settingEpisodes").toNumber();
+        settingEpisodesMax = Application.getApp().getProperty("settingEpisodesMax").toNumber();
 
         // Get podcasts
         podcastProvider.get(method(:onPodcastGet), errorCallback);
@@ -44,14 +44,14 @@ class EpisodesProvider_Recent {
     }
 
     function getEpisodes(item){
-		System.println("Downloading episode list for " + item[Constants.PODCAST_ID]);
-    	PodcastIndex.request(Constants.URL_PODCASTINDEX_EPISODES, {"id" => item[Constants.PODCAST_ID], "max" => settingEpisodesPerPodcast}, method(:onEpisodes));
+        System.println("Downloading episode list for " + item[Constants.PODCAST_ID]);
+        PodcastIndex.request(Constants.URL_PODCASTINDEX_EPISODES, {"id" => item[Constants.PODCAST_ID], "max" => settingEpisodesPerPodcast}, method(:onEpisodes));
     }
 
     function onEpisodes(responseCode, data) {
 
         // Error
-        if (responseCode != 200) { 
+        if (responseCode != 200) {
             errorCallback.invoke("Error " + responseCode);
             return;
         }

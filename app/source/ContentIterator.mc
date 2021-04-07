@@ -7,7 +7,7 @@ class ContentIterator extends Media.ContentIterator {
 
     // The index of the current song in playlist
     private var playlistIndex;
-    
+
     private var playlist;
     private var saved;
 
@@ -30,7 +30,7 @@ class ContentIterator extends Media.ContentIterator {
            Media.PLAYBACK_CONTROL_SKIP_FORWARD,
            Media.PLAYBACK_CONTROL_SKIP_BACKWARD,
            Media.PLAYBACK_CONTROL_LIBRARY
-		];
+        ];
 
         profile.playSpeedMultipliers = [Media.PLAYBACK_SPEED_NORMAL];
         profile.attemptSkipAfterThumbsDown = true;
@@ -48,7 +48,7 @@ class ContentIterator extends Media.ContentIterator {
         if(episode != null && episode[Constants.EPISODE_PROGRESS] != null){
             obj = new Media.ActiveContent(ref, obj.getMetadata(), episode[Constants.EPISODE_PROGRESS]);
         }
-        
+
         return obj;
     }
 

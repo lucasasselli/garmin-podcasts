@@ -9,7 +9,7 @@ class EpisodesProviderWrapper {
     var provider;
 
     function initialize(){
-    	var mode = Application.getApp().getProperty("settingSyncMode");
+        var mode = Application.getApp().getProperty("settingSyncMode");
         switch(mode){
             case EPISODE_MODE_RECENT:
             provider = new EpisodesProvider_Recent();

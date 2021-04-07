@@ -28,19 +28,19 @@ class CompactPromptDelegate extends WatchUi.ConfirmationDelegate {
         ConfirmationDelegate.initialize();
     }
 
-    function onResponse(response) {    	
-		if(response == CONFIRM_YES){		
+    function onResponse(response) {
+        if(response == CONFIRM_YES){
             if(yesCallback != null){
                 yesCallback.invoke();
             }else{
-    	        WatchUi.popView(WatchUi.SLIDE_RIGHT);    	
+                WatchUi.popView(WatchUi.SLIDE_RIGHT);
             }
-		}else{
+        }else{
             if(noCallback != null){
                 noCallback.invoke();
             }else{
-    	        WatchUi.popView(WatchUi.SLIDE_RIGHT);    	
+                WatchUi.popView(WatchUi.SLIDE_RIGHT);
             }
         }
-	}
+    }
 }

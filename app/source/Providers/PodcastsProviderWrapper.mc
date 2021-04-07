@@ -9,7 +9,7 @@ class PodcastsProviderWrapper {
     private var provider;
 
     function initialize(){
-    	var service = Application.getApp().getProperty("settingPodcastService");
+        var service = Application.getApp().getProperty("settingPodcastService");
         switch(service){
             case PODCAST_SERVICE_LOCAL:
             provider = new PodcastProvider_Local();

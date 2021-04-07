@@ -20,17 +20,17 @@ class PodcastProvider_GPodder {
         username = Application.getApp().getProperty("settingUsername");
         password = Application.getApp().getProperty("settingPassword");
         deviceid = Application.getApp().getProperty("settingDeviceId");
-		headers = {
-			"Content-Type" => Communications.REQUEST_CONTENT_TYPE_URL_ENCODED,
-			"Authorization" => "Basic " + StringUtil.encodeBase64(username + ":" + password),
-		};
-        
+        headers = {
+            "Content-Type" => Communications.REQUEST_CONTENT_TYPE_URL_ENCODED,
+            "Authorization" => "Basic " + StringUtil.encodeBase64(username + ":" + password),
+        };
+
     }
 
     function valid(displayError){
         var validLogin = (StringHelper.notNullOrEmpty(username) && StringHelper.notNullOrEmpty(password));
         if(!validLogin && displayError){
-            WatchUi.pushView(new AlertView(Rez.Strings.errorNoCredentials), null, WatchUi.SLIDE_LEFT); 
+            WatchUi.pushView(new AlertView(Rez.Strings.errorNoCredentials), null, WatchUi.SLIDE_LEFT);
         }
         return validLogin;
     }
@@ -40,21 +40,21 @@ class PodcastProvider_GPodder {
         self.doneCallback = doneCallback;
 
         // Login to gPodder
-	   	Communications.makeWebRequest(
-	   		Constants.URL_GPODDER_ROOT + "api/2/auth/" + username + "/login.json", 
-	   		null, 
-	   		{
-		    	:method => Communications.HTTP_REQUEST_METHOD_POST,
-		    	:headers => headers,
-		    	:responseType => Communications.HTTP_RESPONSE_CONTENT_TYPE_TEXT_PLAIN
-	   		},
-	   		method(:onLogin));
-        
+           Communications.makeWebRequest(
+               Constants.URL_GPODDER_ROOT + "api/2/auth/" + username + "/login.json",
+               null,
+               {
+                :method => Communications.HTTP_REQUEST_METHOD_POST,
+                :headers => headers,
+                :responseType => Communications.HTTP_RESPONSE_CONTENT_TYPE_TEXT_PLAIN
+               },
+               method(:onLogin));
+
         return true;
     }
 
     function onLogin(responseCode, data){
-        if (responseCode == 200 || responseCode == -400) { 
+        if (responseCode == 200 || responseCode == -400) {
 
             var url;
 
@@ -65,8 +65,8 @@ class PodcastProvider_GPodder {
             }
 
             Communications.makeWebRequest(
-                url, 
-                null, 
+                url,
+                null,
                 {
                     :method => Communications.HTTP_REQUEST_METHOD_GET,
                     :headers => headers,
@@ -81,7 +81,7 @@ class PodcastProvider_GPodder {
     }
 
     function onSubscriptions(responseCode, data){
-        if (responseCode == 200) { 
+        if (responseCode == 200) {
             var urls = [];
             for(var i=0; i<data.size(); i++){
                 urls.add(data[i]["url"]);
@@ -96,22 +96,22 @@ class PodcastProvider_GPodder {
     }
 
     function getFeeds(item){
-    	PodcastIndex.request(Constants.URL_PODCASTINDEX_FEED, {"url" => item }, method(:onFeed));
+        PodcastIndex.request(Constants.URL_PODCASTINDEX_FEED, {"url" => item }, method(:onFeed));
     }
 
     function onFeed(responseCode, data){
         if (responseCode == 200) {
-	       	var feed = Utils.getSafeDictKey(data, "feed");
-	       	if(feed != null){
+               var feed = Utils.getSafeDictKey(data, "feed");
+               if(feed != null){
                 var podcast = PodcastIndex.feedToPodcast(feed);
                 podcasts.add(podcast);
-	       	}
+               }
         } else if (responseCode == 400) {
             // Feed not found!
         } else {
             errorCallback.invoke("Feed error " + responseCode);
         }
-           
+
         feedsIterator.next();
     }
 

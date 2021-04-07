@@ -6,7 +6,7 @@ class PlaybackQueue extends WatchUi.CustomMenu {
 
     function initialize() {
         CustomMenu.initialize(Constants.CUSTOM_MENU_HEIGHT, Graphics.COLOR_WHITE, {});
-        
+
         // Get the current stored playlist.
         var playlist = StorageHelper.get(Constants.STORAGE_PLAYLIST, []);
 
@@ -14,7 +14,7 @@ class PlaybackQueue extends WatchUi.CustomMenu {
         var episodes = StorageHelper.get(Constants.STORAGE_EPISODES, {}).values();
 
         for (var i = 0; i < episodes.size(); i++) {
-            var refId = episodes[i][Constants.EPISODE_MEDIA];       	
+            var refId = episodes[i][Constants.EPISODE_MEDIA];
             var mediaObj = Utils.getSafeMedia(refId);
 
             if(mediaObj != null){
@@ -69,7 +69,7 @@ class PlaybackQueueItem extends WatchUi.CustomMenuItem {
         self.episode = episode;
         self.checked = checked;
 
-        var refId = episode[Constants.EPISODE_MEDIA];       	
+        var refId = episode[Constants.EPISODE_MEDIA];
         var mediaObj = Utils.getSafeMedia(refId);
 
         var episodeTitle = mediaObj.getMetadata().title;
@@ -160,11 +160,11 @@ class PlaybackQueueDelegate extends WatchUi.Menu2InputDelegate {
         Storage.setValue(Constants.STORAGE_PLAYLIST, playlist);
     }
 
-	function onBack(){
+    function onBack(){
         var prompt = new CompactPrompt(Rez.Strings.confirmPlayback, method(:startPlayback), null);
         prompt.show();
         return false;
-	}
+    }
 
     function startPlayback(){
         // NOTE: Popping the view before starting playback causes problems...

@@ -3,64 +3,64 @@ using Toybox.Media;
 
 class Utils {
 
-	function findArrayField(array, field, value){
-		if (array == null){
-			return null;
-		}
-		for(var i=0; i<array.size(); i++){
-			var x = array[i];
-			if (field < x.size()){
-				if (x[field] == value){
-					return x;
-				}
-			}
-		}
-		
-		return null;
-	}
+    function findArrayField(array, field, value){
+        if (array == null){
+            return null;
+        }
+        for(var i=0; i<array.size(); i++){
+            var x = array[i];
+            if (field < x.size()){
+                if (x[field] == value){
+                    return x;
+                }
+            }
+        }
+
+        return null;
+    }
 
     function arraySwap(array, i, j){
         var temp = array[i];
         array[i] = array[j];
         array = temp;
     }
-	
-	function getArrayField(array, field){
-	
-		if (array == null){
-			return [];
-		}
-		
-		var x = [];
-		
-		for(var i=0; i<array.size(); i++){
-			x.add(array[i][field]);
-		}
-		
-		return x;
-	}
-	
-	function getSafeDictKey(dict, key){
+
+    function getArrayField(array, field){
+
+        if (array == null){
+            return [];
+        }
+
+        var x = [];
+
+        for(var i=0; i<array.size(); i++){
+            x.add(array[i][field]);
+        }
+
+        return x;
+    }
+
+    function getSafeDictKey(dict, key){
         if(dict != null){
             if(dict.hasKey(key)) {
                 return dict[key];
             }
         }
         return null;
-	}
+    }
 
-	function getSafeMedia(refId){
-		var mediaObj = null;
-		if(refId != null){
-			try{
-				var ref = new Media.ContentRef(refId, Media.CONTENT_TYPE_AUDIO);
-				mediaObj = Media.getCachedContentObj(ref);
-			}catch(ex){
-				mediaObj = null;
-			}
-		}
-		return mediaObj;
-	}
+    function getSafeMedia(refId){
+        var mediaObj = null;
+        if(refId != null){
+            try{
+                var ref = new Media.ContentRef(refId, Media.CONTENT_TYPE_AUDIO);
+                mediaObj = Media.getCachedContentObj(ref);
+            }catch(ex){
+                mediaObj = null;
+            }
+        }
+        return mediaObj;
+    }
 
     function purgeBadMedia(){
 
@@ -95,9 +95,9 @@ class Utils {
         // Purge playlist episodes
         var playlist = StorageHelper.get(Constants.STORAGE_PLAYLIST, []);
         var purgedPlaylist = [];
-    	for(var i=0; i<playlist.size(); i++){
-			var x = Utils.findArrayField(episodes.values(), Constants.EPISODE_MEDIA, playlist[i]);
-    		if(x != null){  		
+        for(var i=0; i<playlist.size(); i++){
+            var x = Utils.findArrayField(episodes.values(), Constants.EPISODE_MEDIA, playlist[i]);
+            if(x != null){
                 purgedPlaylist.add(playlist[i]);
             }else{
                 System.println("Media " + playlist[i] + " doesn't exist anymore. Deleting from playlist...");
@@ -108,9 +108,9 @@ class Utils {
         // Purge Artworks without podcast
         var artworks = StorageHelper.get(Constants.STORAGE_ARTWORKS, []);
         var purgedArtworks = [];
-    	for(var i=0; i<artworks.size(); i++){
-			var x = Utils.findArrayField(episodes.values(), Constants.EPISODE_PODCAST, artworks[i]);
-    		if(x != null){  		
+        for(var i=0; i<artworks.size(); i++){
+            var x = Utils.findArrayField(episodes.values(), Constants.EPISODE_PODCAST, artworks[i]);
+            if(x != null){
                 purgedArtworks.add(artworks[i]);
             }else{
                 Storage.deleteValue(Constants.ART_PREFIX + artworks[i]);

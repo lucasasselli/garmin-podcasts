@@ -82,7 +82,7 @@ class CompactMenuView extends WatchUi.Menu2 {
                     i,
                     {});
                 if(init){
-                    updateItem(item, i);     	
+                    updateItem(item, i);
                 } else {
                     addItem(item);
                 }
@@ -107,13 +107,13 @@ class CompactMenuDelegate extends WatchUi.Menu2InputDelegate {
         selectCallback.invoke(item.getId());
     }
 
-	function onBack(){
+    function onBack(){
         if(backCallback == null){
-    	    WatchUi.popView(WatchUi.SLIDE_RIGHT);    	
-		    return true;
+            WatchUi.popView(WatchUi.SLIDE_RIGHT);
+            return true;
         }else{
             return backCallback.invoke();
             return false;
         }
-	}
+    }
 }
