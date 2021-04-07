@@ -40,7 +40,7 @@ class StringHelper {
             return false;
         }else{
             for(var i=0; i<x.length(); i++){
-                if(x[i] != " "){
+                if(x.substring(i, 1) != " "){
                     return true;
                 }
             }
