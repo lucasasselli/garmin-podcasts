@@ -1,3 +1,4 @@
+using Toybox.WatchUi;
 using Toybox.Communications;
 using Toybox.Application.Storage;
 
@@ -59,8 +60,10 @@ class PodcastProvider_GPodder {
             var url;
 
             if(StringHelper.notNullOrEmpty(deviceid)){
+                // Devige ID set
                 url = Constants.URL_GPODDER_ROOT + "subscriptions/" + username + "/" + deviceid + ".json";
             }else{
+                // Device ID not set
                 url = Constants.URL_GPODDER_ROOT + "subscriptions/" + username + ".json";
             }
 
@@ -83,8 +86,16 @@ class PodcastProvider_GPodder {
     function onSubscriptions(responseCode, data){
         if (responseCode == 200) {
             var urls = [];
-            for(var i=0; i<data.size(); i++){
-                urls.add(data[i]["url"]);
+            if(StringHelper.notNullOrEmpty(deviceid)){
+                // Device ID set
+                for(var i=0; i<data.size(); i++){
+                    urls.add(data[i]);
+                }
+            }else{
+                // Device ID not set
+                for(var i=0; i<data.size(); i++){
+                    urls.add(data[i]["url"]);
+                }
             }
             feedsIterator = new Iterator(urls, method(:getFeeds), method(:getFeedsDone));
             feedsIterator.next();
