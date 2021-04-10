@@ -36,16 +36,16 @@ class StringHelper {
     function notNullOrEmpty(x){
         if(x == null){
             return false;
-        }else if(x.length() == 0){
-            return false;
-        }else{
-            for(var i=0; i<x.length(); i++){
-                if(x.substring(i, 1) != " "){
-                    return true;
+        } else if(x instanceof String){
+            if(x.length() != 0){
+                for(var i=0; i<x.length(); i++){
+                    if(x.substring(i, 1) != " "){
+                        return true;
+                    }
                 }
             }
-
-            return false;
         }
+
+        return false;
     }
 }
