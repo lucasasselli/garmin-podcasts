@@ -43,11 +43,10 @@ class SyncDelegate extends Communications.SyncDelegate {
     }
 
     function isSyncNeeded() {
-        return false;
+        return true;
     }
 
     function onStopSync() {
-
         throwSyncError(null);
     }
 
@@ -151,7 +150,6 @@ class SyncDelegate extends Communications.SyncDelegate {
 
     function onMedia(responseCode, data) {
         if (responseCode == 200) {
-
             episodes[downloadsIterator.item()][Constants.EPISODE_MEDIA] = data.getId();
 
             var mediaObj = Utils.getSafeMedia(data.getId());
