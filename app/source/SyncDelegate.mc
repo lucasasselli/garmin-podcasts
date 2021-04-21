@@ -137,11 +137,33 @@ class SyncDelegate extends Communications.SyncDelegate {
             System.println("Skipping episode " + episodeUrl);
             downloadsIterator.next();
         }else{
-            System.println("Downloading episode " + episodeUrl);
+            var format = (episodeUrl.substring(episodeUrl.length()-3, episodeUrl.length())).toLower();
+
+            var encoding;
+            switch (format) {
+
+                case "mp3":
+                    encoding = Media.ENCODING_MP3;
+                    break;
+
+                case "m4a":
+                    encoding = Media.ENCODING_M4A;
+                    break;
+
+                case "wav":
+                    encoding = Media.ENCODING_WAV;
+                    break;
+
+                default:
+                    encoding = Media.ENCODING_MP3;
+                    break;
+            }
+
+            System.println("Downloading " + format + " episode " + episodeUrl);
             var options = {
                 :method => Communications.HTTP_REQUEST_METHOD_GET,
                 :responseType => Communications.HTTP_RESPONSE_CONTENT_TYPE_AUDIO,
-                :mediaEncoding => Media.ENCODING_MP3,
+                :mediaEncoding => encoding,
                 :fileDownloadProgressCallback => method(:onFileProgress)
             };
             Communications.makeWebRequest(episodeUrl, null, options, method(:onMedia));
