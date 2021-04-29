@@ -21,6 +21,8 @@
             <iq:product id="marqexpedition"/>
             <iq:product id="marqgolfer"/>
             <iq:product id="venu"/>
+            <iq:product id="venu2"/>
+            <iq:product id="venu2s"/>
             <iq:product id="venusqm"/>
             <iq:product id="vivoactive3m"/>
             <iq:product id="vivoactive4"/>
