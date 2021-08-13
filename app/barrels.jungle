@@ -1,5 +1,5 @@
 # Do not hand edit this file. To make changes run the 
 # "Configure Monkey Barrels" command.
 
-garmincompactlib = [c:\Users\lucas\Development\garmin-podcasts\libs\garmin-compact-lib\monkey.jungle]
+garmincompactlib = [..\libs\garmin-compact-lib\monkey.jungle]
 base.barrelPath = $(base.barrelPath);$(garmincompactlib)
