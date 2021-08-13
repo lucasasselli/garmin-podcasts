@@ -132,6 +132,15 @@ class PodcastProvider_GPodder {
 
 
     function manage(){
+        var prompt = new CompactPrompt(Rez.Strings.msgSendNotification, method(:showNotification), method(:dummy));
+        prompt.show();
+    }
+
+    function dummy(){
+        // TODO: Find a better way to handle back!
+    }
+
+    function showNotification(){
         Communications.openWebPage(Constants.URL_GPODDER_ROOT, {}, null);
         WatchUi.pushView(new AlertView(Rez.Strings.msgCheckPhone), null, WatchUi.SLIDE_LEFT);
     }

@@ -10,7 +10,7 @@
     </properties>
 
     <strings>
-        <string id="settingSyncModeTitle">Sync Mode</string>
+        <string id="settingSyncModeTitle">Download Mode</string>
         <string id="settingPodcastServiceTitle">Subscription service</string>
         <string id="settingEpisodesPerPodcastTitle">Episodes per Podcast</string>
         <string id="settingEpisodesMaxTitle">Max. episodes</string>
