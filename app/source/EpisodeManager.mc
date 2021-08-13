@@ -5,6 +5,8 @@ using Toybox.Cryptography;
 using Toybox.StringUtil;
 using Toybox.Application.Storage;
 
+using CompactLib.Ui;
+
 class EpisodeManager {
 
     var provider;
@@ -41,7 +43,7 @@ class EpisodeManager {
     function podcastsDone(podcasts){
         self.podcasts = podcasts;
         if(podcasts != null && podcasts.size() > 0){
-            podcastsMenu = new CompactMenu(Rez.Strings.selectEpisodes);
+            podcastsMenu = new Ui.CompactMenu(Rez.Strings.selectEpisodes);
             podcastsMenu.setBackCallback(method(:onPodcastBack));
             for(var i=0; i<podcasts.size(); i++){
                 podcastsMenu.add(podcasts[i][Constants.PODCAST_TITLE], method(:getSelected), method(:getEpisodes));
@@ -88,10 +90,11 @@ class EpisodeManager {
     }
 
     function showError(msg){
+        var alert = new Ui.CompactAlert(msg);
         if(progressBar != null){
-            WatchUi.switchToView(new AlertView(msg), null, WatchUi.SLIDE_LEFT);
+            alert.switchTo();
         }else{
-            WatchUi.pushView(new AlertView(msg), null, WatchUi.SLIDE_LEFT);
+            alert.show();
         }
         progressBar = null;
     }
@@ -124,7 +127,7 @@ class EpisodeManager {
 
                 WatchUi.switchToView(episodesMenu, new EpisodeSelectDelegate(self.weak()), WatchUi.SLIDE_LEFT);
             }else{
-                showError(Rez.Strings.msgNoEpisodes);
+                showError(Rez.Strings.errorNoEpisodes);
             }
         }else if(responseCode == null || responseCode == Communications.REQUEST_CANCELLED){
             // Request cancelled... Do nothing!
@@ -135,7 +138,7 @@ class EpisodeManager {
 
     function onPodcastBack(){
         Storage.setValue(Constants.STORAGE_EPISODES, episodes);
-        var prompt = new CompactPrompt(Rez.Strings.confirmSync, method(:startSync), null);
+        var prompt = new Ui.CompactPrompt(Rez.Strings.confirmSync, method(:startSync), null);
         prompt.show();
     }
 

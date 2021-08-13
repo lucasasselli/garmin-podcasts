@@ -1,6 +1,8 @@
 using Toybox.Communications;
 using Toybox.Application.Storage;
 
+using CompactLib.Ui;
+
 class PodcastProvider_Local {
 
     private var podcasts;
@@ -12,7 +14,8 @@ class PodcastProvider_Local {
     function valid(displayError){
         var validSubs = (podcasts.size() > 0);
         if(!validSubs && displayError){
-            WatchUi.pushView(new AlertView(Rez.Strings.errorNoSubscriptions), null, WatchUi.SLIDE_LEFT); 
+            var alert = new Ui.CompactAlert(Rez.Strings.errorNoSubscriptions);
+            alert.show();
         }
         return validSubs;
     }

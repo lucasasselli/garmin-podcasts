@@ -1,3 +1,0 @@
-[submodule "app/libs/garmin-compact-lib"]
-	path = app/libs/garmin-compact-lib
-	url = https://github.com/lucasasselli/garmin-compact-lib

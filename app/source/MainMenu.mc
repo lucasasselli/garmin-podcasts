@@ -3,7 +3,9 @@ using Toybox.Application.Storage;
 using Toybox.Communications;
 using Toybox.Media;
 
-class MainMenu extends CompactMenu {
+using CompactLib.Ui;
+
+class MainMenu extends Ui.CompactMenu {
 
     function initialize(){
         CompactMenu.initialize(Rez.Strings.AppName);
@@ -36,7 +38,8 @@ class MainMenu extends CompactMenu {
             WatchUi.pushView(new PlaybackQueue(), new PlaybackQueueDelegate(), WatchUi.SLIDE_LEFT);
         } else {
             // No episodes
-            WatchUi.pushView(new AlertView(Rez.Strings.errorNoEpisodes), null, WatchUi.SLIDE_LEFT);
+            var alert = new Ui.CompactAlert(Rez.Strings.errorNoEpisodes);
+            alert.show();
         }
     }
 

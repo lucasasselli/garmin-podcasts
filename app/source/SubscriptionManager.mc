@@ -5,7 +5,9 @@ using Toybox.Cryptography;
 using Toybox.StringUtil;
 using Toybox.Application.Storage;
 
-class SubscriptionManager extends CompactMenu {
+using CompactLib.Ui;
+
+class SubscriptionManager extends Ui.CompactMenu {
 
     function initialize(){
         CompactMenu.initialize(Rez.Strings.AppName);
@@ -51,7 +53,8 @@ class SubscriptionManager extends CompactMenu {
             }
             WatchUi.pushView(menu, new ConfirmMenuDelegate(Rez.Strings.confirmUnsubscribe, method(:onPodcastRemove)), WatchUi.SLIDE_LEFT);
         } else {
-            WatchUi.pushView(new AlertView(Rez.Strings.errorNoSubscriptions), null, WatchUi.SLIDE_LEFT);
+            var alert = new Ui.CompactAlert(Rez.Strings.errorNoSubscriptions);
+            alert.show();
         }
     }
 
@@ -70,8 +73,9 @@ class SubscriptionManager extends CompactMenu {
 
                var feeds = Utils.getSafeDictKey(data, "feeds");
                if(feeds == null || feeds.size() == 0){
-                   WatchUi.switchToView(new AlertView(Rez.Strings.errorNoResults), null, WatchUi.SLIDE_LEFT);
-                   return;
+                    var alert = new Ui.CompactAlert(Rez.Strings.errorNoResults);
+                    alert.switchTo();
+                    return;
                }
 
             var menu = new WatchUi.Menu2({:title=>Rez.Strings.titleResultsMenu});
@@ -80,9 +84,9 @@ class SubscriptionManager extends CompactMenu {
                 var feed = feeds[i];
                 var podcast = new [Constants.PODCAST_DATA_SIZE];
 
-                podcast[Constants.PODCAST_ID]         = feed["id"];
+                podcast[Constants.PODCAST_ID]        = feed["id"];
                 podcast[Constants.PODCAST_TITLE]     = feed["title"];
-                podcast[Constants.PODCAST_AUTHOR]     = feed["author"];
+                podcast[Constants.PODCAST_AUTHOR]    = feed["author"];
 
                 menu.addItem(
                     new WatchUi.MenuItem(
@@ -95,11 +99,13 @@ class SubscriptionManager extends CompactMenu {
             WatchUi.switchToView(menu, new ConfirmMenuDelegate(Rez.Strings.confirmSubscribe, method(:onPodcastAdd)), WatchUi.SLIDE_LEFT);
         }else if(responseCode == Communications.BLE_CONNECTION_UNAVAILABLE){
             // Not connected!!!
-            WatchUi.switchToView(new AlertView(Rez.Strings.errorNoInternet), null, WatchUi.SLIDE_LEFT);
+            var alert = new Ui.CompactAlert(Rez.Strings.errorNoInternet);
+            alert.switchTo();
         }else if(responseCode == null || responseCode == Communications.REQUEST_CANCELLED){
             // Request cancelled... Do nothing!
         }else{
-            WatchUi.switchToView(new AlertView("Error " + responseCode), null, WatchUi.SLIDE_LEFT);
+            var alert = new Ui.CompactAlert("Error " + responseCode);
+            alert.switchTo();
         }
     }
 

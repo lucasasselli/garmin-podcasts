@@ -2,6 +2,8 @@ using Toybox.WatchUi;
 using Toybox.Application.Storage;
 using Toybox.Media;
 
+using CompactLib.Ui;
+
 class PlaybackQueue extends WatchUi.CustomMenu {
 
     function initialize() {
@@ -161,7 +163,7 @@ class PlaybackQueueDelegate extends WatchUi.Menu2InputDelegate {
     }
 
     function onBack(){
-        var prompt = new CompactPrompt(Rez.Strings.confirmPlayback, method(:startPlayback), null);
+        var prompt = new Ui.CompactPrompt(Rez.Strings.confirmPlayback, method(:startPlayback), null);
         prompt.show();
         return false;
     }

@@ -2,6 +2,8 @@ using Toybox.WatchUi;
 using Toybox.Communications;
 using Toybox.Application.Storage;
 
+using CompactLib.Ui;
+
 class PodcastProvider_GPodder {
 
     var feedsIterator;
@@ -31,7 +33,8 @@ class PodcastProvider_GPodder {
     function valid(displayError){
         var validLogin = (StringHelper.notNullOrEmpty(username) && StringHelper.notNullOrEmpty(password));
         if(!validLogin && displayError){
-            WatchUi.pushView(new AlertView(Rez.Strings.errorNoCredentials), null, WatchUi.SLIDE_LEFT);
+            var alert = new Ui.CompactAlert(Rez.Strings.errorNoCredentials);
+            alert.show();
         }
         return validLogin;
     }
@@ -132,7 +135,7 @@ class PodcastProvider_GPodder {
 
 
     function manage(){
-        var prompt = new CompactPrompt(Rez.Strings.msgSendNotification, method(:showNotification), method(:dummy));
+        var prompt = new Ui.CompactPrompt(Rez.Strings.msgSendNotification, method(:showNotification), method(:dummy));
         prompt.show();
     }
 
@@ -142,6 +145,7 @@ class PodcastProvider_GPodder {
 
     function showNotification(){
         Communications.openWebPage(Constants.URL_GPODDER_ROOT, {}, null);
-        WatchUi.pushView(new AlertView(Rez.Strings.msgCheckPhone), null, WatchUi.SLIDE_LEFT);
+        var alert = new Ui.CompactAlert(Rez.Strings.msgCheckPhone);
+        alert.show();
     }
 }

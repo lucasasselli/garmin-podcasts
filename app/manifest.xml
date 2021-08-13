@@ -39,6 +39,8 @@
             <iq:uses-permission id="Communications"/>
         </iq:permissions>
         <iq:languages/>
-        <iq:barrels/>
+        <iq:barrels>
+            <iq:depends name="garmincompactlib" version="1.0.0"/>
+        </iq:barrels>
     </iq:application>
 </iq:manifest>

@@ -1,6 +1,8 @@
 using Toybox.WatchUi;
 
-class Settings extends CompactMenu {
+using CompactLib.Ui;
+
+class Settings extends Ui.CompactMenu {
 
     function initialize(){
         CompactMenu.initialize(Rez.Strings.settings);
