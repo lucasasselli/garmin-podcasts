@@ -2,11 +2,8 @@ import requests
 import logging
 import json
 
-# Garmin devices can parse JSON reponses of max 16K.
-
-BASE_KEYS = ["items", "id", "datePublished", "title", "duration", "feeds", "feed", "title", "author"]
+BASE_KEYS = ["items", "id", "datePublished", "title", "duration", "feeds", "feed", "title", "author", "url", "image"]
 EPISODE_KEYS = BASE_KEYS + ["enclosureUrl", "feedImage", "feedTitle", "episode"];
-
 def remove_from_json(d, keep):
     if isinstance(d, dict):
         for key in list(d.keys()):
