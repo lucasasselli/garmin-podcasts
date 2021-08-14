@@ -60,11 +60,15 @@ class EpisodesProvider_Recent {
             return;
         }
 
-        var items = Utils.getSafeDictKey(data, "items");
+        var items = Utils.getSafeDictKey(data, "feed");
+
         if(items != null){
             // Parse the episodes
             for(var i=0; i<items.size(); i++){
-                episodes.put(items[i]["id"], PodcastIndex.itemToEpisode(items[i], podcastEpisodesIterator.item()));
+                var podcastId = podcastEpisodesIterator.item();
+                var episode = PodcastIndex.itemToEpisode(items[i], podcastId);
+                var episodeId = Utils.hash(episode[Constants.EPISODE_URL]);
+                episodes.put(episodeId, episode);
             }
         }
 
