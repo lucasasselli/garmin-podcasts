@@ -110,18 +110,15 @@ class PodcastProvider_GPodder {
     }
 
     function getFeeds(item){
-        PodcastIndex.request(Constants.URL_PODCASTINDEX_FEED, {"url" => item }, method(:onFeed));
+        PodcastIndex.request(Constants.URL_FEEDPARSER_ROOT, {"url" => item }, method(:onFeed));
     }
 
     function onFeed(responseCode, data){
         if (responseCode == 200) {
-               var feed = Utils.getSafeDictKey(data, "feed");
-               if(feed != null){
-                var podcast = PodcastIndex.feedToPodcast(feed);
-                podcasts.add(podcast);
-               }
-        } else if (responseCode == 400) {
-            // Feed not found!
+                var podcast = PodcastIndex.feedToPodcast(data);
+                if(podcast != null){
+                    podcasts.add(podcast);
+                }
         } else {
             errorCallback.invoke("Feed error " + responseCode);
         }
@@ -132,7 +129,6 @@ class PodcastProvider_GPodder {
     function getFeedsDone(){
         doneCallback.invoke(podcasts);
     }
-
 
     function manage(){
         var prompt = new Ui.CompactPrompt(Rez.Strings.msgSendNotification, method(:showNotification), method(:dummy));

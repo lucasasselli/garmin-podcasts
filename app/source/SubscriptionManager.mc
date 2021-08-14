@@ -9,6 +9,8 @@ using CompactLib.Ui;
 
 class SubscriptionManager extends Ui.CompactMenu {
 
+    var searchResults;
+
     function initialize(){
         CompactMenu.initialize(Rez.Strings.AppName);
     }
@@ -36,18 +38,22 @@ class SubscriptionManager extends Ui.CompactMenu {
 
     // Manage subscribed podcasts
     function callbackSubscribed(){
-        var subscribed = StorageHelper.get(Constants.STORAGE_SUBSCRIBED, []);
 
-        if(subscribed.size() > 0){
+        var podcasts = StorageHelper.get(Constants.STORAGE_SUBSCRIBED, {});
+        var podcastIds = podcasts.keys();
+
+        if(podcasts.size() > 0){
             var menu = new WatchUi.Menu2({:title=> Rez.Strings.titleSubscriptionMenu });
 
-            for(var i=0; i<subscribed.size(); i++){
-                var podcast = subscribed[i];
+            for(var i=0; i<podcastIds.size(); i++){
+
+                var podcast = podcasts[podcastIds[i]];
+
                 menu.addItem(
                     new WatchUi.MenuItem(
                         podcast[Constants.PODCAST_TITLE],
                         podcast[Constants.PODCAST_AUTHOR],
-                        podcast,
+                        podcastIds[i],
                     {})
                 );
             }
@@ -59,84 +65,62 @@ class SubscriptionManager extends Ui.CompactMenu {
     }
 
     function onSearchQuery(query){
-        PodcastIndex.request(
+
+        var searchRequest = new CompactLib.Utils.CompactRequest(
+            method(:onSearchResults),
+            null,
+            WatchUi.loadResource(Rez.Strings.loading),
+            WatchUi.loadResource(Rez.JsonData.connectionErrors));
+
+        // FIXME:
+
+        searchRequest.requestPickerFixProgress(
             Constants.URL_PODCASTINDEX_SEARCH,
             {
                 "q"   => StringHelper.substringReplace(query, " ", "+"),
                 "max" => Constants.PODCASTINDEX_MAX_PODCASTS
             },
-            method(:onSearchResults));
+            PodcastIndex.getRequestOptions());
     }
 
-    function onSearchResults(responseCode, data) {
-        if (responseCode == 200) {
+    function onSearchResults(data, context) {
 
-               var feeds = Utils.getSafeDictKey(data, "feeds");
-               if(feeds == null || feeds.size() == 0){
-                    var alert = new Ui.CompactAlert(Rez.Strings.errorNoResults);
-                    alert.switchTo();
-                    return;
-               }
+        var feeds = Utils.getSafeDictKey(data, "feeds");
 
-            var menu = new WatchUi.Menu2({:title=>Rez.Strings.titleResultsMenu});
-            for (var i=0; i<feeds.size(); i++) {
+        if(feeds == null || feeds.size() == 0){
+            var alert = new Ui.CompactAlert(Rez.Strings.errorNoResults);
+            alert.switchTo();
+            return;
+        }
 
-                var feed = feeds[i];
-                var podcast = new [Constants.PODCAST_DATA_SIZE];
+        var menu = new WatchUi.Menu2({:title=>Rez.Strings.titleResultsMenu});
 
-                podcast[Constants.PODCAST_ID]        = feed["id"];
-                podcast[Constants.PODCAST_TITLE]     = feed["title"];
-                podcast[Constants.PODCAST_AUTHOR]    = feed["author"];
-
+        for (var i=0; i<feeds.size(); i++) {
+            var podcast = PodcastIndex.feedToPodcast(feeds[i]);
+            if(podcast != null){
                 menu.addItem(
                     new WatchUi.MenuItem(
-                        feed["title"],
-                        feed["author"],
+                        podcast[Constants.PODCAST_TITLE],
+                        podcast[Constants.PODCAST_AUTHOR],
                         podcast,
                     {}
                     ));
             }
-            WatchUi.switchToView(menu, new ConfirmMenuDelegate(Rez.Strings.confirmSubscribe, method(:onPodcastAdd)), WatchUi.SLIDE_LEFT);
-        }else if(responseCode == Communications.BLE_CONNECTION_UNAVAILABLE){
-            // Not connected!!!
-            var alert = new Ui.CompactAlert(Rez.Strings.errorNoInternet);
-            alert.switchTo();
-        }else if(responseCode == null || responseCode == Communications.REQUEST_CANCELLED){
-            // Request cancelled... Do nothing!
-        }else{
-            var alert = new Ui.CompactAlert("Error " + responseCode);
-            alert.switchTo();
         }
+
+        WatchUi.switchToView(menu, new ConfirmMenuDelegate(Rez.Strings.confirmSubscribe, method(:onPodcastAdd)), WatchUi.SLIDE_LEFT);
     }
 
     function onPodcastAdd(context){
-        var subscribed = StorageHelper.get(Constants.STORAGE_SUBSCRIBED, []);
-        var x = Utils.findArrayField(subscribed, Constants.PODCAST_ID, context[Constants.PODCAST_ID]);
-        if(x == null){
-            subscribed.add(context);
-        }
+        var subscribed = StorageHelper.get(Constants.STORAGE_SUBSCRIBED, {});
+        subscribed.put(Utils.hash(context[Constants.PODCAST_URL]), context);
         Storage.setValue(Constants.STORAGE_SUBSCRIBED, subscribed);
     }
 
     function onPodcastRemove(context){
-        var subscribed = StorageHelper.get(Constants.STORAGE_SUBSCRIBED, []);
-        var x = Utils.findArrayField(subscribed, Constants.PODCAST_ID, context[Constants.PODCAST_ID]);
-        if(x != null){
-            subscribed.remove(x);
-            Storage.setValue(Constants.STORAGE_SUBSCRIBED, subscribed);
-        }
-    }
-}
-
-class SearchProgressDelegate extends WatchUi.BehaviorDelegate
-{
-    function initialize() {
-        BehaviorDelegate.initialize();
-    }
-
-    function onBack() {
-        Communications.cancelAllRequests();
-        return false;
+        var subscribed = StorageHelper.get(Constants.STORAGE_SUBSCRIBED, {});
+        subscribed.remove(context);
+        Storage.setValue(Constants.STORAGE_SUBSCRIBED, subscribed);
     }
 }
 
@@ -151,10 +135,7 @@ class PickerSearchDelegate extends WatchUi.TextPickerDelegate {
 
     function onTextEntered(text, changed)
     {
-        var progressBar = new WatchUi.ProgressBar(WatchUi.loadResource(Rez.Strings.searching), null);
-        WatchUi.switchToView(progressBar, new SearchProgressDelegate(), WatchUi.SLIDE_IMMEDIATE);
         callback.invoke(text);
-        WatchUi.pushView(progressBar, new SearchProgressDelegate(), WatchUi.SLIDE_LEFT); // Ugly fix
     }
 }
 
@@ -177,8 +158,6 @@ class FallbackPickerSearchDelegate extends WatchUi.PickerDelegate {
         if(!picker.isDone(values[0])) {
             picker.addCharacter(values[0]);
         } else {
-            var progressBar = new WatchUi.ProgressBar(WatchUi.loadResource(Rez.Strings.searching), null);
-            WatchUi.pushView(progressBar, new SearchProgressDelegate(), WatchUi.SLIDE_LEFT);
             callback.invoke(picker.getText());
         }
     }

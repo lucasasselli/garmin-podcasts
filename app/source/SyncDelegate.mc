@@ -5,13 +5,11 @@ using Toybox.Application.Storage;
 class SyncDelegate extends Communications.SyncDelegate {
 
     var episodes;
+    var podcasts;
+
     var artworks;
 
     var downloadsIterator;
-
-    var artworkUrl;
-    var episodeUrl;
-    var podcastTitle;
 
     var downloadErrors = [];
 
@@ -67,11 +65,13 @@ class SyncDelegate extends Communications.SyncDelegate {
         return (artworks.indexOf(episodes[id][Constants.EPISODE_PODCAST]) < 0);
     }
 
-    function onEpisodes(episodes){
+    function onEpisodes(podcasts, episodes){
 
         self.episodes = episodes;
+        self.podcasts = podcasts;
 
         var downloadEpisodes = [];
+
         var ids = episodes.keys();
         for(var i=0; i<ids.size(); i++){
             if(needsMedia(ids[i]) || needsArtwork(ids[i])){
@@ -84,33 +84,20 @@ class SyncDelegate extends Communications.SyncDelegate {
     }
 
     function downloadEpisode(item){
-        System.println("Getting info for episode " + item);
-        PodcastIndex.request(Constants.URL_PODCASTINDEX_EPISODE, {"id" => item }, method(:onInfo));
-    }
-
-    function onInfo(responseCode, data) {
-        if (responseCode == 200) {
-               var episode = Utils.getSafeDictKey(data, "episode");
-               if(episode != null){
-                artworkUrl = episode["feedImage"];
-                podcastTitle = episode["feedTitle"];
-                episodeUrl = episode["enclosureUrl"];
-                downloadArtwork();
-                return;
-               }
-        }else{
-            downloadErrors.add(responseCode);
-            System.println("Info error " + responseCode);
-        }
-        downloadsIterator.next();
+        downloadArtwork();
     }
 
     function downloadArtwork(){
+
+        var episodeId = downloadsIterator.item();
+        var podcastId = episodes[episodeId][Constants.EPISODE_PODCAST];
+        var artworkUrl = podcasts[podcastId][Constants.PODCAST_ARTWORK];
+
         if(!needsArtwork(downloadsIterator.item())){
             System.println("Skipping artwork " + artworkUrl);
             downloadMedia();
         }else{
-            System.println("Downloading artwork " + artworkUrl);
+            System.println("Downloading artwork " + artworkUrl + " for " + podcastId);
             var options = {
                 :maxWidth  => Constants.IMAGE_SIZE,
                 :maxHeight => Constants.IMAGE_SIZE,
@@ -121,8 +108,11 @@ class SyncDelegate extends Communications.SyncDelegate {
     }
 
     function onArtwork(responseCode, data) {
+
+        var episodeId = downloadsIterator.item();
+        var podcastId = episodes[episodeId][Constants.EPISODE_PODCAST];
+
         if (responseCode == 200) {
-            var podcastId = episodes[downloadsIterator.item()][Constants.EPISODE_PODCAST];
             artworks.add(podcastId);
             Storage.setValue(Constants.STORAGE_ARTWORKS, artworks);
             Storage.setValue(Constants.ART_PREFIX + podcastId, data);
@@ -133,12 +123,15 @@ class SyncDelegate extends Communications.SyncDelegate {
     }
 
     function downloadMedia(){
-        if(!needsMedia(downloadsIterator.item())){
+
+        var episodeId = downloadsIterator.item();
+        var episodeUrl = episodes[episodeId][Constants.EPISODE_URL];
+
+        if(!needsMedia(episodeId)){
             System.println("Skipping episode " + episodeUrl);
             downloadsIterator.next();
         }else{
             var format = (episodeUrl.substring(episodeUrl.length()-3, episodeUrl.length())).toLower();
-
             var encoding;
             switch (format) {
 
@@ -156,6 +149,7 @@ class SyncDelegate extends Communications.SyncDelegate {
 
                 default:
                     encoding = Media.ENCODING_MP3;
+                    format = "mp3";
                     break;
             }
 
@@ -171,13 +165,19 @@ class SyncDelegate extends Communications.SyncDelegate {
     }
 
     function onMedia(responseCode, data) {
+
+        var episodeId = downloadsIterator.item();
+        var podcastId = episodes[episodeId][Constants.EPISODE_PODCAST];
+
         if (responseCode == 200) {
             episodes[downloadsIterator.item()][Constants.EPISODE_MEDIA] = data.getId();
 
             var mediaObj = Utils.getSafeMedia(data.getId());
             var metadata = mediaObj.getMetadata();
-            metadata.title = episodes[downloadsIterator.item()][Constants.EPISODE_TITLE];
-            metadata.artist = podcastTitle;
+
+            metadata.title = episodes[episodeId][Constants.EPISODE_TITLE];
+            metadata.artist = podcasts[podcastId][Constants.PODCAST_TITLE];
+
             mediaObj.setMetadata(metadata);
 
             Storage.setValue(Constants.STORAGE_EPISODES, episodes);

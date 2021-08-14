@@ -7,7 +7,7 @@ class EpisodesProvider_Recent {
     var podcastEpisodesIterator;
 
     var podcastProvider;
-    var podcasts = [];
+    var podcasts = {};
 
     var episodes = {};
 
@@ -39,13 +39,17 @@ class EpisodesProvider_Recent {
 
     function onPodcastGet(podcasts){
         self.podcasts = podcasts;
-        podcastEpisodesIterator = new Iterator(podcasts, method(:getEpisodes), method(:getEpisodesDone));
+        podcastEpisodesIterator = new Iterator(podcasts.keys(), method(:getEpisodes), method(:getEpisodesDone));
         podcastEpisodesIterator.next();
     }
 
     function getEpisodes(item){
-        System.println("Downloading episode list for " + item[Constants.PODCAST_ID]);
-        PodcastIndex.request(Constants.URL_PODCASTINDEX_EPISODES, {"id" => item[Constants.PODCAST_ID], "max" => settingEpisodesPerPodcast}, method(:onEpisodes));
+        System.println("Downloading episode list for " + podcasts[item][Constants.PODCAST_URL]);
+        Communications.makeWebRequest(
+            Constants.URL_FEEDPARSER_ROOT,
+            {"url" => podcasts[item][Constants.PODCAST_URL], "max" => settingEpisodesPerPodcast},
+            PodcastIndex.getRequestOptions(),
+            method(:onEpisodes));
     }
 
     function onEpisodes(responseCode, data) {
@@ -87,6 +91,6 @@ class EpisodesProvider_Recent {
             episodes.remove(keys[i]);
         }
 
-        doneCallback.invoke(episodes);
+        doneCallback.invoke(podcasts, episodes);
     }
 }

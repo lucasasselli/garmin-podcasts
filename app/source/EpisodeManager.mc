@@ -45,8 +45,11 @@ class EpisodeManager {
         if(podcasts != null && podcasts.size() > 0){
             podcastsMenu = new Ui.CompactMenu(Rez.Strings.selectEpisodes);
             podcastsMenu.setBackCallback(method(:onPodcastBack));
-            for(var i=0; i<podcasts.size(); i++){
-                podcastsMenu.add(podcasts[i][Constants.PODCAST_TITLE], method(:getSelected), method(:getEpisodes));
+
+            var podcastIds = podcasts.keys();
+
+            for(var i=0; i<podcastIds.size(); i++){
+                podcastsMenu.add(podcasts[podcastIds[i]][Constants.PODCAST_TITLE], method(:getSelected), method(:getEpisodes));
             }
 
             if(progressBar == null){
@@ -61,7 +64,7 @@ class EpisodeManager {
     }
 
     function getSelected(){
-        var podcastId = podcasts[podcastsMenu.getSelected()][Constants.PODCAST_ID];
+        var podcastId = podcasts.keys()[podcastsMenu.getSelected()];
         var selected = 0;
         var downloaded = 0;
         for(var i=0; i<episodes.size(); i++){
@@ -100,39 +103,46 @@ class EpisodeManager {
     }
 
     function getEpisodes(){
-        var podcast = podcasts[podcastsMenu.getSelected()];
-        showLoading();
-        PodcastIndex.request(
-            Constants.URL_PODCASTINDEX_EPISODES,
-            {"id" => podcast[Constants.PODCAST_ID], "max" => Constants.PODCASTINDEX_MAX_EPISODES},
-            method(:onEpisodes));
+
+        var podcastId = podcasts.keys()[podcastsMenu.getSelected()];
+        var podcast = podcasts[podcastId];
+
+        var episodesRequest = new CompactLib.Utils.CompactRequest(
+            method(:onEpisodes),
+            null,
+            WatchUi.loadResource(Rez.Strings.loading),
+            WatchUi.loadResource(Rez.JsonData.connectionErrors));
+
+        // FIXME:
+
+        episodesRequest.requestShowProgress(
+            Constants.URL_FEEDPARSER_ROOT,
+            {"url" => podcast[Constants.PODCAST_URL], "max" => Constants.PODCASTINDEX_MAX_EPISODES},
+            null);
     }
 
-    function onEpisodes(responseCode, data) {
+    function onEpisodes(data, context) {
 
-        if (responseCode == 200) {
+        var podcastId = podcasts.keys()[podcastsMenu.getSelected()];
+        var podcast = podcasts[podcastId];
 
-            menuEpisodes = {};
-            var podcast = podcasts[podcastsMenu.getSelected()];
+        menuEpisodes = {};
 
-            var items = Utils.getSafeDictKey(data, "items");
-            if(items != null && items.size() > 0){
-                var episodesMenu = new WatchUi.CheckboxMenu({:title => podcast[Constants.PODCAST_TITLE]});
-                for(var i=0; i<items.size(); i++){
-                    var id = items[i]["id"];
-                    var episode = PodcastIndex.itemToEpisode(items[i], podcast);
-                    menuEpisodes.put(id, episode);
-                    episodesMenu.addItem(new WatchUi.CheckboxMenuItem(episode[Constants.EPISODE_TITLE], "", id, episodes.hasKey(id), {}));
-                }
+        var items = Utils.getSafeDictKey(data, "feed");
+        if(items != null && items.size() > 0){
+            var episodesMenu = new WatchUi.CheckboxMenu({:title => podcast[Constants.PODCAST_TITLE]});
 
-                WatchUi.switchToView(episodesMenu, new EpisodeSelectDelegate(self.weak()), WatchUi.SLIDE_LEFT);
-            }else{
-                showError(Rez.Strings.errorNoEpisodes);
+            for(var i=0; i<items.size(); i++){
+                var episode = PodcastIndex.itemToEpisode(items[i], podcastId);
+                var episodeId = Utils.hash(episode[Constants.EPISODE_URL]);
+                menuEpisodes.put(episodeId, episode);
+                episodesMenu.addItem(new WatchUi.CheckboxMenuItem(episode[Constants.EPISODE_TITLE], "", episodeId, episodes.hasKey(episodeId), {}));
             }
-        }else if(responseCode == null || responseCode == Communications.REQUEST_CANCELLED){
-            // Request cancelled... Do nothing!
+
+            WatchUi.switchToView(episodesMenu, new EpisodeSelectDelegate(self.weak()), WatchUi.SLIDE_LEFT);
         }else{
-            showError("Error" + responseCode);
+            var alert = new Ui.CompactAlert(Rez.Strings.errorNoEpisodes);
+            alert.switchTo();
         }
     }
 

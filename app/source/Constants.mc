@@ -1,11 +1,9 @@
 module Constants {
 
     const URL_PODCASTINDEX_ROOT = "https://us-central1-garminpodcasts-307017.cloudfunctions.net/podcast-index-minify-1";
+    const URL_FEEDPARSER_ROOT = "https://us-central1-garminpodcasts-307017.cloudfunctions.net/feed-parser-2";
 
     const URL_PODCASTINDEX_SEARCH   = URL_PODCASTINDEX_ROOT + "/api/1.0/search/byterm";
-    const URL_PODCASTINDEX_EPISODES = URL_PODCASTINDEX_ROOT + "/api/1.0/episodes/byfeedid";
-    const URL_PODCASTINDEX_EPISODE  = URL_PODCASTINDEX_ROOT + "/api/1.0/episodes/byid";
-    const URL_PODCASTINDEX_FEED     = URL_PODCASTINDEX_ROOT + "/api/1.0/podcasts/byfeedurl";
 
     const PODCASTINDEX_MAX_PODCASTS = 30;
     const PODCASTINDEX_MAX_EPISODES = 300;
@@ -17,7 +15,7 @@ module Constants {
     const IMAGE_SIZE = 64;
     const CUSTOM_MENU_HEIGHT = 100;
 
-    const STORAGE_VERSION_VALUE = 3;
+    const STORAGE_VERSION_VALUE = 4;
 
     // Data structures
     enum {
@@ -30,13 +28,15 @@ module Constants {
     }
 
     enum {
-        PODCAST_ID,
+        PODCAST_URL,
+        PODCAST_ARTWORK,
         PODCAST_TITLE,
         PODCAST_AUTHOR,
         PODCAST_DATA_SIZE
     }
 
     enum {
+        EPISODE_URL,
         EPISODE_PODCAST,
         EPISODE_MEDIA,
         EPISODE_DATE,

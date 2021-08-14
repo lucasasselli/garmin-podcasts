@@ -1,5 +1,7 @@
 using Toybox.Application.Storage;
 using Toybox.Media;
+using Toybox.Cryptography;
+using Toybox.StringUtil;
 
 class Utils {
 
@@ -10,7 +12,7 @@ class Utils {
         for(var i=0; i<array.size(); i++){
             var x = array[i];
             if (field < x.size()){
-                if (x[field] == value){
+                if (x[field].equals(value)){
                     return x;
                 }
             }
@@ -34,6 +36,7 @@ class Utils {
         var x = [];
 
         for(var i=0; i<array.size(); i++){
+
             x.add(array[i][field]);
         }
 
@@ -108,6 +111,7 @@ class Utils {
         // Purge Artworks without podcast
         var artworks = StorageHelper.get(Constants.STORAGE_ARTWORKS, []);
         var purgedArtworks = [];
+
         for(var i=0; i<artworks.size(); i++){
             var x = Utils.findArrayField(episodes.values(), Constants.EPISODE_PODCAST, artworks[i]);
             if(x != null){
@@ -118,5 +122,28 @@ class Utils {
             }
         }
         Storage.setValue(Constants.STORAGE_ARTWORKS, purgedArtworks);
+    }
+
+    function hash(input){
+
+        var hash = new Cryptography.Hash({
+            :algorithm => Toybox.Cryptography.HASH_SHA1
+        });
+
+        var toArray = {
+            :fromRepresentation => StringUtil.REPRESENTATION_STRING_PLAIN_TEXT,
+            :toRepresentation => StringUtil.REPRESENTATION_BYTE_ARRAY,
+            :encoding => StringUtil.CHAR_ENCODING_UTF8
+        };
+
+        var toString = {
+            :fromRepresentation => StringUtil.REPRESENTATION_BYTE_ARRAY,
+            :toRepresentation => StringUtil.REPRESENTATION_STRING_HEX,
+            :encoding => StringUtil.CHAR_ENCODING_UTF8
+        };
+
+        hash.update(StringUtil.convertEncodedString(input, toArray));
+
+        return StringUtil.convertEncodedString(hash.digest(), toString);
     }
 }

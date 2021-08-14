@@ -8,7 +8,7 @@ class PodcastProvider_Local {
     private var podcasts;
 
     function initialize(){
-        self.podcasts = StorageHelper.get(Constants.STORAGE_SUBSCRIBED, []);
+        self.podcasts = StorageHelper.get(Constants.STORAGE_SUBSCRIBED, {});
     }
 
     function valid(displayError){
