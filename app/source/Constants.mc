@@ -6,7 +6,7 @@ module Constants {
     const URL_PODCASTINDEX_SEARCH   = URL_PODCASTINDEX_ROOT + "/api/1.0/search/byterm";
 
     const PODCASTINDEX_MAX_PODCASTS = 30;
-    const PODCASTINDEX_MAX_EPISODES = 300;
+    const FEEDPARSER_MAX_EPISODES = 300;
 
     const URL_GPODDER_ROOT = "https://gpodder.net/";
 
@@ -36,7 +36,6 @@ module Constants {
     }
 
     enum {
-        EPISODE_URL,
         EPISODE_PODCAST,
         EPISODE_MEDIA,
         EPISODE_DATE,

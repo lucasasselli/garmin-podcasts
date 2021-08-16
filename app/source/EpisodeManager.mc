@@ -30,7 +30,7 @@ class EpisodeManager {
 
     function showLoading(){
         progressBar = new WatchUi.ProgressBar(WatchUi.loadResource(Rez.Strings.loading), null);
-        WatchUi.pushView(progressBar, new RemoteProgressDelegate(), WatchUi.SLIDE_LEFT);
+        WatchUi.pushView(progressBar, new CompactLib.Utils.RemoteProgressDelegate(), WatchUi.SLIDE_LEFT);
     }
 
     function show(){
@@ -69,7 +69,7 @@ class EpisodeManager {
         var downloaded = 0;
         for(var i=0; i<episodes.size(); i++){
             var episode = episodes.values()[i];
-            if(episode[Constants.EPISODE_PODCAST] == podcastId){
+            if(episode[Constants.EPISODE_PODCAST].equals(podcastId)){
                 if(episode[Constants.EPISODE_MEDIA] != null){
                     downloaded++;
                 }
@@ -107,17 +107,12 @@ class EpisodeManager {
         var podcastId = podcasts.keys()[podcastsMenu.getSelected()];
         var podcast = podcasts[podcastId];
 
-        var episodesRequest = new CompactLib.Utils.CompactRequest(
-            method(:onEpisodes),
-            null,
-            WatchUi.loadResource(Rez.Strings.loading),
-            WatchUi.loadResource(Rez.JsonData.connectionErrors));
-
-        // FIXME:
+        var episodesRequest = new CompactLib.Utils.CompactRequest(WatchUi.loadResource(Rez.JsonData.connectionErrors));
 
         episodesRequest.requestShowProgress(
             Constants.URL_FEEDPARSER_ROOT,
-            {"url" => podcast[Constants.PODCAST_URL], "max" => Constants.PODCASTINDEX_MAX_EPISODES},
+            {"feedUrl" => podcast[Constants.PODCAST_URL], "max" => Constants.FEEDPARSER_MAX_EPISODES},
+            method(:onEpisodes),
             null);
     }
 
@@ -129,19 +124,20 @@ class EpisodeManager {
         menuEpisodes = {};
 
         var items = Utils.getSafeDictKey(data, "feed");
+
         if(items != null && items.size() > 0){
             var episodesMenu = new WatchUi.CheckboxMenu({:title => podcast[Constants.PODCAST_TITLE]});
 
             for(var i=0; i<items.size(); i++){
-                var episode = PodcastIndex.itemToEpisode(items[i], podcastId);
-                var episodeId = Utils.hash(episode[Constants.EPISODE_URL]);
+                var episode = Remote.itemToEpisode(items[i], podcastId);
+                var episodeId = Remote.genEpisodeId(episode);
                 menuEpisodes.put(episodeId, episode);
                 episodesMenu.addItem(new WatchUi.CheckboxMenuItem(episode[Constants.EPISODE_TITLE], "", episodeId, episodes.hasKey(episodeId), {}));
             }
 
             WatchUi.switchToView(episodesMenu, new EpisodeSelectDelegate(self.weak()), WatchUi.SLIDE_LEFT);
         }else{
-            var alert = new Ui.CompactAlert(Rez.Strings.errorNoEpisodes);
+            var alert = new Ui.CompactAlert(Rez.Strings.errorNoEpisodes); // FIXME
             alert.switchTo();
         }
     }

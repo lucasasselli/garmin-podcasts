@@ -3,12 +3,13 @@ using Toybox.Communications;
 using Toybox.Application.Storage;
 
 using CompactLib.Ui;
+using CompactLib.StringHelper;
 
 class PodcastProvider_GPodder {
 
     var feedsIterator;
 
-    var podcasts = [];
+    var podcasts = {};
 
     var username;
     var password;
@@ -44,15 +45,15 @@ class PodcastProvider_GPodder {
         self.doneCallback = doneCallback;
 
         // Login to gPodder
-           Communications.makeWebRequest(
-               Constants.URL_GPODDER_ROOT + "api/2/auth/" + username + "/login.json",
-               null,
-               {
-                :method => Communications.HTTP_REQUEST_METHOD_POST,
-                :headers => headers,
-                :responseType => Communications.HTTP_RESPONSE_CONTENT_TYPE_TEXT_PLAIN
-               },
-               method(:onLogin));
+        Communications.makeWebRequest(
+            Constants.URL_GPODDER_ROOT + "api/2/auth/" + username + "/login.json",
+            null,
+            {
+            :method => Communications.HTTP_REQUEST_METHOD_POST,
+            :headers => headers,
+            :responseType => Communications.HTTP_RESPONSE_CONTENT_TYPE_TEXT_PLAIN
+            },
+            method(:onLogin));
 
         return true;
     }
@@ -100,7 +101,7 @@ class PodcastProvider_GPodder {
                     urls.add(data[i]["url"]);
                 }
             }
-            feedsIterator = new Iterator(urls, method(:getFeeds), method(:getFeedsDone));
+            feedsIterator = new Iterator(urls, method(:getFeedInfo), method(:getFeedsDone));
             feedsIterator.next();
         } else if (responseCode == Communications.NETWORK_RESPONSE_TOO_LARGE){
             errorCallback.invoke(WatchUi.loadResource(Rez.Strings.errorTooManySubs));
@@ -109,24 +110,32 @@ class PodcastProvider_GPodder {
         }
     }
 
-    function getFeeds(item){
-        PodcastIndex.request(Constants.URL_FEEDPARSER_ROOT, {"url" => item }, method(:onFeed));
+    function getFeedInfo(item){
+        System.println("Getting feed info for " + item);
+        var podcastInfoRequest = new CompactLib.Utils.CompactRequest(null);
+        podcastInfoRequest.request(
+            Constants.URL_FEEDPARSER_ROOT,
+            {"feedUrl" => item, "max" => Constants.FEEDPARSER_MAX_EPISODES},
+            method(:onFeedInfo),
+            item);
     }
 
-    function onFeed(responseCode, data){
-        if (responseCode == 200) {
-                var podcast = PodcastIndex.feedToPodcast(data);
-                if(podcast != null){
-                    podcasts.add(podcast);
-                }
+    function onFeedInfo(code, data, context){
+
+        if (code == 200) {
+            var podcast = Remote.feedToPodcast(data, context);
+            if(podcast != null){
+                podcasts.put(Utils.hash(context), podcast);
+            }
         } else {
-            errorCallback.invoke("Feed error " + responseCode);
+            System.println("Error " + code + " while processing podcast feed " + feedsIterator.item());
         }
 
         feedsIterator.next();
     }
 
     function getFeedsDone(){
+        Storage.setValue(Constants.STORAGE_SUBSCRIBED, podcasts);
         doneCallback.invoke(podcasts);
     }
 

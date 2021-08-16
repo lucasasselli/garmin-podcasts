@@ -9,11 +9,14 @@ class Utils {
         if (array == null){
             return null;
         }
+
         for(var i=0; i<array.size(); i++){
             var x = array[i];
             if (field < x.size()){
-                if (x[field].equals(value)){
-                    return x;
+                if(x[field] != null){
+                    if (x[field].equals(value)){
+                        return x;
+                    }
                 }
             }
         }

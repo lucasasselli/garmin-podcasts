@@ -93,9 +93,10 @@ class SyncDelegate extends Communications.SyncDelegate {
         var podcastId = episodes[episodeId][Constants.EPISODE_PODCAST];
         var artworkUrl = podcasts[podcastId][Constants.PODCAST_ARTWORK];
 
+
         if(!needsArtwork(downloadsIterator.item())){
             System.println("Skipping artwork " + artworkUrl);
-            downloadMedia();
+            getMediaUrl();
         }else{
             System.println("Downloading artwork " + artworkUrl + " for " + podcastId);
             var options = {
@@ -119,19 +120,46 @@ class SyncDelegate extends Communications.SyncDelegate {
         } else {
             System.println(responseCode);
         }
-        downloadMedia();
+        getMediaUrl();
     }
 
-    function downloadMedia(){
+    function getMediaUrl(){
+        var episodeId = downloadsIterator.item();
+        var podcastId = episodes[episodeId][Constants.EPISODE_PODCAST];
+        var podcastUrl = podcasts[podcastId][Constants.PODCAST_URL];
+
+        var mediaUrlRequest = new CompactLib.Utils.CompactRequest(null);
+        mediaUrlRequest.request(
+            Constants.URL_FEEDPARSER_ROOT,
+            {"feedUrl" => podcastUrl, "episodeId" => episodeId},
+            method(:onMediaUrl),
+            episodeId);
+    }
+
+    function onMediaUrl(code, data, context){
+        if (code == 200) {
+            var url = data.get("url");
+            if(url != null){
+                downloadMedia(url);
+                return;
+            }else{
+            }
+        }
+        System.println("Unable to get the url for " + context);
+        downloadsIterator.next();
+    }
+
+    function downloadMedia(url){
 
         var episodeId = downloadsIterator.item();
-        var episodeUrl = episodes[episodeId][Constants.EPISODE_URL];
+        var podcastId = episodes[episodeId][Constants.EPISODE_PODCAST];
+        var podcastUrl = podcasts[podcastId][Constants.PODCAST_URL];
 
         if(!needsMedia(episodeId)){
-            System.println("Skipping episode " + episodeUrl);
+            System.println("Skipping episode " + url);
             downloadsIterator.next();
         }else{
-            var format = (episodeUrl.substring(episodeUrl.length()-3, episodeUrl.length())).toLower();
+            var format = (url.substring(url.length()-3, url.length())).toLower();
             var encoding;
             switch (format) {
 
@@ -153,14 +181,14 @@ class SyncDelegate extends Communications.SyncDelegate {
                     break;
             }
 
-            System.println("Downloading " + format + " episode " + episodeUrl);
+            System.println("Downloading " + format + " episode " + url);
             var options = {
                 :method => Communications.HTTP_REQUEST_METHOD_GET,
                 :responseType => Communications.HTTP_RESPONSE_CONTENT_TYPE_AUDIO,
                 :mediaEncoding => encoding,
                 :fileDownloadProgressCallback => method(:onFileProgress)
             };
-            Communications.makeWebRequest(episodeUrl, null, options, method(:onMedia));
+            Communications.makeWebRequest(url, null, options, method(:onMedia));
         }
     }
 

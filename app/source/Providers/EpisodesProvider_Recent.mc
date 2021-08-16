@@ -45,30 +45,24 @@ class EpisodesProvider_Recent {
 
     function getEpisodes(item){
         System.println("Downloading episode list for " + podcasts[item][Constants.PODCAST_URL]);
-        Communications.makeWebRequest(
+        var podcastEpisodesRequest = new CompactLib.Utils.CompactRequest(null);
+        podcastEpisodesRequest.request(
             Constants.URL_FEEDPARSER_ROOT,
-            {"url" => podcasts[item][Constants.PODCAST_URL], "max" => settingEpisodesPerPodcast},
-            PodcastIndex.getRequestOptions(),
-            method(:onEpisodes));
+            {"feedUrl" => podcasts[item][Constants.PODCAST_URL], "max" => settingEpisodesPerPodcast},
+            method(:onEpisodes),
+            item);
     }
 
-    function onEpisodes(responseCode, data) {
-
-        // Error
-        if (responseCode != 200) {
-            errorCallback.invoke("Error " + responseCode);
-            return;
-        }
-
-        var items = Utils.getSafeDictKey(data, "feed");
-
-        if(items != null){
-            // Parse the episodes
-            for(var i=0; i<items.size(); i++){
-                var podcastId = podcastEpisodesIterator.item();
-                var episode = PodcastIndex.itemToEpisode(items[i], podcastId);
-                var episodeId = Utils.hash(episode[Constants.EPISODE_URL]);
-                episodes.put(episodeId, episode);
+    function onEpisodes(responseCode, data, context) {
+        if (responseCode == 200) {
+            var items = Utils.getSafeDictKey(data, "feed");
+            if(items != null){
+                // Parse the episodes
+                for(var i=0; i<items.size(); i++){
+                    var podcastId = podcastEpisodesIterator.item();
+                    var episode = Remote.itemToEpisode(items[i], podcastId);
+                    episodes.put(Remote.genEpisodeId(episode), episode);
+                }
             }
         }
 

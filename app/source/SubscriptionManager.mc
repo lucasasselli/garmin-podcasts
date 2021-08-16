@@ -65,22 +65,16 @@ class SubscriptionManager extends Ui.CompactMenu {
     }
 
     function onSearchQuery(query){
-
-        var searchRequest = new CompactLib.Utils.CompactRequest(
-            method(:onSearchResults),
-            null,
-            WatchUi.loadResource(Rez.Strings.loading),
-            WatchUi.loadResource(Rez.JsonData.connectionErrors));
-
-        // FIXME:
-
+        var searchRequest = new CompactLib.Utils.CompactRequest(WatchUi.loadResource(Rez.JsonData.connectionErrors));
+        searchRequest.setOptions(Remote.getPodcastIndexRequestOptions());
         searchRequest.requestPickerFixProgress(
             Constants.URL_PODCASTINDEX_SEARCH,
             {
                 "q"   => StringHelper.substringReplace(query, " ", "+"),
                 "max" => Constants.PODCASTINDEX_MAX_PODCASTS
             },
-            PodcastIndex.getRequestOptions());
+            method(:onSearchResults),
+            null);
     }
 
     function onSearchResults(data, context) {
@@ -96,7 +90,7 @@ class SubscriptionManager extends Ui.CompactMenu {
         var menu = new WatchUi.Menu2({:title=>Rez.Strings.titleResultsMenu});
 
         for (var i=0; i<feeds.size(); i++) {
-            var podcast = PodcastIndex.feedToPodcast(feeds[i]);
+            var podcast = Remote.feedToPodcast(feeds[i], feeds[i]["url"]);
             if(podcast != null){
                 menu.addItem(
                     new WatchUi.MenuItem(

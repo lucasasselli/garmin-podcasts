@@ -2,32 +2,66 @@ import feedparser
 import time
 import logging
 import json
+import flask
+
+# Garmin devices have a poorly documented JSON response memory limit (around 8KB max),
+# parse the feed, conver it to JSON and reduce the size as much as possible!
+
+def format_date(date):
+    return int(time.mktime(date))
 
 def parse_feed(request):
-    d = feedparser.parse(request.args.get('url'))
+    
+    url = request.args.get('feedUrl')
+    episodeId = request.args.get('episodeId')
 
-    o = { 'feed': []}
+    d = feedparser.parse(url)
+    
+    o = {}
 
-    o['title'] = d.channel.title
-    o['author'] = d.channel.title
-    o['image'] = d.channel.image.url
+    if episodeId:
 
-    for i, entry in enumerate(d.entries):
+        date = int(episodeId.split("_")[1])
 
-        max_items = request.args.get('max')
+        try:
+            entry = list(filter(lambda entry : format_date(entry.published_parsed) == date, d.entries))[0]
+            link = list(filter(lambda link : link['rel'] == 'enclosure', entry.links))[0]
+            o['url'] = link.url
+        except:
+            pass
 
-        if max_items and i >= int(max_items):
-            break
+    else:
 
-        e = {}
+        o['title'] = d.channel.title
+        o['author'] = d.channel.title
+        o['image'] = d.channel.image.url
 
-        e['title'] = entry.title
-        e['datePublished'] = time.mktime(entry.published_parsed)
+        o['feed'] = []
 
-        links = list(filter(lambda link : link['rel'] == 'enclosure', entry.links))
+        for i, entry in enumerate(d.entries):
 
-        e['enclosureUrl'] = links[0].url
-        e['duration'] = links[0].length
-        o['feed'].append(e)
+            max_items = request.args.get('max')
 
-    return json.dumps(o)
+            if max_items and i >= int(max_items):
+                break
+                
+            e = {}
+            e['title'] = entry.title
+            e['date'] = format_date(entry.published_parsed)
+
+            duration = 0
+            try:
+                for digit in entry.itunes_duration.split(':'):
+                    duration = duration*60 + int(digit)
+            except:
+                pass  
+            e['length'] = duration
+
+            o['feed'].append(e)
+
+    r = flask.Response(
+        response=json.dumps(o, separators=(',', ':')),
+        status=200,
+        mimetype="application/json")
+
+    return r
