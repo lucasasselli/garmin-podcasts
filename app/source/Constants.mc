@@ -13,7 +13,7 @@ module Constants {
     const ART_PREFIX = "art_";
 
     const IMAGE_SIZE = 64;
-    const CUSTOM_MENU_HEIGHT = 100;
+    const CUSTOM_MENU_HEIGHT = 108;
 
     const STORAGE_VERSION_VALUE = 4;
 
@@ -31,7 +31,6 @@ module Constants {
         PODCAST_URL,
         PODCAST_ARTWORK,
         PODCAST_TITLE,
-        PODCAST_AUTHOR,
         PODCAST_DATA_SIZE
     }
 

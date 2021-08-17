@@ -7,6 +7,7 @@ using Toybox.StringUtil;
 class Remote {
 
     function getPodcastIndexRequestOptions(){
+
         var now = Time.now().value();
         var auth = Utils.hash(Secrets.TOKEN + Secrets.SECRET + now);
 
@@ -41,12 +42,12 @@ class Remote {
     }
 
     function feedToPodcast(data, url){
+
         var podcast = new [Constants.PODCAST_DATA_SIZE];
 
         podcast[Constants.PODCAST_URL] = url;
         podcast[Constants.PODCAST_ARTWORK] = Utils.getSafeDictKey(data, "image");
         podcast[Constants.PODCAST_TITLE] = Utils.getSafeDictKey(data, "title");
-        podcast[Constants.PODCAST_AUTHOR] = Utils.getSafeDictKey(data, "author");
 
         // TODO: Check if NULL
 

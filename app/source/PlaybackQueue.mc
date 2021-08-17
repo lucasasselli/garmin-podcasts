@@ -7,7 +7,7 @@ using CompactLib.Ui;
 class PlaybackQueue extends WatchUi.CustomMenu {
 
     function initialize() {
-        CustomMenu.initialize(Constants.CUSTOM_MENU_HEIGHT, Graphics.COLOR_WHITE, {});
+        CustomMenu.initialize(Constants.CUSTOM_MENU_HEIGHT, Graphics.COLOR_BLACK, {});
 
         // Get the current stored playlist.
         var playlist = StorageHelper.get(Constants.STORAGE_PLAYLIST, []);
@@ -65,6 +65,9 @@ class PlaybackQueueItem extends WatchUi.CustomMenuItem {
 
     var init = false;
 
+    var titleHeight;
+    var podcastHeight;
+    var yTextMargin;
 
     function initialize(episode, checked) {
 
@@ -80,7 +83,9 @@ class PlaybackQueueItem extends WatchUi.CustomMenuItem {
         scrollTimer = new ScrollTimer();
 
         titleText = new ScrollText(self.weak(), episodeTitle, Graphics.FONT_SMALL, MARGIN);
+        titleHeight = Graphics.getFontHeight(Graphics.FONT_SMALL);
         podcastText = new ScrollText(self.weak(), episodePodcast, Graphics.FONT_TINY, MARGIN);
+        podcastHeight = Graphics.getFontHeight(Graphics.FONT_TINY);
 
         CustomMenuItem.initialize(episode[Constants.EPISODE_MEDIA], {});
     }
@@ -89,6 +94,8 @@ class PlaybackQueueItem extends WatchUi.CustomMenuItem {
         if(!init){
             centerX = dc.getWidth()/2;
             centerY = dc.getHeight()/2;
+
+            yTextMargin = (dc.getHeight() - titleHeight - podcastHeight - MARGIN)/2;
 
             artworkBitmap = Storage.getValue(Constants.ART_PREFIX + episode[Constants.EPISODE_PODCAST]);
             if(artworkBitmap == null){
@@ -115,18 +122,22 @@ class PlaybackQueueItem extends WatchUi.CustomMenuItem {
         dc.setPenWidth(1);
         dc.drawLine(0, 0, dc.getWidth(), 0);
 
+        var yPos = yTextMargin + titleHeight/2;
+
         // Title
-        titleText.draw(dc, INNER_MARGIN, centerY - 24, isFocused());
+        titleText.draw(dc, INNER_MARGIN, yPos, isFocused());
+        yPos += titleHeight/2 + podcastHeight/2;
 
         // Podcast
-        podcastText.draw(dc, INNER_MARGIN, centerY + 4, isFocused());
+        podcastText.draw(dc, INNER_MARGIN, yPos, isFocused());
+        yPos += podcastHeight/2 + MARGIN;
 
         // Progress
         dc.setColor(Graphics.COLOR_DK_GRAY, Graphics.COLOR_WHITE);
-        dc.drawLine(INNER_MARGIN, centerY +24, dc.getWidth() - 8, centerY + 24);
+        dc.drawLine(INNER_MARGIN, yPos, dc.getWidth() - 8, yPos);
         dc.setPenWidth(3);
         dc.setColor(Graphics.COLOR_BLUE, Graphics.COLOR_WHITE);
-        dc.drawLine(INNER_MARGIN, centerY +24, INNER_MARGIN + progress*(dc.getWidth() - INNER_MARGIN - 8), centerY + 24);
+        dc.drawLine(INNER_MARGIN, yPos, INNER_MARGIN + progress*(dc.getWidth() - INNER_MARGIN - 8), yPos);
 
         // Draw image
         dc.drawBitmap(MARGIN, centerY - Constants.IMAGE_SIZE/2, artworkBitmap);

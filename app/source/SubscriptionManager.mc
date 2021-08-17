@@ -52,7 +52,7 @@ class SubscriptionManager extends Ui.CompactMenu {
                 menu.addItem(
                     new WatchUi.MenuItem(
                         podcast[Constants.PODCAST_TITLE],
-                        podcast[Constants.PODCAST_AUTHOR],
+                        null,
                         podcastIds[i],
                     {})
                 );
@@ -95,7 +95,7 @@ class SubscriptionManager extends Ui.CompactMenu {
                 menu.addItem(
                     new WatchUi.MenuItem(
                         podcast[Constants.PODCAST_TITLE],
-                        podcast[Constants.PODCAST_AUTHOR],
+                        feeds[i]["author"],
                         podcast,
                     {}
                     ));

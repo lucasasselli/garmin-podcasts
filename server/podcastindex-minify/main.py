@@ -2,8 +2,8 @@ import requests
 import logging
 import json
 
-BASE_KEYS = ["items", "id", "datePublished", "title", "duration", "feeds", "feed", "title", "author", "url", "image"]
-EPISODE_KEYS = BASE_KEYS + ["enclosureUrl", "feedImage", "feedTitle", "episode"];
+KEYS_TO_KEEP = ["items", "id", "datePublished", "title", "duration", "feeds", "feed", "title", "author", "url", "image"]
+
 def remove_from_json(d, keep):
     if isinstance(d, dict):
         for key in list(d.keys()):
@@ -29,8 +29,6 @@ def podcast_index_minify(request):
 
     j = json.loads(r.text)
 
-    if "episode" in list(j.keys()):
-        remove_from_json(j, EPISODE_KEYS)
-    else:
-        remove_from_json(j, BASE_KEYS)
+    remove_from_json(j, KEYS_TO_KEEP)
+
     return json.dumps(j)

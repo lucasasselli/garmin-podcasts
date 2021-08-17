@@ -5,7 +5,7 @@ import json
 import flask
 
 # Garmin devices have a poorly documented JSON response memory limit (around 8KB max),
-# parse the feed, conver it to JSON and reduce the size as much as possible!
+# parse the feed and reduce the size as much as possible!
 
 def format_date(date):
     return int(time.mktime(date))
@@ -33,11 +33,9 @@ def parse_feed(request):
     else:
 
         o['title'] = d.channel.title
-        o['author'] = d.channel.title
         o['image'] = d.channel.image.url
 
         o['feed'] = []
-
         for i, entry in enumerate(d.entries):
 
             max_items = request.args.get('max')

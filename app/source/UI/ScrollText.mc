@@ -15,7 +15,7 @@ class ScrollTimer {
         if(subscribers.indexOf(ref) < 0){
             subscribers.add(ref);
         }
-        
+
         start();
     }
 
@@ -53,7 +53,7 @@ class ScrollTimer {
 
     function reset() {
         if (timer != null) {
-            timer.stop(); 
+            timer.stop();
             timer = null;
         }
     }
@@ -148,7 +148,7 @@ class ScrollText {
             }
 
             if (offset < -textWidth){
-                // Exceeded screen... Back to beginning 
+                // Exceeded screen... Back to beginning
                 offset = +textWidth;
                 tripDone = true;
             }
