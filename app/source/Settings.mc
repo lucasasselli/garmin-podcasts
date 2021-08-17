@@ -5,7 +5,7 @@ using CompactLib.Ui;
 class Settings extends Ui.CompactMenu {
 
     function initialize(){
-        CompactMenu.initialize(Rez.Strings.settings);
+        CompactMenu.initialize(Rez.Strings.menuSettings);
     }
 
     function build(){

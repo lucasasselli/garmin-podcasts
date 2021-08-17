@@ -137,9 +137,9 @@ class Utils {
             :encoding => StringUtil.CHAR_ENCODING_UTF8
         };
 
-        hash.update(StringUtil.convertEncodedString(input, toArray));
+        hash.update(StringUtil.convertEnresponseCodedString(input, toArray));
 
-        return StringUtil.convertEncodedString(hash.digest(), toString);
+        return StringUtil.convertEnresponseCodedString(hash.digest(), toString);
     }
 
     function getPodcastIndexRequestOptions(){

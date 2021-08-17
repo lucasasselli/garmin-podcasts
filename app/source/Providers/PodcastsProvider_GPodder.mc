@@ -26,7 +26,7 @@ class PodcastProvider_GPodder {
         deviceid = Application.getApp().getProperty("settingDeviceId");
         headers = {
             "Content-Type" => Communications.REQUEST_CONTENT_TYPE_URL_ENCODED,
-            "Authorization" => "Basic " + StringUtil.encodeBase64(username + ":" + password),
+            "Authorization" => "Basic " + StringUtil.enresponseCodeBase64(username + ":" + password),
         };
 
     }
@@ -83,6 +83,7 @@ class PodcastProvider_GPodder {
         } else if(responseCode == Communications.BLE_CONNECTION_UNAVAILABLE){
             errorCallback.invoke(WatchUi.loadResource(Rez.Strings.errorNoInternet));
         } else {
+            // FIXME: Use JSON!
             errorCallback.invoke("Login error " + responseCode);
         }
     }
@@ -104,6 +105,7 @@ class PodcastProvider_GPodder {
             feedsIterator = new Iterator(urls, method(:getFeedInfo), method(:getFeedsDone));
             feedsIterator.next();
         } else if (responseCode == Communications.NETWORK_RESPONSE_TOO_LARGE){
+            // FIXME: Use JSON!
             errorCallback.invoke(WatchUi.loadResource(Rez.Strings.errorTooManySubs));
         } else {
             errorCallback.invoke("List error " + responseCode);
@@ -120,15 +122,15 @@ class PodcastProvider_GPodder {
             item);
     }
 
-    function onFeedInfo(code, data, context){
+    function onFeedInfo(responseCode, data, context){
 
-        if (code == 200) {
+        if (responseCode == 200) {
             var podcast = Data.parsePodcast(data, context);
             if(podcast != null){
                 podcasts.put(Utils.hash(context), podcast);
             }
         } else {
-            System.println("Error " + code + " while processing podcast feed " + feedsIterator.item());
+            System.println("Error " + responseCode + " while processing podcast feed " + feedsIterator.item());
         }
 
         feedsIterator.next();

@@ -38,7 +38,7 @@ class MainMenu extends Ui.CompactMenu {
             WatchUi.pushView(new PlaybackQueue(), new PlaybackQueueDelegate(), WatchUi.SLIDE_LEFT);
         } else {
             // No episodes
-            var alert = new Ui.CompactAlert(Rez.Strings.errorNoEpisodes);
+            var alert = new Ui.CompactAlert(Rez.Strings.errorNoQueueEpisodes);
             alert.show();
         }
     }

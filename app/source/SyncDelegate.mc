@@ -136,8 +136,8 @@ class SyncDelegate extends Communications.SyncDelegate {
             episodeId);
     }
 
-    function onMediaUrl(code, data, context){
-        if (code == 200) {
+    function onMediaUrl(responseCode, data, context){
+        if (responseCode == 200) {
             var url = data.get("url");
             if(url != null){
                 downloadMedia(url);

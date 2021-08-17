@@ -43,7 +43,7 @@ class EpisodeManager {
     function podcastsDone(podcasts){
         self.podcasts = podcasts;
         if(podcasts != null && podcasts.size() > 0){
-            podcastsMenu = new Ui.CompactMenu(Rez.Strings.selectEpisodes);
+            podcastsMenu = new Ui.CompactMenu(Rez.Strings.titleSelectEpisodesMenu);
             podcastsMenu.setBackCallback(method(:onPodcastBack));
 
             var podcastIds = podcasts.keys();
@@ -139,7 +139,7 @@ class EpisodeManager {
 
             WatchUi.switchToView(episodesMenu, new EpisodeSelectDelegate(self.weak()), WatchUi.SLIDE_LEFT);
         }else{
-            var alert = new Ui.CompactAlert(Rez.Strings.errorNoEpisodes); // FIXME
+            var alert = new Ui.CompactAlert(Rez.Strings.errorNoPodcastEpisodes);
             alert.switchTo();
         }
     }
