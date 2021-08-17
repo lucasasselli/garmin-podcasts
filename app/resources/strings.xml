@@ -33,7 +33,6 @@
 
     <!-- Msg Dialog -->
     <string id="msgSendNotification">Open on phone?</string>
-    <string id="msgCheckPhone">Check phone</string>
 
     <!-- Other -->
     <string id="search">Search</string>

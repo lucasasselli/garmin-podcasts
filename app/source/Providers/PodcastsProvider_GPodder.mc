@@ -148,7 +148,5 @@ class PodcastProvider_GPodder {
 
     function showNotification(){
         Communications.openWebPage(Constants.URL_GPODDER_ROOT, {}, null);
-        // var alert = new Ui.CompactAlert(Rez.Strings.msgCheckPhone);
-        // alert.switchTo();
     }
 }
