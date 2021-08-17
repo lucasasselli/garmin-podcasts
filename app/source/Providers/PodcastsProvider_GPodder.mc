@@ -123,7 +123,7 @@ class PodcastProvider_GPodder {
     function onFeedInfo(code, data, context){
 
         if (code == 200) {
-            var podcast = Remote.feedToPodcast(data, context);
+            var podcast = Data.parsePodcast(data, context);
             if(podcast != null){
                 podcasts.put(Utils.hash(context), podcast);
             }

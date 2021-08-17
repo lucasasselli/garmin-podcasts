@@ -66,7 +66,7 @@ class SubscriptionManager extends Ui.CompactMenu {
 
     function onSearchQuery(query){
         var searchRequest = new CompactLib.Utils.CompactRequest(WatchUi.loadResource(Rez.JsonData.connectionErrors));
-        searchRequest.setOptions(Remote.getPodcastIndexRequestOptions());
+        searchRequest.setOptions(Utils.getPodcastIndexRequestOptions());
         searchRequest.requestPickerFixProgress(
             Constants.URL_PODCASTINDEX_SEARCH,
             {
@@ -79,7 +79,7 @@ class SubscriptionManager extends Ui.CompactMenu {
 
     function onSearchResults(data, context) {
 
-        var feeds = Utils.getSafeDictKey(data, "feeds");
+        var feeds = data.get("feeds");
 
         if(feeds == null || feeds.size() == 0){
             var alert = new Ui.CompactAlert(Rez.Strings.errorNoResults);
@@ -90,7 +90,7 @@ class SubscriptionManager extends Ui.CompactMenu {
         var menu = new WatchUi.Menu2({:title=>Rez.Strings.titleResultsMenu});
 
         for (var i=0; i<feeds.size(); i++) {
-            var podcast = Remote.feedToPodcast(feeds[i], feeds[i]["url"]);
+            var podcast = Data.parsePodcast(feeds[i], feeds[i]["url"]);
             if(podcast != null){
                 menu.addItem(
                     new WatchUi.MenuItem(

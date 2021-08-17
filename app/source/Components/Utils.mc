@@ -2,6 +2,7 @@ using Toybox.Application.Storage;
 using Toybox.Media;
 using Toybox.Cryptography;
 using Toybox.StringUtil;
+using Toybox.Communications;
 
 class Utils {
 
@@ -44,15 +45,6 @@ class Utils {
         }
 
         return x;
-    }
-
-    function getSafeDictKey(dict, key){
-        if(dict != null){
-            if(dict.hasKey(key)) {
-                return dict[key];
-            }
-        }
-        return null;
     }
 
     function getSafeMedia(refId){
@@ -148,5 +140,26 @@ class Utils {
         hash.update(StringUtil.convertEncodedString(input, toArray));
 
         return StringUtil.convertEncodedString(hash.digest(), toString);
+    }
+
+    function getPodcastIndexRequestOptions(){
+
+        var now = Time.now().value();
+        var auth = Utils.hash(Secrets.TOKEN + Secrets.SECRET + now);
+
+        var headers = {
+            "Content-Type" => Communications.REQUEST_CONTENT_TYPE_URL_ENCODED,
+            "X-Auth-Date" => now.format("%d"),
+            "X-Auth-Key" => Secrets.TOKEN,
+            "Authorization" => auth,
+        };
+
+        var options = {
+            :method => Communications.HTTP_REQUEST_METHOD_GET,
+            :headers => headers,
+            :responseType => Communications.HTTP_RESPONSE_CONTENT_TYPE_JSON
+            };
+
+        return options;
     }
 }

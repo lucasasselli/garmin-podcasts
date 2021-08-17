@@ -123,16 +123,18 @@ class EpisodeManager {
 
         menuEpisodes = {};
 
-        var items = Utils.getSafeDictKey(data, "feed");
+        var items = data.get("feed");
 
         if(items != null && items.size() > 0){
             var episodesMenu = new WatchUi.CheckboxMenu({:title => podcast[Constants.PODCAST_TITLE]});
 
             for(var i=0; i<items.size(); i++){
-                var episode = Remote.itemToEpisode(items[i], podcastId);
-                var episodeId = Remote.genEpisodeId(episode);
-                menuEpisodes.put(episodeId, episode);
-                episodesMenu.addItem(new WatchUi.CheckboxMenuItem(episode[Constants.EPISODE_TITLE], "", episodeId, episodes.hasKey(episodeId), {}));
+                var episode = Data.parseEpisode(items[i], podcastId);
+                if(episode != null){
+                    var episodeId = Data.genEpisodeId(episode);
+                    menuEpisodes.put(episodeId, episode);
+                    episodesMenu.addItem(new WatchUi.CheckboxMenuItem(episode[Constants.EPISODE_TITLE], "", episodeId, episodes.hasKey(episodeId), {}));
+                }
             }
 
             WatchUi.switchToView(episodesMenu, new EpisodeSelectDelegate(self.weak()), WatchUi.SLIDE_LEFT);

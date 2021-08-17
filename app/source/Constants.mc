@@ -36,10 +36,10 @@ module Constants {
 
     enum {
         EPISODE_PODCAST,
-        EPISODE_MEDIA,
-        EPISODE_DATE,
         EPISODE_TITLE,
+        EPISODE_DATE,
         EPISODE_DURATION,
+        EPISODE_MEDIA,
         EPISODE_PROGRESS,
         EPISODE_DATA_SIZE
     }

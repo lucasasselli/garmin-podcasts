@@ -55,13 +55,16 @@ class EpisodesProvider_Recent {
 
     function onEpisodes(responseCode, data, context) {
         if (responseCode == 200) {
-            var items = Utils.getSafeDictKey(data, "feed");
+
+            var items = data.get("feed");
             if(items != null){
                 // Parse the episodes
                 for(var i=0; i<items.size(); i++){
                     var podcastId = podcastEpisodesIterator.item();
-                    var episode = Remote.itemToEpisode(items[i], podcastId);
-                    episodes.put(Remote.genEpisodeId(episode), episode);
+                    var episode = Data.parseEpisode(items[i], podcastId);
+                    if(episode != null){
+                        episodes.put(Data.genEpisodeId(episode), episode);
+                    }
                 }
             }
         }
