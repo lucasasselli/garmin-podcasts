@@ -15,8 +15,10 @@ class Data {
         episode[Constants.EPISODE_TITLE] = data["title"];
         episode[Constants.EPISODE_DURATION] = data["length"];
 
-        for(var i=0; i<Constants.EPISODE_DATA_SIZE; i++){
+        // Media and duration CAN be null!
+        for(var i=0; i<Constants.EPISODE_DATA_SIZE-2; i++){
             if(episode[i] == null){
+                System.println(i);
                 return null;
             }
         }
@@ -32,8 +34,7 @@ class Data {
         podcast[Constants.PODCAST_ARTWORK] = data.get("image");
         podcast[Constants.PODCAST_TITLE] = data.get("title");
 
-        // Media and duration CAN be null!
-        for(var i=0; i<Constants.PODCAST_DATA_SIZE-2; i++){
+        for(var i=0; i<Constants.PODCAST_DATA_SIZE; i++){
             if(podcast[i] == null){
                 return null;
             }

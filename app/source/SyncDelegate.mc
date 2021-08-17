@@ -45,16 +45,17 @@ class SyncDelegate extends Communications.SyncDelegate {
     }
 
     function onStopSync() {
+        System.println("Sync cancelled!");
         throwSyncError(null);
     }
 
     function throwSyncError(msg){
         System.println(msg);
         Communications.cancelAllRequests();
-        Communications.notifySyncComplete(msg);
 
         // Clean media
         Utils.purgeBadMedia();
+        Communications.notifySyncComplete(msg);
     }
 
     function needsMedia(id){

@@ -121,12 +121,11 @@ class EpisodeManager {
         var podcastId = podcasts.keys()[podcastsMenu.getSelected()];
         var podcast = podcasts[podcastId];
 
+        var episodesMenu = new WatchUi.CheckboxMenu({:title => podcast[Constants.PODCAST_TITLE]});
         menuEpisodes = {};
 
         var items = data.get("feed");
-
-        if(items != null && items.size() > 0){
-            var episodesMenu = new WatchUi.CheckboxMenu({:title => podcast[Constants.PODCAST_TITLE]});
+        if(items != null){
 
             for(var i=0; i<items.size(); i++){
                 var episode = Data.parseEpisode(items[i], podcastId);
@@ -137,6 +136,9 @@ class EpisodeManager {
                 }
             }
 
+        }
+
+        if(menuEpisodes.size() > 0){
             WatchUi.switchToView(episodesMenu, new EpisodeSelectDelegate(self.weak()), WatchUi.SLIDE_LEFT);
         }else{
             var alert = new Ui.CompactAlert(Rez.Strings.errorNoPodcastEpisodes);
@@ -146,7 +148,7 @@ class EpisodeManager {
 
     function onPodcastBack(){
         Storage.setValue(Constants.STORAGE_EPISODES, episodes);
-        var prompt = new Ui.CompactPrompt(Rez.Strings.confirmSync, method(:startSync), null);
+        var prompt = new Ui.CompactPrompt(Rez.Strings.confirmSync, method(:startSync), method(:exitView));
         prompt.show();
     }
 
@@ -156,6 +158,10 @@ class EpisodeManager {
         // Start sync
         Storage.setValue(Constants.STORAGE_MANUAL_SYNC, true);
         Communications.startSync();
+    }
+
+    function exitView(){
+        WatchUi.popView(WatchUi.SLIDE_RIGHT);
     }
 }
 

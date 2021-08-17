@@ -26,7 +26,7 @@ class PodcastProvider_GPodder {
         deviceid = Application.getApp().getProperty("settingDeviceId");
         headers = {
             "Content-Type" => Communications.REQUEST_CONTENT_TYPE_URL_ENCODED,
-            "Authorization" => "Basic " + StringUtil.enresponseCodeBase64(username + ":" + password),
+            "Authorization" => "Basic " + StringUtil.encodeBase64(username + ":" + password),
         };
 
     }
@@ -142,17 +142,13 @@ class PodcastProvider_GPodder {
     }
 
     function manage(){
-        var prompt = new Ui.CompactPrompt(Rez.Strings.msgSendNotification, method(:showNotification), method(:dummy));
+        var prompt = new Ui.CompactPrompt(Rez.Strings.msgSendNotification, method(:showNotification), null);
         prompt.show();
-    }
-
-    function dummy(){
-        // TODO: Find a better way to handle back!
     }
 
     function showNotification(){
         Communications.openWebPage(Constants.URL_GPODDER_ROOT, {}, null);
-        var alert = new Ui.CompactAlert(Rez.Strings.msgCheckPhone);
-        alert.show();
+        // var alert = new Ui.CompactAlert(Rez.Strings.msgCheckPhone);
+        // alert.switchTo();
     }
 }

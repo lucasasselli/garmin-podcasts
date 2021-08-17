@@ -174,7 +174,7 @@ class PlaybackQueueDelegate extends WatchUi.Menu2InputDelegate {
     }
 
     function onBack(){
-        var prompt = new Ui.CompactPrompt(Rez.Strings.confirmPlayback, method(:startPlayback), null);
+        var prompt = new Ui.CompactPrompt(Rez.Strings.confirmPlayback, method(:startPlayback), method(:exitView));
         prompt.show();
         return false;
     }
@@ -182,5 +182,9 @@ class PlaybackQueueDelegate extends WatchUi.Menu2InputDelegate {
     function startPlayback(){
         // NOTE: Popping the view before starting playback causes problems...
         Media.startPlayback(null);
+    }
+
+    function exitView(){
+        WatchUi.popView(WatchUi.SLIDE_RIGHT);
     }
 }
