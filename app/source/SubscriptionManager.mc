@@ -22,12 +22,8 @@ class SubscriptionManager extends Ui.CompactMenu {
 
     // Search new podcast
     function callbackSearch(){
-        if (WatchUi has :TextPicker) {
-            WatchUi.pushView(new WatchUi.TextPicker(""), new PickerSearchDelegate(method(:onSearchQuery)), WatchUi.SLIDE_LEFT);
-        }else{
-            var fallbackPickerSearch = new FallbackPicker("");
-            WatchUi.pushView(fallbackPickerSearch, new FallbackPickerSearchDelegate(fallbackPickerSearch, method(:onSearchQuery)), WatchUi.SLIDE_LEFT);
-        }
+        var picker = new CompactLib.Ui.CompactPicker(method(:onSearchQuery));
+        picker.show();
     }
 
     // Return number of subscribed podcast strings
@@ -67,7 +63,7 @@ class SubscriptionManager extends Ui.CompactMenu {
     function onSearchQuery(query){
         var searchRequest = new CompactLib.Utils.CompactRequest(WatchUi.loadResource(Rez.JsonData.connectionErrors));
         searchRequest.setOptions(Utils.getPodcastIndexRequestOptions());
-        searchRequest.requestPickerFixProgress(
+        searchRequest.requestPickerProgress(
             Constants.URL_PODCASTINDEX_SEARCH,
             {
                 "q"   => StringHelper.substringReplace(query, " ", "+"),
@@ -115,44 +111,5 @@ class SubscriptionManager extends Ui.CompactMenu {
         var subscribed = StorageHelper.get(Constants.STORAGE_SUBSCRIBED, {});
         subscribed.remove(context);
         Storage.setValue(Constants.STORAGE_SUBSCRIBED, subscribed);
-    }
-}
-
-class PickerSearchDelegate extends WatchUi.TextPickerDelegate {
-
-    hidden var callback;
-
-    function initialize(callback) {
-        self.callback = callback;
-        TextPickerDelegate.initialize();
-    }
-
-    function onTextEntered(text, changed)
-    {
-        callback.invoke(text);
-    }
-}
-
-class FallbackPickerSearchDelegate extends WatchUi.PickerDelegate {
-
-    hidden var picker;
-    hidden var callback;
-
-    function initialize(picker, callback) {
-        PickerDelegate.initialize();
-        self.picker = picker;
-        self.callback = callback;
-    }
-
-    function onCancel() {
-        WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
-    }
-
-    function onAccept(values) {
-        if(!picker.isDone(values[0])) {
-            picker.addCharacter(values[0]);
-        } else {
-            callback.invoke(picker.getText());
-        }
     }
 }
