@@ -17,7 +17,7 @@ class PodcastsApp extends Application.AudioContentProviderApp {
 
         AudioContentProviderApp.initialize();
     }
-    
+
     // Get a Media.ContentDelegate for use by the system to get and iterate through media on the device
     function getContentDelegate(arg) {
         return new ContentDelegate();
@@ -42,7 +42,7 @@ class PodcastsApp extends Application.AudioContentProviderApp {
     function getSyncConfigurationView() {
         return new MainMenu().get();
     }
-    
+
     // Get the provider icon
     function getProviderIconInfo() {
         return new Media.ProviderIconInfo(Rez.Drawables.PlayerIcon, 0x00E2E2);

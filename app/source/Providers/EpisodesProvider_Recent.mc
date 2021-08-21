@@ -39,7 +39,7 @@ class EpisodesProvider_Recent {
 
     function onPodcastGet(podcasts){
         self.podcasts = podcasts;
-        podcastEpisodesIterator = new Iterator(podcasts.keys(), method(:getEpisodes), method(:getEpisodesDone));
+        podcastEpisodesIterator = new CompactLib.Utils.Iterator(podcasts.keys(), method(:getEpisodes), method(:getEpisodesDone));
         podcastEpisodesIterator.next();
     }
 

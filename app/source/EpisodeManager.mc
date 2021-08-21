@@ -28,15 +28,12 @@ class EpisodeManager {
         episodes = StorageHelper.get(Constants.STORAGE_EPISODES, {});
     }
 
-    function showLoading(){
-        progressBar = new WatchUi.ProgressBar(WatchUi.loadResource(Rez.Strings.loading), null);
-        WatchUi.pushView(progressBar, new CompactLib.Utils.RemoteProgressDelegate(), WatchUi.SLIDE_LEFT);
-    }
-
     function show(){
         if(provider.valid(true)){
-            showLoading();
-            provider.get(method(:podcastsDone), method(:showError));
+            if(provider.get(method(:podcastsDone), method(:showError))){
+                progressBar = new WatchUi.ProgressBar(WatchUi.loadResource(Rez.Strings.loading), null);
+                WatchUi.pushView(progressBar, new CompactLib.Utils.RemoteProgressDelegate(), WatchUi.SLIDE_LEFT);
+            }
         }
     }
 

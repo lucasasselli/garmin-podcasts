@@ -22,6 +22,7 @@ class PodcastProvider_Local {
 
     function get(doneCallback, errorCallback){
         doneCallback.invoke(self.podcasts);
+        return false;
     }
 
     function manage(){

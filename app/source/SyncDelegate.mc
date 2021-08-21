@@ -80,7 +80,7 @@ class SyncDelegate extends Communications.SyncDelegate {
             }
         }
 
-        downloadsIterator = new Iterator(downloadEpisodes, method(:downloadEpisode), method(:onDownloadEpisodesDone));
+        downloadsIterator = new CompactLib.Utils.Iterator(downloadEpisodes, method(:downloadEpisode), method(:onDownloadEpisodesDone));
         downloadsIterator.next();
     }
 

@@ -102,7 +102,7 @@ class PodcastProvider_GPodder {
                     urls.add(data[i]["url"]);
                 }
             }
-            feedsIterator = new Iterator(urls, method(:getFeedInfo), method(:getFeedsDone));
+            feedsIterator = new CompactLib.Utils.Iterator(urls, method(:getFeedInfo), method(:getFeedsDone));
             feedsIterator.next();
         } else if (responseCode == Communications.NETWORK_RESPONSE_TOO_LARGE){
             // FIXME: Use JSON!

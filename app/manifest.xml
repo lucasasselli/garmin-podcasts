@@ -40,7 +40,7 @@
         </iq:permissions>
         <iq:languages/>
         <iq:barrels>
-            <iq:depends name="garmincompactlib" version="1.0.0"/>
+            <iq:depends name="CompactLib" version="1.0.0"/>
         </iq:barrels>
     </iq:application>
 </iq:manifest>
