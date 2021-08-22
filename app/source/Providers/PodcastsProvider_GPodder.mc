@@ -17,6 +17,7 @@ class PodcastProvider_GPodder {
 
     var doneCallback;
     var errorCallback;
+    var progressCallback;
 
     var headers;
 
@@ -58,11 +59,13 @@ class PodcastProvider_GPodder {
         return true;
     }
 
+    function setProgressCallback(callback){
+        progressCallback = callback;
+    }
+
     function onLogin(responseCode, data){
         if (responseCode == 200 || responseCode == -400) {
-
             var url;
-
             if(StringHelper.notNullOrEmpty(deviceid)){
                 // Devige ID set
                 url = Constants.URL_GPODDER_ROOT + "subscriptions/" + username + "/" + deviceid + ".json";
@@ -123,8 +126,12 @@ class PodcastProvider_GPodder {
     }
 
     function onFeedInfo(responseCode, data, context){
-
         if (responseCode == 200) {
+            if(progressCallback != null){
+                var progress = feedsIterator.index().toFloat()/feedsIterator.size().toFloat();
+                progressCallback.invoke((progress*100).toNumber());
+            }
+
             var podcast = Data.parsePodcast(data, context);
             if(podcast != null){
                 podcasts.put(Utils.hash(context), podcast);

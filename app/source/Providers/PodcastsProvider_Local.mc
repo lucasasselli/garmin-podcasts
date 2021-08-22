@@ -25,6 +25,9 @@ class PodcastProvider_Local {
         return false;
     }
 
+    function setProgressCallback(callback){
+    }
+
     function manage(){
         var manager = new SubscriptionManager();
         manager.show();

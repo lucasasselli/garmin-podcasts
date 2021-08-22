@@ -6,8 +6,9 @@ class PodcastsApp extends Application.AudioContentProviderApp {
     function initialize() {
 
         // If the storage scheme as changed, delete the sotred data to avoid crashes
-        var storage_version = Storage.getValue(Constants.STORAGE_VERSION);
-        if(storage_version != Constants.STORAGE_VERSION_VALUE){
+        var storageVersion = Storage.getValue(Constants.STORAGE_VERSION);
+        if(storageVersion != Constants.STORAGE_VERSION_VALUE){
+            System.println("Storage version changed! Deleting data...");
             Storage.clearValues();
             Storage.setValue(Constants.STORAGE_VERSION, Constants.STORAGE_VERSION_VALUE);
         }
@@ -25,8 +26,8 @@ class PodcastsApp extends Application.AudioContentProviderApp {
 
     // Get a delegate that communicates sync status to the system for syncing media content to the device
     function getSyncDelegate() {
-        var is_manual = Storage.getValue(Constants.STORAGE_MANUAL_SYNC);
-        if(is_manual == true){
+        var isManual = Storage.getValue(Constants.STORAGE_MANUAL_SYNC);
+        if(isManual == true){
             return new SyncDelegate();
         }else{
             return new SyncDummy();

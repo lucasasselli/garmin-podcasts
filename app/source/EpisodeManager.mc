@@ -30,10 +30,17 @@ class EpisodeManager {
 
     function show(){
         if(provider.valid(true)){
+            provider.setProgressCallback(method(:progressCallback));
             if(provider.get(method(:podcastsDone), method(:showError))){
                 progressBar = new WatchUi.ProgressBar(WatchUi.loadResource(Rez.Strings.loading), null);
                 WatchUi.pushView(progressBar, new CompactLib.Utils.RemoteProgressDelegate(), WatchUi.SLIDE_LEFT);
             }
+        }
+    }
+
+    function progressCallback(progress){
+        if(progressBar != null){
+            progressBar.setProgress(progress);
         }
     }
 
