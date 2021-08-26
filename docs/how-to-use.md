@@ -28,11 +28,11 @@ In order to start using _Podcast_, you need to set it as your device Music Provi
   <img src="img/how-to/start2.bmp" width="200" />
 </p>
 
-## Downloading episodes
+## Subscribing to podcast
 
 First of all, to listen to podcasts, you need podcasts to listen! To subscribe to a podcast navigate to the app main menu:
 
-1. Select **Podcasts**
+1. Select **Manage Subscriptions**
 2. Select **Search**
 3. Enter the title of the feed you want to subscribe
 4. Select a podcast from the results
@@ -44,9 +44,11 @@ First of all, to listen to podcasts, you need podcasts to listen! To subscribe t
   <img src="img/how-to/podcast3.bmp" width="200" />
 </p>
 
+## Download episodes
+
 To download episodes, from the main menu:
 
-1. Select **Sync**
+1. Select **Download Episodes**
 2. Select a podcast from the list
 3. Check the episodes you want to download, or uncheck the episodes you want to remove
 5. When you are done, press back or select **Done**
@@ -68,13 +70,12 @@ To manage the playback queue, from the main menu:
 3. When you are done, press back
 
 At this point you will be prompted to start the playback immediately, select yes if you are ready, or no if you want to do it later. 
-Your queue will wait for you in your device player.
 
 ## Advanced settings
 
-### Getting your subscriptions from gpodder
+### Using gpodder subscription
 
-By default, _Podcasts_ manages the subscriptions directly from your Garmin device, but optionally subscriptions you can download subscriptions from a gpodder.net account.
+By default, _Podcasts_ manages the subscriptions directly from your Garmin device, but optionally you can download subscriptions from a gpodder.net account.
 
 {% include note.html content="gpodder is an external project. More info at [gpodder.net](https://gpodder.net)" %}
 
@@ -87,7 +88,7 @@ From Garmin Connect IQ app set your **Username** and **Password**.
   <img src="img/gpodder-username.png" width="600" />
 </p>
 
-### Downloading recent episodes automatically
+### Download recent episodes
 
 Instead of selecting individual episodes each time you sync, _Podcasts_ can automatically download the most recent ones for each feed.
 
