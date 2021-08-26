@@ -24,6 +24,10 @@ If you like this app and you want to show your support you can [pay me a beer](h
  - Support other podcast subscription services
  - Add other languages
 
+## How to use
+
+[link](https://lucasasselli.github.io/garmin-podcasts/how-to-use.html)
+
 ## How to build
 
 1. Download the latest version of [Garmin Connect IQ SDK](https://developer.garmin.com/connect-iq/sdk/);
