@@ -14,6 +14,7 @@ class PodcastProvider_GPodder {
     var username;
     var password;
     var deviceid;
+    var serviceroot;
 
     var doneCallback;
     var errorCallback;
@@ -25,6 +26,16 @@ class PodcastProvider_GPodder {
         username = Application.getApp().getProperty("settingUsername");
         password = Application.getApp().getProperty("settingPassword");
         deviceid = Application.getApp().getProperty("settingDeviceId");
+        serviceroot = Application.getApp().getProperty("settingServiceUrl");
+        if(!StringHelper.notNullOrEmpty(serviceroot)){
+            serviceroot = Constants.URL_GPODDER_ROOT;
+        }
+        if(serviceroot.find("http") != 0){
+            serviceroot = "https://" + serviceroot;
+        }
+        if(!serviceroot.substring(serviceroot.length() - 1, serviceroot.length()).equals("/")){
+            serviceroot = serviceroot + "/";
+        }
         headers = {
             "Content-Type" => Communications.REQUEST_CONTENT_TYPE_URL_ENCODED,
             "Authorization" => "Basic " + StringUtil.encodeBase64(username + ":" + password),
@@ -47,7 +58,7 @@ class PodcastProvider_GPodder {
 
         // Login to gPodder
         Communications.makeWebRequest(
-            Constants.URL_GPODDER_ROOT + "api/2/auth/" + username + "/login.json",
+            serviceroot + "api/2/auth/" + username + "/login.json",
             null,
             {
             :method => Communications.HTTP_REQUEST_METHOD_POST,
@@ -68,10 +79,10 @@ class PodcastProvider_GPodder {
             var url;
             if(StringHelper.notNullOrEmpty(deviceid)){
                 // Devige ID set
-                url = Constants.URL_GPODDER_ROOT + "subscriptions/" + username + "/" + deviceid + ".json";
+                url = serviceroot + "subscriptions/" + username + "/" + deviceid + ".json";
             }else{
                 // Device ID not set
-                url = Constants.URL_GPODDER_ROOT + "subscriptions/" + username + ".json";
+                url = serviceroot + "subscriptions/" + username + ".json";
             }
 
             Communications.makeWebRequest(
@@ -154,6 +165,6 @@ class PodcastProvider_GPodder {
     }
 
     function showNotification(){
-        Communications.openWebPage(Constants.URL_GPODDER_ROOT, {}, null);
+        Communications.openWebPage(serviceroot, {}, null);
     }
 }
