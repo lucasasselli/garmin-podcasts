@@ -7,6 +7,7 @@
         <property id="settingUsername" type="string"></property>
         <property id="settingPassword" type="string"></property>
         <property id="settingDeviceId" type="string"></property>
+        <property id="settingServiceUrl" type="string"></property>
     </properties>
 
     <strings>
@@ -17,6 +18,7 @@
         <string id="settingUsernameTitle">Username</string>
         <string id="settingPasswordTitle">Password</string>
         <string id="settingDeviceIdTitle">Device ID (optional)</string>
+        <string id="settingServiceUrlTitle">Service URL (optional)</string>
         <string id="none">None</string>
         <string id="gPodder">gpodder.net</string>
         <string id="manual">Manual</string>
@@ -69,6 +71,10 @@
         </setting>
 
         <setting propertyKey="@Properties.settingDeviceId" title="@Strings.settingDeviceIdTitle">
+            <settingConfig type="alphaNumeric" required="false" />
+        </setting>
+
+        <setting propertyKey="@Properties.settingServiceUrl" title="@Strings.settingServiceUrlTitle">
             <settingConfig type="alphaNumeric" required="false" />
         </setting>
     </settings>
