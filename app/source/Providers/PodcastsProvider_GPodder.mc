@@ -5,6 +5,7 @@ using Toybox.Application.Storage;
 using CompactLib.Ui;
 using CompactLib.StringHelper;
 
+(:background)
 class PodcastProvider_GPodder {
 
     var feedsIterator;
@@ -40,7 +41,6 @@ class PodcastProvider_GPodder {
             "Content-Type" => Communications.REQUEST_CONTENT_TYPE_URL_ENCODED,
             "Authorization" => "Basic " + StringUtil.encodeBase64(username + ":" + password),
         };
-
     }
 
     function valid(displayError){
@@ -49,12 +49,22 @@ class PodcastProvider_GPodder {
             var alert = new Ui.CompactAlert(Rez.Strings.errorNoCredentials);
             alert.show();
         }
+        // FIXME: Add check for Device ID
         return validLogin;
     }
 
     function get(doneCallback, errorCallback){
         self.errorCallback = errorCallback;
         self.doneCallback = doneCallback;
+
+        var last_update = StorageHelper.get(Constants.STORAGE_LAST_UPDATE, 0);
+        var now = Time.now().value();
+        var podcasts = StorageHelper.get(Constants.STORAGE_SUBSCRIBED, []);
+
+        if (last_update + 5*60 > now && podcasts.size() > 0){
+            doneCallback.invoke(podcasts);
+            return false;
+        }
 
         // Login to gPodder
         Communications.makeWebRequest(
@@ -75,6 +85,7 @@ class PodcastProvider_GPodder {
     }
 
     function onLogin(responseCode, data){
+        // FIXME:
         if (responseCode == 200 || responseCode == -400) {
             var url;
             if(StringHelper.notNullOrEmpty(deviceid)){
@@ -105,21 +116,13 @@ class PodcastProvider_GPodder {
     function onSubscriptions(responseCode, data){
         if (responseCode == 200) {
             var urls = [];
-            if(StringHelper.notNullOrEmpty(deviceid)){
-                // Device ID set
-                for(var i=0; i<data.size(); i++){
-                    urls.add(data[i]);
-                }
-            }else{
-                // Device ID not set
-                for(var i=0; i<data.size(); i++){
-                    urls.add(data[i]["url"]);
-                }
+            // Device ID set
+            for(var i=0; i<data.size(); i++){
+                urls.add(data[i]);
             }
             feedsIterator = new CompactLib.Utils.Iterator(urls, method(:getFeedInfo), method(:getFeedsDone));
             feedsIterator.next();
         } else if (responseCode == Communications.NETWORK_RESPONSE_TOO_LARGE){
-            // FIXME: Use JSON!
             errorCallback.invoke(WatchUi.loadResource(Rez.Strings.errorTooManySubs));
         } else {
             errorCallback.invoke("List error " + responseCode);
@@ -131,7 +134,7 @@ class PodcastProvider_GPodder {
         var podcastInfoRequest = new CompactLib.Utils.CompactRequest(null);
         podcastInfoRequest.request(
             Constants.URL_FEEDPARSER_ROOT,
-            {"feedUrl" => item, "max" => Constants.FEEDPARSER_MAX_EPISODES},
+            {"feedUrl" => item, "max" => "0"},
             method(:onFeedInfo),
             item);
     }
@@ -156,6 +159,7 @@ class PodcastProvider_GPodder {
 
     function getFeedsDone(){
         Storage.setValue(Constants.STORAGE_SUBSCRIBED, podcasts);
+        Storage.setValue(Constants.STORAGE_LAST_UPDATE, Time.now().value());
         doneCallback.invoke(podcasts);
     }
 

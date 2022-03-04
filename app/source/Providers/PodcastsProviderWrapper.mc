@@ -1,6 +1,7 @@
 using Toybox.Communications;
-using Toybox.Application.Storage;
+using Toybox.Application;
 
+(:background)
 class PodcastsProviderWrapper {
 
     const PODCAST_SERVICE_LOCAL = 0;

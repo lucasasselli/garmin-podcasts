@@ -131,6 +131,7 @@ class EpisodeManager {
         var items = data.get("feed");
         if(items != null){
 
+            // FIXME: This can trip the watchdog
             for(var i=0; i<items.size(); i++){
                 var episode = Data.parseEpisode(items[i], podcastId);
                 if(episode != null){

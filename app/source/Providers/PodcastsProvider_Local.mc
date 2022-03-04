@@ -3,6 +3,7 @@ using Toybox.Application.Storage;
 
 using CompactLib.Ui;
 
+(:background)
 class PodcastProvider_Local {
 
     private var podcasts;

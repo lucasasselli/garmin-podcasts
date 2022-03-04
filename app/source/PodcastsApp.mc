@@ -1,10 +1,17 @@
 using Toybox.Application;
 using Toybox.Media;
+using Toybox.Time;
+using Toybox.Application.Storage;
+using Constants;
 
+(:background)
 class PodcastsApp extends Application.AudioContentProviderApp {
 
     function initialize() {
+        AudioContentProviderApp.initialize();
+    }
 
+    function initData(){
         // If the storage scheme as changed, delete the sotred data to avoid crashes
         var storageVersion = Storage.getValue(Constants.STORAGE_VERSION);
         if(storageVersion != Constants.STORAGE_VERSION_VALUE){
@@ -15,8 +22,12 @@ class PodcastsApp extends Application.AudioContentProviderApp {
 
         // Ensure media sanity!
         Utils.purgeBadMedia();
+    }
 
-        AudioContentProviderApp.initialize();
+    function initBackground(){
+        System.println("Registering background service...");
+        // FIXME:
+        Background.registerForTemporalEvent(new Time.Duration(60*5));
     }
 
     // Get a Media.ContentDelegate for use by the system to get and iterate through media on the device
@@ -34,13 +45,22 @@ class PodcastsApp extends Application.AudioContentProviderApp {
         }
     }
 
+
+    function getServiceDelegate() {
+        return [new BackgroundDelegate()];
+    }
+
     // Get the initial view for configuring playback
     function getPlaybackConfigurationView() {
+        initData();
+        initBackground();
         return new MainMenu().get();
     }
 
     // Get the initial view for configuring sync
     function getSyncConfigurationView() {
+        initData();
+        initBackground();
         return new MainMenu().get();
     }
 

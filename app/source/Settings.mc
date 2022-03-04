@@ -11,8 +11,11 @@ class Settings extends Ui.CompactMenu {
     function build(){
         add(Rez.Strings.settingPodcastServiceTitle, method(:getPodcastService), method(:callbackPodcastService));
         add(Rez.Strings.settingSyncModeTitle, method(:getSyncMode), method(:callbackSyncMode));
+
         add(Rez.Strings.settingEpisodesPerPodcastTitle, method(:getEpisodesPerPodcast), method(:callbackEpisodesPerPodcast));
         add(Rez.Strings.settingEpisodesMaxTitle, method(:getEpisodesMax), method(:callbackEpisodesMax));
+
+        add(Rez.Strings.settingSyncNowTitle, null, null);
     }
 
     function getPodcastService(){

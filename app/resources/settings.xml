@@ -4,6 +4,8 @@
         <property id="settingSyncMode" type="number">0</property>
         <property id="settingEpisodes" type="number">1</property>
         <property id="settingEpisodesMax" type="number">10</property>
+        <property id="settingBackgroundSync" type="boolean">true</property>
+        <property id="settingBackgroundPeriod" type="number">1440</property>
         <property id="settingUsername" type="string"></property>
         <property id="settingPassword" type="string"></property>
         <property id="settingDeviceId" type="string"></property>
@@ -11,7 +13,7 @@
     </properties>
 
     <strings>
-        <string id="settingSyncModeTitle">Download Mode</string>
+        <string id="settingSyncModeTitle">Episode download mode</string>
         <string id="settingPodcastServiceTitle">Subscription service</string>
         <string id="settingEpisodesPerPodcastTitle">Episodes per Podcast</string>
         <string id="settingEpisodesMaxTitle">Max. episodes</string>
@@ -19,9 +21,11 @@
         <string id="settingPasswordTitle">Password</string>
         <string id="settingDeviceIdTitle">Device ID (optional)</string>
         <string id="settingServiceUrlTitle">Service URL (optional)</string>
-        <string id="none">None</string>
+        <string id="settingSyncNowTitle">Sync Subscriptions</string>
+
+        <string id="none">Local</string>
         <string id="gPodder">gpodder.net</string>
-        <string id="manual">Manual</string>
+        <string id="manual">Select episodes</string>
         <string id="mostRecent">Most recent</string>
         <string id="number1">1</string>
         <string id="number2">2</string>
