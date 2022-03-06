@@ -14,8 +14,6 @@ class Settings extends Ui.CompactMenu {
 
         add(Rez.Strings.settingEpisodesPerPodcastTitle, method(:getEpisodesPerPodcast), method(:callbackEpisodesPerPodcast));
         add(Rez.Strings.settingEpisodesMaxTitle, method(:getEpisodesMax), method(:callbackEpisodesMax));
-
-        add(Rez.Strings.settingSyncNowTitle, null, null);
     }
 
     function getPodcastService(){
