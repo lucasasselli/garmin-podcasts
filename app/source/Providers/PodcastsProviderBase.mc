@@ -15,6 +15,10 @@ class PodcastsProviderBase {
         downloaded = false;
     }
 
+    function valid(){
+        return true;
+    }
+
     function get(doneCallback, errorCallback, porgressCallback){
         self.errorCallback = errorCallback;
         self.doneCallback = doneCallback;
@@ -38,6 +42,26 @@ class PodcastsProviderBase {
     }
 
     function download(){
+
+    }
+
+    function add(context){
+        podcasts = StorageHelper.get(Constants.STORAGE_SUBSCRIBED, {});
+        podcasts.put(Utils.hash(context[Constants.PODCAST_URL]), context);
+        Storage.setValue(Constants.STORAGE_SUBSCRIBED, podcasts);
+
+        return false;
+    }
+
+    function remove(context){
+        podcasts = StorageHelper.get(Constants.STORAGE_SUBSCRIBED, {});
+        podcasts.remove(context);
+        Storage.setValue(Constants.STORAGE_SUBSCRIBED, podcasts);
+
+        // Trigger data cleanup
+        Utils.purgeBadMedia();
+
+        return false;
     }
 
     function done(podcasts){

@@ -13,8 +13,8 @@ class MainMenu extends Ui.CompactMenu {
 
     function build(){
         add(Rez.Strings.menuQueue, method(:getQueueSize), method(:callbackQueue));
-        add(Rez.Strings.menuPodcasts, null, method(:callbackPodcasts));
-        add(Rez.Strings.menuEpisodes, null, method(:callbackEpisodes));
+        add(Rez.Strings.menuPodcasts, null, method(:callbackManagePodcasts));
+        add(Rez.Strings.menuEpisodes, null, method(:callbackManageEpisodes));
         add(Rez.Strings.menuSettings, null, method(:callbackSettings));
     }
 
@@ -44,12 +44,21 @@ class MainMenu extends Ui.CompactMenu {
     }
 
     // Manage subscriptions
-    function callbackPodcasts(){
-        $.podscastsProvider.manage();
+    function callbackManagePodcasts(){
+        $.podcastsProvider.get(method(:podcastsDone));
+    }
+
+    function podcastsDone(hasProgress, podcasts){
+        var manager = new SubscriptionManager();
+        if(hasProgress){
+            manager.switchTo();
+        }else{
+            manager.show();
+        }
     }
 
     // Manage episodes
-    function callbackEpisodes(){
+    function callbackManageEpisodes(){
         var episodeManager = new EpisodeManager();
         episodeManager.show();
     }

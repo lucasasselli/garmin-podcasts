@@ -4,7 +4,7 @@ using Toybox.Time;
 using Toybox.Application.Storage;
 using Constants;
 
-var podscastsProvider;
+var podcastsProvider;
 
 class PodcastsApp extends Application.AudioContentProviderApp {
 
@@ -24,12 +24,9 @@ class PodcastsApp extends Application.AudioContentProviderApp {
         // Ensure media sanity!
         Utils.purgeBadMedia();
 
-        $.podscastsProvider = new PodcastsProviderWrapper();
-
         // Starting download in background
-        if($.podscastsProvider.valid(false)){
-            $.podscastsProvider.get(null, null, null);
-        }
+        $.podcastsProvider = new PodcastsProviderWrapper();
+        $.podcastsProvider.getSilent();
     }
 
     // Get a Media.ContentDelegate for use by the system to get and iterate through media on the device

@@ -12,7 +12,7 @@ class SubscriptionManager extends Ui.CompactMenu {
     var searchResults;
 
     function initialize(){
-        CompactMenu.initialize(Rez.Strings.AppName);
+        CompactMenu.initialize(Rez.Strings.menuPodcasts);
     }
 
     function build(){
@@ -102,17 +102,10 @@ class SubscriptionManager extends Ui.CompactMenu {
     }
 
     function onPodcastAdd(context){
-        var subscribed = StorageHelper.get(Constants.STORAGE_SUBSCRIBED, {});
-        subscribed.put(Utils.hash(context[Constants.PODCAST_URL]), context);
-        Storage.setValue(Constants.STORAGE_SUBSCRIBED, subscribed);
+        $.podcastsProvider.add(context);
     }
 
     function onPodcastRemove(context){
-        var subscribed = StorageHelper.get(Constants.STORAGE_SUBSCRIBED, {});
-        subscribed.remove(context);
-        Storage.setValue(Constants.STORAGE_SUBSCRIBED, subscribed);
-
-        // Trigger data cleanup
-        Utils.purgeBadMedia();
+        $.podcastsProvider.remove(context);
     }
 }

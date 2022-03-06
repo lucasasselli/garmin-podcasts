@@ -12,7 +12,7 @@ class EpisodeDownload {
     var loadingShown;
 
     var podcasts;
-    var podcastsMenu;
+    var view;
 
     var progressBar;
 
@@ -26,45 +26,35 @@ class EpisodeDownload {
     }
 
     function show(){
-        if($.podscastsProvider.valid(true)){
-            if($.podscastsProvider.get(method(:podcastsDone), method(:showError), method(:progressCallback))){
-                progressBar = new WatchUi.ProgressBar(WatchUi.loadResource(Rez.Strings.loading), null);
-                WatchUi.pushView(progressBar, new CompactLib.Utils.RemoteProgressDelegate(), WatchUi.SLIDE_LEFT);
-            }
-        }
+        $.podcastsProvider.get(method(:podcastsDone));
     }
 
-    function progressCallback(progress){
-        if(progressBar != null){
-            progressBar.setProgress(progress);
-        }
-    }
-
-    function podcastsDone(podcasts){
+    function podcastsDone(hasProgress, podcasts){
         self.podcasts = podcasts;
+
         if(podcasts != null && podcasts.size() > 0){
-            podcastsMenu = new Ui.CompactMenu(Rez.Strings.titleSelectEpisodesMenu);
-            podcastsMenu.setBackCallback(method(:onPodcastBack));
+            view = new Ui.CompactMenu(Rez.Strings.titleSelectEpisodesMenu);
+            view.setBackCallback(method(:onPodcastBack));
 
             var podcastIds = podcasts.keys();
 
             for(var i=0; i<podcastIds.size(); i++){
-                podcastsMenu.add(podcasts[podcastIds[i]][Constants.PODCAST_TITLE], method(:getSelected), method(:getEpisodes));
+                view.add(podcasts[podcastIds[i]][Constants.PODCAST_TITLE], method(:getSelected), method(:getEpisodes));
             }
 
-            if(progressBar == null){
-                podcastsMenu.show();
-            }else{
-                podcastsMenu.switchTo();
-            }
-            progressBar = null;
         }else{
-            showError(Rez.Strings.errorNoSubscriptions);
+            view = new Ui.CompactAlert(Rez.Strings.errorNoSubscriptions);
+        }
+
+        if(hasProgress == null){
+            view.switchTo();
+        }else{
+            view.show();
         }
     }
 
     function getSelected(){
-        var podcastId = podcasts.keys()[podcastsMenu.getSelected()];
+        var podcastId = podcasts.keys()[view.getSelected()];
         var selected = 0;
         var downloaded = 0;
         for(var i=0; i<episodes.size(); i++){
@@ -104,7 +94,7 @@ class EpisodeDownload {
 
     function getEpisodes(){
 
-        var podcastId = podcasts.keys()[podcastsMenu.getSelected()];
+        var podcastId = podcasts.keys()[view.getSelected()];
         var podcast = podcasts[podcastId];
 
         var episodesRequest = new CompactLib.Utils.CompactRequest(WatchUi.loadResource(Rez.JsonData.connectionErrors));
@@ -118,7 +108,7 @@ class EpisodeDownload {
 
     function onEpisodes(data, context) {
 
-        var podcastId = podcasts.keys()[podcastsMenu.getSelected()];
+        var podcastId = podcasts.keys()[view.getSelected()];
         var podcast = podcasts[podcastId];
 
         var episodesMenu = new WatchUi.CheckboxMenu({:title => podcast[Constants.PODCAST_TITLE]});

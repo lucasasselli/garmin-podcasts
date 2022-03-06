@@ -5,7 +5,7 @@ using Toybox.Application.Storage;
 using CompactLib.Ui;
 using CompactLib.StringHelper;
 
-class PodcastProvider_GPodder extends PodcastsProviderBase {
+class PodcastsProvider_GPodder extends PodcastsProviderBase {
 
     var feedsIterator;
 
@@ -38,21 +38,19 @@ class PodcastProvider_GPodder extends PodcastsProviderBase {
         };
 
         PodcastsProviderBase.initialize();
+
+        downloaded = false;
     }
 
-    function valid(displayError){
+    function valid(){
         var validLogin = (StringHelper.notNullOrEmpty(username) && StringHelper.notNullOrEmpty(password) && StringHelper.notNullOrEmpty(deviceid));
-        if(!validLogin && displayError){
-            var alert = new Ui.CompactAlert(Rez.Strings.errorNoCredentials);
-            alert.show();
+        if(!validLogin){
+            error(Rez.Strings.errorNoCredentials);
         }
         return validLogin;
     }
 
     function download(){
-
-        podcasts = StorageHelper.get(Constants.STORAGE_SUBSCRIBED, {});
-
         // Login to gPodder
         Communications.makeWebRequest(
             serviceroot + "api/2/auth/" + username + "/login.json",
@@ -62,13 +60,12 @@ class PodcastProvider_GPodder extends PodcastsProviderBase {
             :headers => headers,
             :responseType => Communications.HTTP_RESPONSE_CONTENT_TYPE_TEXT_PLAIN
             },
-            method(:onLogin));
+            method(:getSubscriptions));
 
         return true;
     }
 
-    function onLogin(responseCode, data){
-        // FIXME: Make device id mandatory!!!
+    function getSubscriptions(responseCode, data){
         if (responseCode == 200 || responseCode == -400) {
             Communications.makeWebRequest(
                 serviceroot + "subscriptions/" + username + "/" + deviceid + ".json",
@@ -88,6 +85,7 @@ class PodcastProvider_GPodder extends PodcastsProviderBase {
     }
 
     function onSubscriptions(responseCode, data){
+        podcasts = {};
         if (responseCode == 200) {
             var urls = [];
             // Device ID set
@@ -132,14 +130,5 @@ class PodcastProvider_GPodder extends PodcastsProviderBase {
     function getFeedsDone(){
         Storage.setValue(Constants.STORAGE_SUBSCRIBED, podcasts);
         done(podcasts);
-    }
-
-    function manage(){
-        var prompt = new Ui.CompactPrompt(Rez.Strings.msgSendNotification, method(:showNotification), null);
-        prompt.show();
-    }
-
-    function showNotification(){
-        Communications.openWebPage(serviceroot, {}, null);
     }
 }
