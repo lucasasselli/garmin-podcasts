@@ -14,7 +14,7 @@ class MainMenu extends Ui.CompactMenu {
     function build(){
         add(Rez.Strings.menuQueue, method(:getQueueSize), method(:callbackQueue));
         add(Rez.Strings.menuPodcasts, null, method(:callbackPodcasts));
-        add(Rez.Strings.menuSync, null, method(:callbackSync));
+        add(Rez.Strings.menuEpisodes, null, method(:callbackEpisodes));
         add(Rez.Strings.menuSettings, null, method(:callbackSettings));
     }
 
@@ -43,31 +43,16 @@ class MainMenu extends Ui.CompactMenu {
         }
     }
 
-    // Podcast subscription management
+    // Manage subscriptions
     function callbackPodcasts(){
         var podcastProvider = new PodcastsProviderWrapper();
         podcastProvider.manage();
     }
 
-    // Sync
-    function callbackSync(){
-        var mode = Application.getApp().getProperty("settingSyncMode");
-        var provider = new EpisodesProviderWrapper();
-
-        switch(mode){
-            case EpisodesProviderWrapper.EPISODE_MODE_RECENT:
-            if(provider.valid(true)){
-                // Start sync
-                Storage.setValue(Constants.STORAGE_MANUAL_SYNC, true);
-                Communications.startSync();
-            }
-            break;
-
-            case EpisodesProviderWrapper.EPISODE_MODE_MANUAL:
-            var manager = new EpisodeManager();
-            manager.show();
-            break;
-        }
+    // Manage episodes
+    function callbackEpisodes(){
+        var episodeManager = new EpisodeManager();
+        episodeManager.show();
     }
 
     // Settings

@@ -28,7 +28,7 @@ class SubscriptionManager extends Ui.CompactMenu {
 
     // Return number of subscribed podcast strings
     function getSubscribedCount(){
-        var subscribed = StorageHelper.get(Constants.STORAGE_SUBSCRIBED, []);
+        var subscribed = StorageHelper.get(Constants.STORAGE_SUBSCRIBED, {});
         return subscribed.size().toString() + " " + WatchUi.loadResource(Rez.Strings.podcasts);
     }
 
@@ -111,5 +111,8 @@ class SubscriptionManager extends Ui.CompactMenu {
         var subscribed = StorageHelper.get(Constants.STORAGE_SUBSCRIBED, {});
         subscribed.remove(context);
         Storage.setValue(Constants.STORAGE_SUBSCRIBED, subscribed);
+
+        // Trigger data cleanup
+        Utils.purgeBadMedia();
     }
 }

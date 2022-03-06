@@ -63,6 +63,7 @@ class Utils {
     function purgeBadMedia(){
 
         var episodes = StorageHelper.get(Constants.STORAGE_EPISODES, {});
+        var podcasts = StorageHelper.get(Constants.STORAGE_SUBSCRIBED, {});
 
         // Purge medias without episode
         var medias = Media.getContentRefIter({:contentType => Media.CONTENT_TYPE_AUDIO});
@@ -78,7 +79,7 @@ class Utils {
             }
         }
 
-        // Purge episodes without media
+        // Purge episodes without media/podcast
         var episodeIds = episodes.keys();
         for (var i = 0; i < episodeIds.size(); i++) {
             var mediaObj = Utils.getSafeMedia(episodes[episodeIds[i]][Constants.EPISODE_MEDIA]);
@@ -86,6 +87,11 @@ class Utils {
             if(mediaObj == null){
                 episodes.remove(episodeIds[i]);
                 System.println("Episode " + episodeIds[i] + " doesn't have a media. Deleting...");
+            }
+
+            if(!podcasts.hasKey(episodes[episodeIds[i]][Constants.EPISODE_PODCAST])){
+                episodes.remove(episodeIds[i]);
+                System.println("Episode " + episodeIds[i] + " doesn't have a podcast. Deleting...");
             }
         }
         Storage.setValue(Constants.STORAGE_EPISODES, episodes);

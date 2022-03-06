@@ -1,197 +1,122 @@
 using Toybox.WatchUi;
-using Toybox.System;
-using Toybox.Communications;
-using Toybox.Cryptography;
-using Toybox.StringUtil;
 using Toybox.Application.Storage;
+using Toybox.Communications;
+using Toybox.Media;
 
 using CompactLib.Ui;
 
-class EpisodeManager {
-
-    var provider;
-
-    var loadingShown;
-
-    var podcasts;
-    var podcastsMenu;
-
-    var progressBar;
-
-    var saved;
-    var episodes;
-    var menuEpisodes;
+class EpisodeManager extends Ui.CompactMenu {
 
     function initialize(){
-        provider = new PodcastsProviderWrapper();
-        saved = StorageHelper.get(Constants.STORAGE_EPISODES, {});
-        episodes = StorageHelper.get(Constants.STORAGE_EPISODES, {});
+        CompactMenu.initialize(Rez.Strings.menuEpisodes);
     }
 
-    function show(){
-        if(provider.valid(true)){
-            provider.setProgressCallback(method(:progressCallback));
-            if(provider.get(method(:podcastsDone), method(:showError))){
-                progressBar = new WatchUi.ProgressBar(WatchUi.loadResource(Rez.Strings.loading), null);
-                WatchUi.pushView(progressBar, new CompactLib.Utils.RemoteProgressDelegate(), WatchUi.SLIDE_LEFT);
+    function build(){
+        add(Rez.Strings.menuEpisodesDownload, null, method(:callbackDownload));
+        add(Rez.Strings.menuEpisodesDelete, null, method(:callbackDelete));
+    }
+
+    // Download
+    function callbackDownload(){
+        var mode = Application.getApp().getProperty("settingSyncMode");
+        var provider = new EpisodesProviderWrapper();
+
+        switch(mode){
+            case EpisodesProviderWrapper.EPISODE_MODE_RECENT:
+            if(provider.valid(true)){
+                // Start sync
+                Storage.setValue(Constants.STORAGE_MANUAL_SYNC, true);
+                Communications.startSync();
             }
+            break;
+
+            case EpisodesProviderWrapper.EPISODE_MODE_MANUAL:
+            var episodeDownload = new EpisodeDownload();
+            episodeDownload.show();
+            break;
         }
     }
 
-    function progressCallback(progress){
-        if(progressBar != null){
-            progressBar.setProgress(progress);
-        }
-    }
+    // Delete
+    function callbackDelete() {
+        var episodes = StorageHelper.get(Constants.STORAGE_EPISODES, {});
+        var podcasts = StorageHelper.get(Constants.STORAGE_SUBSCRIBED, {});
 
-    function podcastsDone(podcasts){
-        self.podcasts = podcasts;
-        if(podcasts != null && podcasts.size() > 0){
-            podcastsMenu = new Ui.CompactMenu(Rez.Strings.titleSelectEpisodesMenu);
-            podcastsMenu.setBackCallback(method(:onPodcastBack));
+        var downloadedCount = 0;
 
-            var podcastIds = podcasts.keys();
+        var episodesMenu = new WatchUi.CheckboxMenu({:title => Rez.Strings.menuEpisodesDelete});
+        var menuEpisodes = {};
 
-            for(var i=0; i<podcastIds.size(); i++){
-                podcastsMenu.add(podcasts[podcastIds[i]][Constants.PODCAST_TITLE], method(:getSelected), method(:getEpisodes));
-            }
-
-            if(progressBar == null){
-                podcastsMenu.show();
-            }else{
-                podcastsMenu.switchTo();
-            }
-            progressBar = null;
-        }else{
-            showError(Rez.Strings.errorNoSubscriptions);
-        }
-    }
-
-    function getSelected(){
-        var podcastId = podcasts.keys()[podcastsMenu.getSelected()];
-        var selected = 0;
-        var downloaded = 0;
         for(var i=0; i<episodes.size(); i++){
             var episode = episodes.values()[i];
-            if(episode[Constants.EPISODE_PODCAST].equals(podcastId)){
-                if(episode[Constants.EPISODE_MEDIA] != null){
-                    downloaded++;
+            var podcastTitle = "";
+
+            if(episode[Constants.EPISODE_MEDIA] != null){
+                downloadedCount++;
+
+                // If podcast still exists
+                if(podcasts.hasKey(episode[Constants.EPISODE_PODCAST])){
+                    podcastTitle = podcasts[episode[Constants.EPISODE_PODCAST]][Constants.PODCAST_TITLE];
                 }
-                selected++;
+
+                episodesMenu.addItem(new WatchUi.CheckboxMenuItem(episode[Constants.EPISODE_TITLE], podcastTitle, episodes.keys()[i], false, {}));
             }
         }
-
-        if(downloaded > 0){
-            if(selected > 0){
-                return selected + " S " + downloaded  + " D";
-            }else{
-                return downloaded + " downloaded";
-            }
-        }else{
-            if(selected > 0){
-                return selected + " selected";
-            }else{
-                return null;
-            }
-        }
-    }
-
-    function showError(msg){
-        var alert = new Ui.CompactAlert(msg);
-        if(progressBar != null){
-            alert.switchTo();
-        }else{
+        if (downloadedCount > 0) {
+            // Episodes downloaded
+            WatchUi.pushView(episodesMenu, new EpisodeDeleteSelectDelegate(), WatchUi.SLIDE_LEFT);
+        } else {
+            // No episodes
+            var alert = new Ui.CompactAlert(Rez.Strings.errorNoQueueEpisodes);
             alert.show();
         }
-        progressBar = null;
-    }
-
-    function getEpisodes(){
-
-        var podcastId = podcasts.keys()[podcastsMenu.getSelected()];
-        var podcast = podcasts[podcastId];
-
-        var episodesRequest = new CompactLib.Utils.CompactRequest(WatchUi.loadResource(Rez.JsonData.connectionErrors));
-
-        episodesRequest.requestShowProgress(
-            Constants.URL_FEEDPARSER_ROOT,
-            {"feedUrl" => podcast[Constants.PODCAST_URL], "max" => Constants.FEEDPARSER_MAX_EPISODES},
-            method(:onEpisodes),
-            null);
-    }
-
-    function onEpisodes(data, context) {
-
-        var podcastId = podcasts.keys()[podcastsMenu.getSelected()];
-        var podcast = podcasts[podcastId];
-
-        var episodesMenu = new WatchUi.CheckboxMenu({:title => podcast[Constants.PODCAST_TITLE]});
-        menuEpisodes = {};
-
-        var items = data.get("feed");
-        if(items != null){
-
-            for(var i=0; i<items.size(); i++){
-                var episode = Data.parseEpisode(items[i], podcastId);
-                if(episode != null){
-                    var episodeId = Data.genEpisodeId(episode);
-                    menuEpisodes.put(episodeId, episode);
-                    episodesMenu.addItem(new WatchUi.CheckboxMenuItem(episode[Constants.EPISODE_TITLE], "", episodeId, episodes.hasKey(episodeId), {}));
-                }
-            }
-
-        }
-
-        if(menuEpisodes.size() > 0){
-            WatchUi.switchToView(episodesMenu, new EpisodeSelectDelegate(self.weak()), WatchUi.SLIDE_LEFT);
-        }else{
-            var alert = new Ui.CompactAlert(Rez.Strings.errorNoPodcastEpisodes);
-            alert.switchTo();
-        }
-    }
-
-    function onPodcastBack(){
-        Storage.setValue(Constants.STORAGE_EPISODES, episodes);
-        var prompt = new Ui.CompactPrompt(Rez.Strings.confirmSync, method(:startSync), method(:exitView));
-        prompt.show();
-    }
-
-    function startSync(){
-        WatchUi.popView(WatchUi.SLIDE_RIGHT);
-
-        // Start sync
-        Storage.setValue(Constants.STORAGE_MANUAL_SYNC, true);
-        Communications.startSync();
-    }
-
-    function exitView(){
-        WatchUi.popView(WatchUi.SLIDE_RIGHT);
     }
 }
 
-class EpisodeSelectDelegate extends WatchUi.Menu2InputDelegate {
+class EpisodeDeleteSelectDelegate extends WatchUi.Menu2InputDelegate {
 
-    private var parentRef;
+    var toDelete = {};
 
-    function initialize(parentRef) {
-        self.parentRef = parentRef;
+    function initialize() {
         Menu2InputDelegate.initialize();
     }
 
     function onSelect(item) {
-        if(parentRef.stillAlive()){
-            var parent = parentRef.get();
-            var id = item.getId();
-            if (item.isChecked()) {
-                if(parent.saved.hasKey(id)){
-                    // If the episode is saved, use it to avoid loosing media
-                    parent.episodes.put(id, parent.saved[id]);
-                }else{
-                    parent.episodes.put(id, parent.menuEpisodes[id]);
-                }
-            } else {
-                parent.episodes.remove(item.getId());
-            }
+        if (item.isChecked()) {
+            toDelete.put(item.getId(), null);
+        } else {
+            toDelete.remove(item.getId());
         }
+    }
+
+    function onDone() {
+        if(toDelete.size() > 0){
+            // ... something to delete, ask user to confirm
+            var prompt = new Ui.CompactPrompt(Rez.Strings.confirmDelete, method(:delete), method(:exitView));
+            prompt.show();
+        }else{
+            // Just exit
+            WatchUi.popView(WatchUi.SLIDE_RIGHT);
+        }
+    }
+
+    function delete(){
+
+        // Remove deleted episodes
+        var episodes = StorageHelper.get(Constants.STORAGE_EPISODES, {});
+        for(var i=0; i<toDelete.size(); i++){
+            episodes.remove(toDelete.keys()[i]);
+        }
+        Storage.setValue(Constants.STORAGE_EPISODES, episodes);
+
+        // Trigger data cleanup
+        Utils.purgeBadMedia();
+
+        WatchUi.popView(WatchUi.SLIDE_RIGHT);
+    }
+
+    function exitView(){
+        // Just exit
+        WatchUi.popView(WatchUi.SLIDE_RIGHT);
     }
 }
