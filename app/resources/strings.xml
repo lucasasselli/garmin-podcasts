@@ -5,7 +5,9 @@
     <string id="menuPlayer">Now playing</string>
     <string id="menuQueue">Playback queue</string>
     <string id="menuPodcasts">Manage Subscriptions</string>
-    <string id="menuSync">Download Episodes</string>
+    <string id="menuEpisodes">Manage Episodes</string>
+    <string id="menuEpisodesDownload">Download</string>
+    <string id="menuEpisodesDelete">Delete</string>
     <string id="menuSettings">Settings</string>
     <string id="menuSearch">Search</string>
     <string id="menuSubscribed">Subscribed</string>
@@ -30,6 +32,7 @@
     <string id="confirmUnsubscribe">Do you want to unsubscribe?</string>
     <string id="confirmPlayback">Do you want to start playback?</string>
     <string id="confirmSync">Do you want to sync?</string>
+    <string id="confirmDelete">Do you want to delete?</string>
 
     <!-- Msg Dialog -->
     <string id="msgSendNotification">Open on phone?</string>
