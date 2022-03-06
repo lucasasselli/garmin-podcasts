@@ -1,9 +1,6 @@
 <resources>
     <properties>
         <property id="settingPodcastService" type="number">0</property>
-        <property id="settingSyncMode" type="number">0</property>
-        <property id="settingEpisodes" type="number">1</property>
-        <property id="settingEpisodesMax" type="number">10</property>
         <property id="settingUsername" type="string"></property>
         <property id="settingPassword" type="string"></property>
         <property id="settingDeviceId" type="string"></property>
@@ -11,24 +8,13 @@
     </properties>
 
     <strings>
-        <string id="settingSyncModeTitle">Download Mode</string>
         <string id="settingPodcastServiceTitle">Subscription service</string>
-        <string id="settingEpisodesPerPodcastTitle">Episodes per Podcast</string>
-        <string id="settingEpisodesMaxTitle">Max. episodes</string>
         <string id="settingUsernameTitle">Username</string>
         <string id="settingPasswordTitle">Password</string>
-        <string id="settingDeviceIdTitle">Device ID (optional)</string>
+        <string id="settingDeviceIdTitle">Device ID</string>
         <string id="settingServiceUrlTitle">Service URL (optional)</string>
         <string id="none">None</string>
         <string id="gPodder">gpodder.net</string>
-        <string id="manual">Manual</string>
-        <string id="mostRecent">Most recent</string>
-        <string id="number1">1</string>
-        <string id="number2">2</string>
-        <string id="number5">5</string>
-        <string id="number10">10</string>
-        <string id="number20">20</string>
-        <string id="number50">50</string>
     </strings>
 
     <settings>
@@ -36,29 +22,6 @@
             <settingConfig type="list">
                 <listEntry value="0">@Strings.none</listEntry>
                 <listEntry value="1">@Strings.gPodder</listEntry>
-            </settingConfig>
-        </setting>
-
-        <setting propertyKey="@Properties.settingSyncMode" title="@Strings.settingSyncModeTitle">
-            <settingConfig type="list">
-                <listEntry value="0">@Strings.manual</listEntry>
-                <listEntry value="1">@Strings.mostRecent</listEntry>
-            </settingConfig>
-        </setting>
-
-        <setting propertyKey="@Properties.settingEpisodes" title="@Strings.settingEpisodesPerPodcastTitle">
-            <settingConfig type="list">
-                <listEntry value="1">@Strings.number1</listEntry>
-                <listEntry value="2">@Strings.number2</listEntry>
-                <listEntry value="5">@Strings.number5</listEntry>
-            </settingConfig>
-        </setting>
-
-        <setting propertyKey="@Properties.settingEpisodesMax" title="@Strings.settingEpisodesMaxTitle">
-            <settingConfig type="list">
-                <listEntry value="10">@Strings.number10</listEntry>
-                <listEntry value="20">@Strings.number20</listEntry>
-                <listEntry value="50">@Strings.number50</listEntry>
             </settingConfig>
         </setting>
 

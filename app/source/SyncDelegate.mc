@@ -6,7 +6,6 @@ class SyncDelegate extends Communications.SyncDelegate {
 
     var episodes;
     var podcasts;
-
     var artworks;
 
     var downloadsIterator;
@@ -21,22 +20,19 @@ class SyncDelegate extends Communications.SyncDelegate {
         // Reset Manual flag
         Storage.setValue(Constants.STORAGE_MANUAL_SYNC, false);
 
-        artworks = StorageHelper.get(Constants.STORAGE_ARTWORKS, []);
+        self.episodes = StorageHelper.get(Constants.STORAGE_EPISODES, {});
+        self.podcasts = StorageHelper.get(Constants.STORAGE_SUBSCRIBED, {});
+        self.artworks = StorageHelper.get(Constants.STORAGE_ARTWORKS, []);
 
-        var episodesProvider = new EpisodesProviderWrapper();
-        if(episodesProvider.valid(false)){
-            episodesProvider.get(method(:onEpisodes), method(:throwSyncError));
-        }else{
-            var service = Application.getApp().getProperty("settingPodcastService");
-            switch(service){
-                case PODCAST_SERVICE_LOCAL:
-                throwSyncError("Error: Unknown");
-                break;
+        var service = Application.getApp().getProperty("settingPodcastService");
+        switch(service){
+            case PODCAST_SERVICE_LOCAL:
+            throwSyncError("Error: Unknown");
+            break;
 
-                case PODCAST_SERVICE_GPODDER:
-                throwSyncError(StringHelper.get(Rez.Strings.errorNoCredentials));
-                break;
-            }
+            case PODCAST_SERVICE_GPODDER:
+            throwSyncError(StringHelper.get(Rez.Strings.errorNoCredentials));
+            break;
         }
     }
 
