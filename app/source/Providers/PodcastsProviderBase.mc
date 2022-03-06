@@ -8,6 +8,7 @@ class PodcastsProviderBase {
 
     var doneCallback;
     var errorCallback;
+    var progressCallback;
 
     function initialize(){
         podcasts = StorageHelper.get(Constants.STORAGE_SUBSCRIBED, {});

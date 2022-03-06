@@ -18,23 +18,8 @@ class EpisodeManager extends Ui.CompactMenu {
 
     // Download
     function callbackDownload(){
-        var mode = Application.getApp().getProperty("settingSyncMode");
-        var episodeProvider = new EpisodesProviderWrapper();
-
-        switch(mode){
-            case EpisodesProviderWrapper.EPISODE_MODE_RECENT:
-            if(episodeProvider.valid(true)){
-                // Start sync
-                Storage.setValue(Constants.STORAGE_MANUAL_SYNC, true);
-                Communications.startSync();
-            }
-            break;
-
-            case EpisodesProviderWrapper.EPISODE_MODE_MANUAL:
-            var episodeDownload = new EpisodeDownload();
-            episodeDownload.show();
-            break;
-        }
+        var episodeDownload = new EpisodeDownload();
+        episodeDownload.show();
     }
 
     // Delete

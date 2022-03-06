@@ -1,4 +1,0 @@
-<menu2 id="SettingSyncMode" title="@Strings.settingSyncModeTitle">
-    <menu-item id="manual" label="@Strings.manual"></menu-item>
-    <menu-item id="recent" label="@Strings.mostRecent"></menu-item>
-</menu2>

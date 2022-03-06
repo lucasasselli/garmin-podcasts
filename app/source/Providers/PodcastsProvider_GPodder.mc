@@ -14,8 +14,6 @@ class PodcastProvider_GPodder extends PodcastsProviderBase {
     var deviceid;
     var serviceroot;
 
-    var progressCallback;
-
     var headers;
 
     function initialize(){
@@ -43,12 +41,11 @@ class PodcastProvider_GPodder extends PodcastsProviderBase {
     }
 
     function valid(displayError){
-        var validLogin = (StringHelper.notNullOrEmpty(username) && StringHelper.notNullOrEmpty(password));
+        var validLogin = (StringHelper.notNullOrEmpty(username) && StringHelper.notNullOrEmpty(password) && StringHelper.notNullOrEmpty(deviceid));
         if(!validLogin && displayError){
             var alert = new Ui.CompactAlert(Rez.Strings.errorNoCredentials);
             alert.show();
         }
-        // FIXME: Add check for Device ID
         return validLogin;
     }
 
@@ -73,17 +70,8 @@ class PodcastProvider_GPodder extends PodcastsProviderBase {
     function onLogin(responseCode, data){
         // FIXME: Make device id mandatory!!!
         if (responseCode == 200 || responseCode == -400) {
-            var url;
-            if(StringHelper.notNullOrEmpty(deviceid)){
-                // Device ID set
-                url = serviceroot + "subscriptions/" + username + "/" + deviceid + ".json";
-            }else{
-                // Device ID not set
-                url = serviceroot + "subscriptions/" + username + ".json";
-            }
-
             Communications.makeWebRequest(
-                url,
+                serviceroot + "subscriptions/" + username + "/" + deviceid + ".json",
                 null,
                 {
                     :method => Communications.HTTP_REQUEST_METHOD_GET,
