@@ -45,8 +45,7 @@ class MainMenu extends Ui.CompactMenu {
 
     // Manage subscriptions
     function callbackPodcasts(){
-        var podcastProvider = new PodcastsProviderWrapper();
-        podcastProvider.manage();
+        $.podscastsProvider.manage();
     }
 
     // Manage episodes

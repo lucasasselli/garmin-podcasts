@@ -5,29 +5,26 @@ using Toybox.Application.Storage;
 using CompactLib.Ui;
 using CompactLib.StringHelper;
 
-(:background)
-class PodcastProvider_GPodder {
+class PodcastProvider_GPodder extends PodcastsProviderBase {
 
     var feedsIterator;
-
-    var podcasts = {};
 
     var username;
     var password;
     var deviceid;
     var serviceroot;
 
-    var doneCallback;
-    var errorCallback;
     var progressCallback;
 
     var headers;
 
     function initialize(){
+
         username = Application.getApp().getProperty("settingUsername");
         password = Application.getApp().getProperty("settingPassword");
         deviceid = Application.getApp().getProperty("settingDeviceId");
         serviceroot = Application.getApp().getProperty("settingServiceUrl");
+
         if(!StringHelper.notNullOrEmpty(serviceroot)){
             serviceroot = Constants.URL_GPODDER_ROOT;
         }
@@ -41,6 +38,8 @@ class PodcastProvider_GPodder {
             "Content-Type" => Communications.REQUEST_CONTENT_TYPE_URL_ENCODED,
             "Authorization" => "Basic " + StringUtil.encodeBase64(username + ":" + password),
         };
+
+        PodcastsProviderBase.initialize();
     }
 
     function valid(displayError){
@@ -53,18 +52,9 @@ class PodcastProvider_GPodder {
         return validLogin;
     }
 
-    function get(doneCallback, errorCallback){
-        self.errorCallback = errorCallback;
-        self.doneCallback = doneCallback;
+    function download(){
 
-        var last_update = StorageHelper.get(Constants.STORAGE_LAST_UPDATE, 0);
-        var now = Time.now().value();
-        var podcasts = StorageHelper.get(Constants.STORAGE_SUBSCRIBED, []);
-
-        if (last_update + 5*60 > now && podcasts.size() > 0){
-            doneCallback.invoke(podcasts);
-            return false;
-        }
+        podcasts = StorageHelper.get(Constants.STORAGE_SUBSCRIBED, {});
 
         // Login to gPodder
         Communications.makeWebRequest(
@@ -80,16 +70,12 @@ class PodcastProvider_GPodder {
         return true;
     }
 
-    function setProgressCallback(callback){
-        progressCallback = callback;
-    }
-
     function onLogin(responseCode, data){
-        // FIXME:
+        // FIXME: Make device id mandatory!!!
         if (responseCode == 200 || responseCode == -400) {
             var url;
             if(StringHelper.notNullOrEmpty(deviceid)){
-                // Devige ID set
+                // Device ID set
                 url = serviceroot + "subscriptions/" + username + "/" + deviceid + ".json";
             }else{
                 // Device ID not set
@@ -106,10 +92,10 @@ class PodcastProvider_GPodder {
                 },
                 method(:onSubscriptions));
         } else if(responseCode == Communications.BLE_CONNECTION_UNAVAILABLE){
-            errorCallback.invoke(WatchUi.loadResource(Rez.Strings.errorNoInternet));
+            error(WatchUi.loadResource(Rez.Strings.errorNoInternet));
         } else {
             // FIXME: Use JSON!
-            errorCallback.invoke("Login error " + responseCode);
+            error("Login error " + responseCode);
         }
     }
 
@@ -123,9 +109,9 @@ class PodcastProvider_GPodder {
             feedsIterator = new CompactLib.Utils.Iterator(urls, method(:getFeedInfo), method(:getFeedsDone));
             feedsIterator.next();
         } else if (responseCode == Communications.NETWORK_RESPONSE_TOO_LARGE){
-            errorCallback.invoke(WatchUi.loadResource(Rez.Strings.errorTooManySubs));
+            error(WatchUi.loadResource(Rez.Strings.errorTooManySubs));
         } else {
-            errorCallback.invoke("List error " + responseCode);
+            error("List error " + responseCode);
         }
     }
 
@@ -141,10 +127,8 @@ class PodcastProvider_GPodder {
 
     function onFeedInfo(responseCode, data, context){
         if (responseCode == 200) {
-            if(progressCallback != null){
-                var progress = feedsIterator.index().toFloat()/feedsIterator.size().toFloat();
-                progressCallback.invoke((progress*100).toNumber());
-            }
+            var progress_val = feedsIterator.index().toFloat()/feedsIterator.size().toFloat();
+            progress((progress_val*100).toNumber());
 
             var podcast = Data.parsePodcast(data, context);
             if(podcast != null){
@@ -159,8 +143,7 @@ class PodcastProvider_GPodder {
 
     function getFeedsDone(){
         Storage.setValue(Constants.STORAGE_SUBSCRIBED, podcasts);
-        Storage.setValue(Constants.STORAGE_LAST_UPDATE, Time.now().value());
-        doneCallback.invoke(podcasts);
+        done(podcasts);
     }
 
     function manage(){

@@ -9,8 +9,6 @@ using CompactLib.Ui;
 
 class EpisodeDownload {
 
-    var provider;
-
     var loadingShown;
 
     var podcasts;
@@ -23,15 +21,13 @@ class EpisodeDownload {
     var menuEpisodes;
 
     function initialize(){
-        provider = new PodcastsProviderWrapper();
         saved = StorageHelper.get(Constants.STORAGE_EPISODES, {});
         episodes = StorageHelper.get(Constants.STORAGE_EPISODES, {});
     }
 
     function show(){
-        if(provider.valid(true)){
-            provider.setProgressCallback(method(:progressCallback));
-            if(provider.get(method(:podcastsDone), method(:showError))){
+        if($.podscastsProvider.valid(true)){
+            if($.podscastsProvider.get(method(:podcastsDone), method(:showError), method(:progressCallback))){
                 progressBar = new WatchUi.ProgressBar(WatchUi.loadResource(Rez.Strings.loading), null);
                 WatchUi.pushView(progressBar, new CompactLib.Utils.RemoteProgressDelegate(), WatchUi.SLIDE_LEFT);
             }

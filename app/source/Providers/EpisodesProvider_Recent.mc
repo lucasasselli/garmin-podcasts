@@ -6,7 +6,6 @@ class EpisodesProvider_Recent {
 
     var podcastEpisodesIterator;
 
-    var podcastProvider;
     var podcasts = {};
 
     var episodes = {};
@@ -18,11 +17,10 @@ class EpisodesProvider_Recent {
     var errorCallback;
 
     function initialize(){
-        podcastProvider = new PodcastsProviderWrapper();
     }
 
     function valid(displayError){
-        return podcastProvider.valid(displayError);
+        return $.podscastsProvider.valid(displayError);
     }
 
     function get(doneCallback, errorCallback){
@@ -34,7 +32,7 @@ class EpisodesProvider_Recent {
         settingEpisodesMax = Application.getApp().getProperty("settingEpisodesMax").toNumber();
 
         // Get podcasts
-        podcastProvider.get(method(:onPodcastGet), errorCallback);
+        $.podscastsProvider.get(method(:onPodcastGet), errorCallback);
     }
 
     function onPodcastGet(podcasts){

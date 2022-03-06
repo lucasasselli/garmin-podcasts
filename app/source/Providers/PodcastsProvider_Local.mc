@@ -3,13 +3,12 @@ using Toybox.Application.Storage;
 
 using CompactLib.Ui;
 
-(:background)
-class PodcastProvider_Local {
-
-    private var podcasts;
+class PodcastProvider_Local extends PodcastsProviderBase{
 
     function initialize(){
-        self.podcasts = StorageHelper.get(Constants.STORAGE_SUBSCRIBED, {});
+        PodcastsProviderBase.initialize();
+
+        downloaded = true;
     }
 
     function valid(displayError){
@@ -19,14 +18,6 @@ class PodcastProvider_Local {
             alert.show();
         }
         return validSubs;
-    }
-
-    function get(doneCallback, errorCallback){
-        doneCallback.invoke(self.podcasts);
-        return false;
-    }
-
-    function setProgressCallback(callback){
     }
 
     function manage(){

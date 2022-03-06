@@ -19,11 +19,11 @@ class EpisodeManager extends Ui.CompactMenu {
     // Download
     function callbackDownload(){
         var mode = Application.getApp().getProperty("settingSyncMode");
-        var provider = new EpisodesProviderWrapper();
+        var episodeProvider = new EpisodesProviderWrapper();
 
         switch(mode){
             case EpisodesProviderWrapper.EPISODE_MODE_RECENT:
-            if(provider.valid(true)){
+            if(episodeProvider.valid(true)){
                 // Start sync
                 Storage.setValue(Constants.STORAGE_MANUAL_SYNC, true);
                 Communications.startSync();

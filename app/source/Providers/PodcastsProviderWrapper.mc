@@ -1,7 +1,6 @@
 using Toybox.Communications;
 using Toybox.Application;
 
-(:background)
 class PodcastsProviderWrapper {
 
     const PODCAST_SERVICE_LOCAL = 0;
@@ -26,12 +25,8 @@ class PodcastsProviderWrapper {
         return provider.valid(displayError);
     }
 
-    function get(doneCallback, errorCallback){
-        return provider.get(doneCallback, errorCallback);
-    }
-
-    function setProgressCallback(callback){
-        provider.setProgressCallback(callback);
+    function get(doneCallback, errorCallback, progressCallback){
+        return provider.get(doneCallback, errorCallback, progressCallback);
     }
 
     function manage(){

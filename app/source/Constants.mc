@@ -1,4 +1,3 @@
-(:background)
 module Constants {
 
     const URL_PODCASTINDEX_ROOT = "https://us-central1-garminpodcasts-307017.cloudfunctions.net/podcast-index-minify-1";
@@ -25,8 +24,7 @@ module Constants {
         STORAGE_EPISODES,
         STORAGE_PLAYLIST,
         STORAGE_ARTWORKS,
-        STORAGE_MANUAL_SYNC,
-        STORAGE_LAST_UPDATE
+        STORAGE_MANUAL_SYNC
     }
 
     enum {
