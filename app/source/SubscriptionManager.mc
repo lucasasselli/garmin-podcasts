@@ -9,8 +9,6 @@ using CompactLib.Ui;
 
 class SubscriptionManager extends Ui.CompactMenu {
 
-    var searchResults;
-
     function initialize(){
         CompactMenu.initialize(Rez.Strings.menuPodcasts);
     }
@@ -53,6 +51,7 @@ class SubscriptionManager extends Ui.CompactMenu {
                     {})
                 );
             }
+            // FIXME
             WatchUi.pushView(menu, new ConfirmMenuDelegate(Rez.Strings.confirmUnsubscribe, method(:onPodcastRemove)), WatchUi.SLIDE_LEFT);
         } else {
             var alert = new Ui.CompactAlert(Rez.Strings.errorNoSubscriptions);
@@ -97,7 +96,7 @@ class SubscriptionManager extends Ui.CompactMenu {
                     ));
             }
         }
-
+        // FIXME:
         WatchUi.switchToView(menu, new ConfirmMenuDelegate(Rez.Strings.confirmSubscribe, method(:onPodcastAdd)), WatchUi.SLIDE_LEFT);
     }
 

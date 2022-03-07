@@ -4,6 +4,8 @@ using Toybox.WatchUi;
 
 using CompactLib.Ui;
 
+// FIXME: Add handle to access podcasts
+
 class PodcastsProviderWrapper {
 
     const PODCAST_SERVICE_LOCAL = 0;
@@ -39,6 +41,8 @@ class PodcastsProviderWrapper {
                 progressBar = new WatchUi.ProgressBar(WatchUi.loadResource(Rez.Strings.loading), null);
                 WatchUi.pushView(progressBar, new CompactLib.Utils.RemoteProgressDelegate(), WatchUi.SLIDE_LEFT);
             }
+        }else{
+            error(Rez.Strings.errorNoCredentials);
         }
     }
 

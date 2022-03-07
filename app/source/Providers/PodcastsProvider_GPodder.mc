@@ -43,11 +43,7 @@ class PodcastsProvider_GPodder extends PodcastsProviderBase {
     }
 
     function valid(){
-        var validLogin = (StringHelper.notNullOrEmpty(username) && StringHelper.notNullOrEmpty(password) && StringHelper.notNullOrEmpty(deviceid));
-        if(!validLogin){
-            error(Rez.Strings.errorNoCredentials);
-        }
-        return validLogin;
+        return (StringHelper.notNullOrEmpty(username) && StringHelper.notNullOrEmpty(password) && StringHelper.notNullOrEmpty(deviceid));
     }
 
     function download(){

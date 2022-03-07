@@ -48,6 +48,7 @@ class MainMenu extends Ui.CompactMenu {
         $.podcastsProvider.get(method(:podcastsDone));
     }
 
+    // Manage subscriptions - Subscriptions ready
     function podcastsDone(hasProgress, podcasts){
         var manager = new SubscriptionManager();
         if(hasProgress){

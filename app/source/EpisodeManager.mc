@@ -12,18 +12,18 @@ class EpisodeManager extends Ui.CompactMenu {
     }
 
     function build(){
-        add(Rez.Strings.menuEpisodesDownload, null, method(:callbackDownload));
-        add(Rez.Strings.menuEpisodesDelete, null, method(:callbackDelete));
+        add(Rez.Strings.menuEpisodesDownload, null, method(:callbackEpisodeDownload));
+        add(Rez.Strings.menuEpisodesDelete, null, method(:callbackEpisodeDelete));
     }
 
     // Download
-    function callbackDownload(){
+    function callbackEpisodeDownload(){
         var episodeDownload = new EpisodeDownload();
         episodeDownload.show();
     }
 
     // Delete
-    function callbackDelete() {
+    function callbackEpisodeDelete() {
         var episodes = StorageHelper.get(Constants.STORAGE_EPISODES, {});
         var podcasts = StorageHelper.get(Constants.STORAGE_SUBSCRIBED, {});
 
