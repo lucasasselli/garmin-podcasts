@@ -4,12 +4,12 @@ using Toybox.WatchUi;
 
 using CompactLib.Ui;
 
-// FIXME: Add handle to access podcasts
-
 class PodcastsProviderWrapper {
 
-    const PODCAST_SERVICE_LOCAL = 0;
-    const PODCAST_SERVICE_GPODDER = 1;
+    enum {
+        PODCAST_SERVICE_LOCAL,
+        PODCAST_SERVICE_GPODDER
+    }
 
     private var provider;
 
@@ -20,7 +20,7 @@ class PodcastsProviderWrapper {
         var service = Application.getApp().getProperty("settingPodcastService");
         switch(service){
             case PODCAST_SERVICE_LOCAL:
-            provider = new PodcastsProviderBase();
+            provider = new PodcastsProviderBase(false);
             break;
 
             case PODCAST_SERVICE_GPODDER:
@@ -46,6 +46,20 @@ class PodcastsProviderWrapper {
         }
     }
 
+    function add(podcast){
+        if(provider.add(podcast)){
+            progressBar = new WatchUi.ProgressBar(WatchUi.loadResource(Rez.Strings.loading), null);
+            WatchUi.pushView(progressBar, new CompactLib.Utils.RemoteProgressDelegate(), WatchUi.SLIDE_LEFT);
+        }
+    }
+
+    function remove(podcast){
+        if(provider.remove(podcast)){
+            progressBar = new WatchUi.ProgressBar(WatchUi.loadResource(Rez.Strings.loading), null);
+            WatchUi.pushView(progressBar, new CompactLib.Utils.RemoteProgressDelegate(), WatchUi.SLIDE_LEFT);
+        }
+    }
+
     function errorHandler(msg){
         var alert = new Ui.CompactAlert(msg);
         if(progressBar != null){
@@ -56,7 +70,9 @@ class PodcastsProviderWrapper {
     }
 
     function doneCallback(podcasts){
-        callback.invoke((progressCallback != null), podcasts);
+        if(callback != null){
+            callback.invoke((progressCallback != null), podcasts);
+        }
     }
 
     function progressCallback(progress){

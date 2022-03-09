@@ -9,8 +9,9 @@
     <string id="menuEpisodesDownload">Download</string>
     <string id="menuEpisodesDelete">Delete</string>
     <string id="menuSettings">Settings</string>
-    <string id="menuSearch">Search</string>
-    <string id="menuSubscribed">Subscribed</string>
+    <string id="menuPodcastsSearch">Search</string>
+    <string id="menuPodcastsSubscribed">Subscribed</string>
+    <string id="menuPodcastsRefresh">Refresh subscriptions</string>
 
     <!-- Errors -->
     <string id="errorNoResults">No results!</string>

@@ -4,6 +4,8 @@ using Toybox.Communications;
 using Toybox.Cryptography;
 using Toybox.StringUtil;
 using Toybox.Application.Storage;
+using Toybox.Time;
+using Toybox.Time.Gregorian;
 
 using CompactLib.Ui;
 
@@ -14,23 +16,22 @@ class SubscriptionManager extends Ui.CompactMenu {
     }
 
     function build(){
-        add(Rez.Strings.menuSearch, null, method(:callbackSearch));
-        add(Rez.Strings.menuSubscribed, method(:getSubscribedCount), method(:callbackSubscribed));
+        add(Rez.Strings.menuPodcastsSearch, null, method(:callbackSearch));
+        add(Rez.Strings.menuPodcastsSubscribed, method(:getSubscribedCount), method(:callbackSubscribed));
+
+        var service = Application.getApp().getProperty("settingPodcastService");
+        if(service > 0){
+            add(Rez.Strings.menuPodcastsRefresh, null, method(:callbackRefreshSubscriptions));
+        }
     }
 
-    // Search new podcast
+    // Podcast search
     function callbackSearch(){
         var picker = new CompactLib.Ui.CompactPicker(method(:onSearchQuery));
         picker.show();
     }
 
-    // Return number of subscribed podcast strings
-    function getSubscribedCount(){
-        var subscribed = StorageHelper.get(Constants.STORAGE_SUBSCRIBED, {});
-        return subscribed.size().toString() + " " + WatchUi.loadResource(Rez.Strings.podcasts);
-    }
-
-    // Manage subscribed podcasts
+    // Manage subscriptions
     function callbackSubscribed(){
 
         var podcasts = StorageHelper.get(Constants.STORAGE_SUBSCRIBED, {});
@@ -47,16 +48,28 @@ class SubscriptionManager extends Ui.CompactMenu {
                     new WatchUi.MenuItem(
                         podcast[Constants.PODCAST_TITLE],
                         null,
-                        podcastIds[i],
+                        podcast,
                     {})
                 );
             }
-            // FIXME
+            // FIXME: Reuse confirmation view
             WatchUi.pushView(menu, new ConfirmMenuDelegate(Rez.Strings.confirmUnsubscribe, method(:onPodcastRemove)), WatchUi.SLIDE_LEFT);
         } else {
             var alert = new Ui.CompactAlert(Rez.Strings.errorNoSubscriptions);
             alert.show();
         }
+    }
+
+    // Return subscribed count
+    function getSubscribedCount(){
+        var subscribed = StorageHelper.get(Constants.STORAGE_SUBSCRIBED, {});
+        return subscribed.size().toString() + " " + WatchUi.loadResource(Rez.Strings.podcasts);
+    }
+
+    // Refresh subscriptions
+    function callbackRefreshSubscriptions(){
+        // FIXME: Add done callback
+        $.podcastsProvider.get(null);
     }
 
     function onSearchQuery(query){
@@ -96,7 +109,7 @@ class SubscriptionManager extends Ui.CompactMenu {
                     ));
             }
         }
-        // FIXME:
+        // FIXME: Reuse confirmation view
         WatchUi.switchToView(menu, new ConfirmMenuDelegate(Rez.Strings.confirmSubscribe, method(:onPodcastAdd)), WatchUi.SLIDE_LEFT);
     }
 

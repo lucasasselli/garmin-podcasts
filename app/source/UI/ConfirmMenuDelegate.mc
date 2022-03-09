@@ -37,6 +37,5 @@ class ConfirmMenuPromptDelegate extends WatchUi.ConfirmationDelegate {
         if(response == CONFIRM_YES){
             callback.invoke(context.getId());
         }
-        WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
     }
 }

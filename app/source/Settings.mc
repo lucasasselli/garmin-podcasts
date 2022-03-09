@@ -34,7 +34,7 @@ class Settings extends Ui.CompactMenu {
     }
 
     function callbackStorage(){
-        // TODO:
+        // TODO: Implement some extra info?
     }
 }
 

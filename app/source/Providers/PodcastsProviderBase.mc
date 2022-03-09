@@ -1,18 +1,20 @@
+using Toybox.Application.Storage;
 
 class PodcastsProviderBase {
+
+    hidden var remote;
 
     var podcasts;
 
     var busy;
-    var downloaded;
 
     var doneCallback;
     var errorCallback;
     var progressCallback;
 
-    function initialize(){
-        podcasts = StorageHelper.get(Constants.STORAGE_SUBSCRIBED, {});
-        downloaded = false;
+    function initialize(remote){
+        self.podcasts = StorageHelper.get(Constants.STORAGE_SUBSCRIBED, {});
+        self.remote = remote;
     }
 
     function valid(){
@@ -24,20 +26,21 @@ class PodcastsProviderBase {
         self.doneCallback = doneCallback;
         self.progressCallback = progressCallback;
 
+        // Check if provider is doing something is background
         if(busy){
-            System.println("Podcast provider is already running!");
+            System.println("Podcast provider: busy...");
+            return true;
+        }
+
+        if(remote){
+            System.println("Podcast provider: Downloading subscriptions...");
+            busy = true;
+            download();
             return true;
         }else{
-            if(downloaded){
-                System.println("Podcast provider download already has data!");
-                done(podcasts);
-                return false;
-            }else{
-                System.println("Podcast provider starting download...");
-                busy = true;
-                download();
-                return true;
-            }
+            System.println("Podcast provider: Subscriptions available locally...");
+            done(podcasts);
+            return false;
         }
     }
 
@@ -45,17 +48,17 @@ class PodcastsProviderBase {
 
     }
 
-    function add(context){
+    function add(podcast){
         podcasts = StorageHelper.get(Constants.STORAGE_SUBSCRIBED, {});
-        podcasts.put(Utils.hash(context[Constants.PODCAST_URL]), context);
+        podcasts.put(Utils.hash(podcast[Constants.PODCAST_URL]), podcast);
         Storage.setValue(Constants.STORAGE_SUBSCRIBED, podcasts);
 
         return false;
     }
 
-    function remove(context){
+    function remove(podcast){
         podcasts = StorageHelper.get(Constants.STORAGE_SUBSCRIBED, {});
-        podcasts.remove(context);
+        podcasts.remove(Utils.hash(podcast[Constants.PODCAST_URL]));
         Storage.setValue(Constants.STORAGE_SUBSCRIBED, podcasts);
 
         // Trigger data cleanup
@@ -67,9 +70,6 @@ class PodcastsProviderBase {
     function done(podcasts){
         if(doneCallback != null){
             doneCallback.invoke(podcasts);
-        }
-        if(podcasts.size() > 0){
-            downloaded = true;
         }
         busy = false;
     }
