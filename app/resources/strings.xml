@@ -19,7 +19,6 @@
     <string id="errorNoQueueEpisodes">No episodes downloaded!</string>
     <string id="errorNoPodcastEpisodes">Unable to retrieve episodes for this podcast!</string>
     <string id="errorNoCredentials">Login credentials\nnot set!</string>
-    <string id="errorNoInternet">No internet\nconnection!</string><!-- REMOVE -->
     <string id="errorTooManySubs">Too many\nsubscriptions!</string>
 
     <!-- Titles -->

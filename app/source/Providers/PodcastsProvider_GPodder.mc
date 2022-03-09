@@ -64,6 +64,15 @@ class PodcastsProvider_GPodder extends PodcastsProviderBase {
         gPodderlogin(method(:gPodderManagePodcast));
     }
 
+    function error(code){
+        var msg = WatchUi.loadResource(Rez.JsonData.connectionErrors).get(code.toString());
+        if(msg != null){
+            PodcastsProviderBase.error(msg);
+        }else{
+            PodcastsProviderBase.error("Error " + code);
+        }
+    }
+
     // Login to gPodder
     function gPodderlogin(callback){
         Communications.makeWebRequest(
@@ -89,11 +98,8 @@ class PodcastsProvider_GPodder extends PodcastsProviderBase {
                     :responseType => Communications.HTTP_RESPONSE_CONTENT_TYPE_JSON
                 },
                 method(:gPodderOnSubscriptions));
-        } else if(responseCode == Communications.BLE_CONNECTION_UNAVAILABLE){
-            error(WatchUi.loadResource(Rez.Strings.errorNoInternet));
         } else {
-            // FIXME: Use JSON!
-            error("Login error " + responseCode);
+            error(responseCode);
         }
     }
 
@@ -117,11 +123,8 @@ class PodcastsProvider_GPodder extends PodcastsProviderBase {
 
             feedsIterator = new CompactLib.Utils.Iterator(new_podcasts_urls, method(:getFeedInfo), method(:getFeedsDone));
             feedsIterator.next();
-
-        } else if (responseCode == Communications.NETWORK_RESPONSE_TOO_LARGE){
-            error(WatchUi.loadResource(Rez.Strings.errorTooManySubs));
         } else {
-            error("List error " + responseCode);
+            error(responseCode);
         }
     }
 
@@ -170,11 +173,8 @@ class PodcastsProvider_GPodder extends PodcastsProviderBase {
                     :responseType => Communications.HTTP_RESPONSE_CONTENT_TYPE_JSON
                 },
                 method(:gPodderOnManagePodcast));
-        } else if(responseCode == Communications.BLE_CONNECTION_UNAVAILABLE){
-            error(WatchUi.loadResource(Rez.Strings.errorNoInternet));
         } else {
-            // FIXME: Use JSON!
-            error("Login error " + responseCode);
+            error(responseCode);
         }
     }
 

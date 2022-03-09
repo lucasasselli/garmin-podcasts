@@ -21,7 +21,6 @@ class PodcastsProvider_Local extends PodcastsProviderBase {
     }
 
     function remove(podcast, doneCallback, errorCallback){
-
         PodcastsProviderBase.remove(podcast, doneCallback, errorCallback);
 
         podcasts = StorageHelper.get(Constants.STORAGE_SUBSCRIBED, {});
