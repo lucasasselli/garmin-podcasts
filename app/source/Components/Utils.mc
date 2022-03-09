@@ -112,7 +112,7 @@ class Utils {
                 continue;
             }
 
-            var podcastId = podcasts[episode[Constants.EPISODE_PODCAST]];
+            var podcastId = episode[Constants.EPISODE_PODCAST];
             if(podcastId == null || !podcasts.hasKey(podcastId)){
                 episodes.remove(episodeIds[i]);
                 System.println("Episode " + episodeIds[i] + " doesn't have a podcast. Deleting...");
