@@ -116,8 +116,8 @@ class EpisodeDownload {
 
         var items = data.get("feed");
         if(items != null){
-
             for(var i=0; i<items.size(); i++){
+                // FIXME: Might never be null!
                 var episode = Data.parseEpisode(items[i], podcastId);
                 if(episode != null){
                     var episodeId = Data.genEpisodeId(episode);

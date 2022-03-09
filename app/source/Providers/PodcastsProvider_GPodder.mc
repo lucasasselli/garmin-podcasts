@@ -143,12 +143,13 @@ class PodcastsProvider_GPodder extends PodcastsProviderBase {
             var progress_val = feedsIterator.index().toFloat()/feedsIterator.size().toFloat();
             progress((progress_val*100).toNumber());
 
+            // FIXME: Might never be null!
             var podcast = Data.parsePodcast(data, context);
             if(podcast != null){
                 podcasts.put(Utils.hash(context), podcast);
             }
         } else {
-            System.println("Error " + responseCode + " while processing podcast feed " + feedsIterator.item());
+            error(responseCode);
         }
 
         feedsIterator.next();

@@ -96,6 +96,7 @@ class SubscriptionManager extends Ui.CompactMenu {
         var menu = new WatchUi.Menu2({:title=>Rez.Strings.titleResultsMenu});
 
         for (var i=0; i<feeds.size(); i++) {
+            // FIXME: Might never be null!
             var podcast = Data.parsePodcast(feeds[i], feeds[i]["url"]);
             if(podcast != null){
                 menu.addItem(
