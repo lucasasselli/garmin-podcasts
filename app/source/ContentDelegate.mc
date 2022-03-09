@@ -5,11 +5,11 @@ class ContentDelegate extends Media.ContentDelegate {
 
     // Iterator for playing songs
     private var iterator;
-    
+
     // Constructor
     function initialize() {
         ContentDelegate.initialize();
-        resetContentIterator();            
+        resetContentIterator();
     }
 
     // Returns the iterator to play songs
@@ -22,7 +22,7 @@ class ContentDelegate extends Media.ContentDelegate {
         iterator = new ContentIterator();
         return iterator;
     }
-    
+
     function onSong(refId, songEvent, playbackPosition) {
 
         var episodes = StorageHelper.get(Constants.STORAGE_EPISODES, {});
@@ -50,7 +50,7 @@ class ContentDelegate extends Media.ContentDelegate {
                 if(playbackPosition > 0){
                     episodes[id][Constants.EPISODE_PROGRESS] = playbackPosition;
                     Storage.setValue(Constants.STORAGE_EPISODES, episodes);
-                    System.println("Progress saved @ " + playbackPosition);
+                    Log.debug("Progress saved @ " + playbackPosition);
                 }
             }
         }

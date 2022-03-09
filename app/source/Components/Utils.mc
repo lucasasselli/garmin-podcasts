@@ -84,7 +84,7 @@ class Utils {
             var media = medias.next();
             while (media != null) {
                 if(Utils.findArrayField(episodes.values(), Constants.EPISODE_MEDIA, media.getId()) == null){
-                    System.println("Media " + media.getId() + " is not used by an episode. Deleting...");
+                    Log.debug("Media " + media.getId() + " is not used by an episode. Deleting...");
                     var ref = new Media.ContentRef(media.getId(), Media.CONTENT_TYPE_AUDIO);
                     Media.deleteCachedItem(ref);
                 }
@@ -100,7 +100,7 @@ class Utils {
 
             if(episode == null){
                 episodes.remove(episodeIds[i]);
-                System.println("Episode " + episodeIds[i] + " is null. Deleting...");
+                Log.debug("Episode " + episodeIds[i] + " is null. Deleting...");
                 continue;
             }
 
@@ -108,14 +108,14 @@ class Utils {
             // var mediaObj = Utils.getSafeMedia(episode[Constants.EPISODE_MEDIA]);
             // if(mediaObj == null){
             //     episodes.remove(episodeIds[i]);
-            //     System.println("Episode " + episodeIds[i] + " doesn't have a media. Deleting...");
+            //     Log.debug("Episode " + episodeIds[i] + " doesn't have a media. Deleting...");
             //     continue;
             // }
 
             var podcastId = episode[Constants.EPISODE_PODCAST];
             if(podcastId == null || !podcasts.hasKey(podcastId)){
                 episodes.remove(episodeIds[i]);
-                System.println("Episode " + episodeIds[i] + " doesn't have a podcast. Deleting...");
+                Log.debug("Episode " + episodeIds[i] + " doesn't have a podcast. Deleting...");
                 continue;
             }
         }
@@ -129,7 +129,7 @@ class Utils {
             if(x != null){
                 purgedPlaylist.add(playlist[i]);
             }else{
-                System.println("Media " + playlist[i] + " doesn't exist anymore. Deleting from playlist...");
+                Log.debug("Media " + playlist[i] + " doesn't exist anymore. Deleting from playlist...");
             }
         }
         Storage.setValue(Constants.STORAGE_PLAYLIST, purgedPlaylist);
@@ -144,7 +144,7 @@ class Utils {
                 purgedArtworks.add(artworks[i]);
             }else{
                 Storage.deleteValue(Constants.ART_PREFIX + artworks[i]);
-                System.println("Artwork " + artworks[i] + " no longer needed. Deleting...");
+                Log.debug("Artwork " + artworks[i] + " no longer needed. Deleting...");
             }
         }
         Storage.setValue(Constants.STORAGE_ARTWORKS, purgedArtworks);

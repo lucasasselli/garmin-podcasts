@@ -28,17 +28,17 @@ class PodcastsProviderBase {
 
         // Check if provider is doing something is background
         if(busy){
-            System.println("Podcast provider: busy...");
+            Log.debug("Podcast provider: busy...");
             return true;
         }
 
         if(remote){
-            System.println("Podcast provider: Downloading subscriptions...");
+            Log.debug("Podcast provider: Downloading subscriptions...");
             busy = true;
             download();
             return true;
         }else{
-            System.println("Podcast provider: Subscriptions available locally...");
+            Log.debug("Podcast provider: Subscriptions available locally...");
             done(podcasts);
             return false;
         }

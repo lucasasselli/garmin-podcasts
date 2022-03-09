@@ -42,12 +42,12 @@ class SyncDelegate extends Communications.SyncDelegate {
     }
 
     function onStopSync() {
-        System.println("Sync cancelled!");
+        Log.debug("Sync cancelled!");
         throwSyncError(null);
     }
 
     function throwSyncError(msg){
-        System.println(msg);
+        Log.debug(msg);
         Communications.cancelAllRequests();
 
         // Clean media
@@ -75,10 +75,10 @@ class SyncDelegate extends Communications.SyncDelegate {
 
 
         if(!needsArtwork(downloadsIterator.item())){
-            System.println("Skipping artwork " + artworkUrl);
+            Log.debug("Skipping artwork " + artworkUrl);
             getMediaUrl();
         }else{
-            System.println("Downloading artwork " + artworkUrl + " for " + podcastId);
+            Log.debug("Downloading artwork " + artworkUrl + " for " + podcastId);
             var options = {
                 :maxWidth  => Constants.IMAGE_SIZE,
                 :maxHeight => Constants.IMAGE_SIZE,
@@ -98,7 +98,7 @@ class SyncDelegate extends Communications.SyncDelegate {
             Storage.setValue(Constants.STORAGE_ARTWORKS, artworks);
             Storage.setValue(Constants.ART_PREFIX + podcastId, data);
         } else {
-            System.println(responseCode);
+            Log.debug(responseCode);
         }
         getMediaUrl();
     }
@@ -125,7 +125,7 @@ class SyncDelegate extends Communications.SyncDelegate {
             }else{
             }
         }
-        System.println("Unable to get the url for " + context);
+        Log.debug("Unable to get the url for " + context);
         downloadsIterator.next();
     }
 
@@ -136,7 +136,7 @@ class SyncDelegate extends Communications.SyncDelegate {
         var podcastUrl = podcasts[podcastId][Constants.PODCAST_URL];
 
         if(!needsMedia(episodeId)){
-            System.println("Skipping episode " + url);
+            Log.debug("Skipping episode " + url);
             downloadsIterator.next();
         }else{
             var format = (url.substring(url.length()-3, url.length())).toLower();
@@ -161,7 +161,7 @@ class SyncDelegate extends Communications.SyncDelegate {
                     break;
             }
 
-            System.println("Downloading " + format + " episode " + url);
+            Log.debug("Downloading " + format + " episode " + url);
             var options = {
                 :method => Communications.HTTP_REQUEST_METHOD_GET,
                 :responseType => Communications.HTTP_RESPONSE_CONTENT_TYPE_AUDIO,
@@ -191,7 +191,7 @@ class SyncDelegate extends Communications.SyncDelegate {
             Storage.setValue(Constants.STORAGE_EPISODES, episodes);
         }else{
             downloadErrors.add(responseCode);
-            System.println("Download error " + responseCode);
+            Log.debug("Download error " + responseCode);
         }
         downloadsIterator.next();
     }
@@ -200,7 +200,7 @@ class SyncDelegate extends Communications.SyncDelegate {
         if(downloadErrors.size() > 0){
             throwSyncError("Error! " + downloadErrors.toString());
         }else{
-            System.println("Sync done!");
+            Log.debug("Sync done!");
 
             // Save episodes
             Storage.setValue(Constants.STORAGE_EPISODES, episodes);

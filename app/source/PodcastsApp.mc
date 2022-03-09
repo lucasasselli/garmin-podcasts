@@ -16,7 +16,7 @@ class PodcastsApp extends Application.AudioContentProviderApp {
         // If the storage scheme as changed, delete the sotred data to avoid crashes
         var storageVersion = Storage.getValue(Constants.STORAGE_VERSION);
         if(storageVersion != Constants.STORAGE_VERSION_VALUE){
-            System.println("Storage version changed! Deleting data...");
+            Log.debug("Storage version changed! Deleting data...");
             Storage.clearValues();
             Storage.setValue(Constants.STORAGE_VERSION, Constants.STORAGE_VERSION_VALUE);
         }

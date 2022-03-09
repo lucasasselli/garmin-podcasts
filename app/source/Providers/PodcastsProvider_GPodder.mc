@@ -129,7 +129,7 @@ class PodcastsProvider_GPodder extends PodcastsProviderBase {
     }
 
     function getFeedInfo(item){
-        System.println("Getting feed info for " + item);
+        Log.debug("Getting feed info for " + item);
         var podcastInfoRequest = new CompactLib.Utils.CompactRequest(null);
         podcastInfoRequest.request(
             Constants.URL_FEEDPARSER_ROOT,
