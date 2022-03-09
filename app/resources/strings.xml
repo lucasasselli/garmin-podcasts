@@ -9,14 +9,14 @@
     <string id="menuEpisodesDownload">Download</string>
     <string id="menuEpisodesDelete">Delete</string>
     <string id="menuSettings">Settings</string>
-    <string id="menuPodcastsSearch">Search</string>
-    <string id="menuPodcastsSubscribed">Subscribed</string>
+    <string id="menuPodcastsSubscribe">Subscribe</string>
+    <string id="menuPodcastsUnsubscribe">Unsubscribe</string>
     <string id="menuPodcastsRefresh">Refresh subscriptions</string>
 
     <!-- Errors -->
     <string id="errorNoResults">No results!</string>
     <string id="errorNoSubscriptions">You are not subscribed to any podcast!</string>
-    <string id="errorNoQueueEpisodes">No podcast episodes downloaded!</string>
+    <string id="errorNoQueueEpisodes">No episodes downloaded!</string>
     <string id="errorNoPodcastEpisodes">Unable to retrieve episodes for this podcast!</string>
     <string id="errorNoCredentials">Login credentials\nnot set!</string>
     <string id="errorNoInternet">No internet\nconnection!</string><!-- REMOVE -->
@@ -24,19 +24,13 @@
 
     <!-- Titles -->
     <string id="titleQueueMenu">Queue</string>
-    <string id="titleSubscriptionMenu">Subscribed</string>
     <string id="titleResultsMenu">Results</string>
     <string id="titleSelectEpisodesMenu">Select episodes</string>
 
     <!-- Confirm Dialog -->
-    <string id="confirmSubscribe">Do you want to subscribe?</string>
-    <string id="confirmUnsubscribe">Do you want to unsubscribe?</string>
     <string id="confirmPlayback">Do you want to start playback?</string>
     <string id="confirmSync">Do you want to sync?</string>
     <string id="confirmDelete">Do you want to delete?</string>
-
-    <!-- Msg Dialog -->
-    <string id="msgSendNotification">Open on phone?</string>
 
     <!-- Other -->
     <string id="search">Search</string>

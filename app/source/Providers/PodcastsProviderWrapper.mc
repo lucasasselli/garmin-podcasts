@@ -20,7 +20,7 @@ class PodcastsProviderWrapper {
         var service = Application.getApp().getProperty("settingPodcastService");
         switch(service){
             case PODCAST_SERVICE_LOCAL:
-            provider = new PodcastsProviderBase(false);
+            provider = new PodcastsProvider_Local();
             break;
 
             case PODCAST_SERVICE_GPODDER:
@@ -37,27 +37,34 @@ class PodcastsProviderWrapper {
         self.callback = callback;
         self.progressBar = null;
         if(provider.valid()){
-            if(provider.get(method(:doneCallback), method(:errorHandler), method(:progressCallback))){
+            if(provider.remote){
                 progressBar = new WatchUi.ProgressBar(WatchUi.loadResource(Rez.Strings.loading), null);
                 WatchUi.pushView(progressBar, new CompactLib.Utils.RemoteProgressDelegate(), WatchUi.SLIDE_LEFT);
             }
+            provider.get(method(:doneCallback), method(:errorHandler), method(:progressCallback));
         }else{
             error(Rez.Strings.errorNoCredentials);
         }
     }
 
-    function add(podcast){
-        if(provider.add(podcast)){
+    function add(podcast, callback){
+        self.callback = callback;
+        self.progressBar = null;
+        if(provider.remote){
             progressBar = new WatchUi.ProgressBar(WatchUi.loadResource(Rez.Strings.loading), null);
-            WatchUi.pushView(progressBar, new CompactLib.Utils.RemoteProgressDelegate(), WatchUi.SLIDE_LEFT);
+            WatchUi.switchToView(progressBar, new CompactLib.Utils.RemoteProgressDelegate(), WatchUi.SLIDE_LEFT);
         }
+        provider.add(podcast, method(:doneCallback), method(:errorHandler));
     }
 
-    function remove(podcast){
-        if(provider.remove(podcast)){
+    function remove(podcast, callback){
+        self.callback = callback;
+        self.progressBar = null;
+        if(provider.remote){
             progressBar = new WatchUi.ProgressBar(WatchUi.loadResource(Rez.Strings.loading), null);
-            WatchUi.pushView(progressBar, new CompactLib.Utils.RemoteProgressDelegate(), WatchUi.SLIDE_LEFT);
+            WatchUi.switchToView(progressBar, new CompactLib.Utils.RemoteProgressDelegate(), WatchUi.SLIDE_LEFT);
         }
+        provider.remove(podcast, method(:doneCallback), method(:errorHandler));
     }
 
     function errorHandler(msg){

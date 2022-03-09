@@ -47,9 +47,9 @@ class EpisodeDownload {
         }
 
         if(hasProgress == null){
-            view.switchTo();
-        }else{
             view.show();
+        }else{
+            view.switchTo();
         }
     }
 

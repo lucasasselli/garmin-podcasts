@@ -52,16 +52,16 @@ class PodcastsProvider_GPodder extends PodcastsProviderBase {
         gPodderlogin(method(:gPodderGetSubscriptions));
     }
 
-    function add(podcast){
+    function add(podcast, doneCallback, errorCallback){
+        PodcastsProviderBase.add(podcast, doneCallback, errorCallback);
         podcastRequestParams = { "add" => [ podcast[Constants.PODCAST_URL] ], "remove" => []};
         gPodderlogin(method(:gPodderManagePodcast));
-        return true;
     }
 
-    function remove(podcast){
+    function remove(podcast, doneCallback, errorCallback){
+        PodcastsProviderBase.remove(podcast, doneCallback, errorCallback);
         podcastRequestParams = { "add" => [], "remove" => [ podcast[Constants.PODCAST_URL] ] };
         gPodderlogin(method(:gPodderManagePodcast));
-        return true;
     }
 
     // Login to gPodder

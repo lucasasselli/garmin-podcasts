@@ -2,7 +2,7 @@ using Toybox.Application.Storage;
 
 class PodcastsProviderBase {
 
-    hidden var remote;
+    var remote;
 
     var podcasts;
 
@@ -21,9 +21,9 @@ class PodcastsProviderBase {
         return true;
     }
 
-    function get(doneCallback, errorCallback, porgressCallback){
-        self.errorCallback = errorCallback;
+    function get(doneCallback, errorCallback, progressCallback){
         self.doneCallback = doneCallback;
+        self.errorCallback = errorCallback;
         self.progressCallback = progressCallback;
 
         // Check if provider is doing something is background
@@ -48,23 +48,16 @@ class PodcastsProviderBase {
 
     }
 
-    function add(podcast){
-        podcasts = StorageHelper.get(Constants.STORAGE_SUBSCRIBED, {});
-        podcasts.put(Utils.hash(podcast[Constants.PODCAST_URL]), podcast);
-        Storage.setValue(Constants.STORAGE_SUBSCRIBED, podcasts);
-
-        return false;
+    function add(podcast, doneCallback, errorCallback){
+        self.doneCallback = doneCallback;
+        self.errorCallback = errorCallback;
+        busy = true;
     }
 
-    function remove(podcast){
-        podcasts = StorageHelper.get(Constants.STORAGE_SUBSCRIBED, {});
-        podcasts.remove(Utils.hash(podcast[Constants.PODCAST_URL]));
-        Storage.setValue(Constants.STORAGE_SUBSCRIBED, podcasts);
-
-        // Trigger data cleanup
-        Utils.purgeBadMedia();
-
-        return false;
+    function remove(podcast, doneCallback, errorCallback){
+        self.doneCallback = doneCallback;
+        self.errorCallback = errorCallback;
+        busy = true;
     }
 
     function done(podcasts){

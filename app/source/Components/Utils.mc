@@ -65,6 +65,7 @@ class Utils {
         var episodes = StorageHelper.get(Constants.STORAGE_EPISODES, {});
         var podcasts = StorageHelper.get(Constants.STORAGE_SUBSCRIBED, {});
 
+
         // Purge medias without episode
         var medias = Media.getContentRefIter({:contentType => Media.CONTENT_TYPE_AUDIO});
         if (medias != null) {
@@ -79,19 +80,30 @@ class Utils {
             }
         }
 
-        // Purge episodes without media/podcast
+        // Purge episodes
         var episodeIds = episodes.keys();
         for (var i = 0; i < episodeIds.size(); i++) {
-            var mediaObj = Utils.getSafeMedia(episodes[episodeIds[i]][Constants.EPISODE_MEDIA]);
 
+            var episode = episodes[episodeIds[i]];
+
+            if(episode == null){
+                episodes.remove(episodeIds[i]);
+                System.println("Episode " + episodeIds[i] + " is null. Deleting...");
+                continue;
+            }
+
+            var mediaObj = Utils.getSafeMedia(episode[Constants.EPISODE_MEDIA]);
             if(mediaObj == null){
                 episodes.remove(episodeIds[i]);
                 System.println("Episode " + episodeIds[i] + " doesn't have a media. Deleting...");
+                continue;
             }
 
-            if(!podcasts.hasKey(episodes[episodeIds[i]][Constants.EPISODE_PODCAST])){
+            var podcastId = podcasts[Constants.EPISODE_PODCAST];
+            if(podcastId == null || !podcasts.hasKey(podcastId)){
                 episodes.remove(episodeIds[i]);
                 System.println("Episode " + episodeIds[i] + " doesn't have a podcast. Deleting...");
+                continue;
             }
         }
         Storage.setValue(Constants.STORAGE_EPISODES, episodes);

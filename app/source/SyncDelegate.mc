@@ -24,16 +24,17 @@ class SyncDelegate extends Communications.SyncDelegate {
         self.podcasts = StorageHelper.get(Constants.STORAGE_SUBSCRIBED, {});
         self.artworks = StorageHelper.get(Constants.STORAGE_ARTWORKS, []);
 
-        var service = Application.getApp().getProperty("settingPodcastService");
-        switch(service){
-            case PODCAST_SERVICE_LOCAL:
-            throwSyncError("Error: Unknown");
-            break;
+        var downloadEpisodes = [];
 
-            case PODCAST_SERVICE_GPODDER:
-            throwSyncError(StringHelper.get(Rez.Strings.errorNoCredentials));
-            break;
+        var ids = episodes.keys();
+        for(var i=0; i<ids.size(); i++){
+            if(needsMedia(ids[i]) || needsArtwork(ids[i])){
+                downloadEpisodes.add(ids[i]);
+            }
         }
+
+        downloadsIterator = new CompactLib.Utils.Iterator(downloadEpisodes, method(:downloadEpisode), method(:onDownloadEpisodesDone));
+        downloadsIterator.next();
     }
 
     function isSyncNeeded() {
@@ -60,24 +61,6 @@ class SyncDelegate extends Communications.SyncDelegate {
 
     function needsArtwork(id){
         return (artworks.indexOf(episodes[id][Constants.EPISODE_PODCAST]) < 0);
-    }
-
-    function onEpisodes(podcasts, episodes){
-
-        self.episodes = episodes;
-        self.podcasts = podcasts;
-
-        var downloadEpisodes = [];
-
-        var ids = episodes.keys();
-        for(var i=0; i<ids.size(); i++){
-            if(needsMedia(ids[i]) || needsArtwork(ids[i])){
-                downloadEpisodes.add(ids[i]);
-            }
-        }
-
-        downloadsIterator = new CompactLib.Utils.Iterator(downloadEpisodes, method(:downloadEpisode), method(:onDownloadEpisodesDone));
-        downloadsIterator.next();
     }
 
     function downloadEpisode(item){

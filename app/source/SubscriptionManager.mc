@@ -16,8 +16,8 @@ class SubscriptionManager extends Ui.CompactMenu {
     }
 
     function build(){
-        add(Rez.Strings.menuPodcastsSearch, null, method(:callbackSearch));
-        add(Rez.Strings.menuPodcastsSubscribed, method(:getSubscribedCount), method(:callbackSubscribed));
+        add(Rez.Strings.menuPodcastsSubscribe, null, method(:callbackSubscribe));
+        add(Rez.Strings.menuPodcastsUnsubscribe, method(:getSubscribedCount), method(:callbackUnsubscribe));
 
         var service = Application.getApp().getProperty("settingPodcastService");
         if(service > 0){
@@ -25,20 +25,20 @@ class SubscriptionManager extends Ui.CompactMenu {
         }
     }
 
-    // Podcast search
-    function callbackSearch(){
-        var picker = new CompactLib.Ui.CompactPicker(method(:onSearchQuery));
+    // Subscribe
+    function callbackSubscribe(){
+        var picker = new CompactLib.Ui.CompactPicker(method(:onSubscribeQuery));
         picker.show();
     }
 
-    // Manage subscriptions
-    function callbackSubscribed(){
+    // Unsubscribe
+    function callbackUnsubscribe(){
 
         var podcasts = StorageHelper.get(Constants.STORAGE_SUBSCRIBED, {});
         var podcastIds = podcasts.keys();
 
         if(podcasts.size() > 0){
-            var menu = new WatchUi.Menu2({:title=> Rez.Strings.titleSubscriptionMenu });
+            var menu = new WatchUi.Menu2({:title=> Rez.Strings.menuPodcastsUnsubscribe });
 
             for(var i=0; i<podcastIds.size(); i++){
 
@@ -52,8 +52,7 @@ class SubscriptionManager extends Ui.CompactMenu {
                     {})
                 );
             }
-            // FIXME: Reuse confirmation view
-            WatchUi.pushView(menu, new ConfirmMenuDelegate(Rez.Strings.confirmUnsubscribe, method(:onPodcastRemove)), WatchUi.SLIDE_LEFT);
+            WatchUi.pushView(menu, new SubscriptionMenuDelegate(method(:onSubscriptionRemove)), WatchUi.SLIDE_LEFT);
         } else {
             var alert = new Ui.CompactAlert(Rez.Strings.errorNoSubscriptions);
             alert.show();
@@ -68,11 +67,10 @@ class SubscriptionManager extends Ui.CompactMenu {
 
     // Refresh subscriptions
     function callbackRefreshSubscriptions(){
-        // FIXME: Add done callback
-        $.podcastsProvider.get(null);
+        $.podcastsProvider.get(method(:onProgressDone));
     }
 
-    function onSearchQuery(query){
+    function onSubscribeQuery(query){
         var searchRequest = new CompactLib.Utils.CompactRequest(WatchUi.loadResource(Rez.JsonData.connectionErrors));
         searchRequest.setOptions(Utils.getPodcastIndexRequestOptions());
         searchRequest.requestPickerProgress(
@@ -81,11 +79,11 @@ class SubscriptionManager extends Ui.CompactMenu {
                 "q"   => StringHelper.substringReplace(query, " ", "+"),
                 "max" => Constants.PODCASTINDEX_MAX_PODCASTS
             },
-            method(:onSearchResults),
+            method(:onSubscribeResults),
             null);
     }
 
-    function onSearchResults(data, context) {
+    function onSubscribeResults(data, context) {
 
         var feeds = data.get("feeds");
 
@@ -109,15 +107,35 @@ class SubscriptionManager extends Ui.CompactMenu {
                     ));
             }
         }
-        // FIXME: Reuse confirmation view
-        WatchUi.switchToView(menu, new ConfirmMenuDelegate(Rez.Strings.confirmSubscribe, method(:onPodcastAdd)), WatchUi.SLIDE_LEFT);
+        WatchUi.switchToView(menu, new SubscriptionMenuDelegate(method(:onSubscriptionAdd)), WatchUi.SLIDE_LEFT);
     }
 
-    function onPodcastAdd(context){
-        $.podcastsProvider.add(context);
+    function onSubscriptionAdd(context){
+        $.podcastsProvider.add(context, method(:onProgressDone));
     }
 
-    function onPodcastRemove(context){
-        $.podcastsProvider.remove(context);
+    function onSubscriptionRemove(context){
+        $.podcastsProvider.remove(context, method(:onProgressDone));
+    }
+
+    function onProgressDone(podcasts, hasProgress){
+        if(hasProgress){
+            WatchUi.popView(WatchUi.SLIDE_LEFT);
+        }
+    }
+}
+
+class SubscriptionMenuDelegate extends WatchUi.Menu2InputDelegate {
+
+    hidden var msg;
+    hidden var callback;
+
+    function initialize(callback) {
+        self.callback = callback;
+        Menu2InputDelegate.initialize();
+    }
+
+    function onSelect(item) {
+        callback.invoke(item.getId());
     }
 }
