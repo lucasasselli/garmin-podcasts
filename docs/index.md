@@ -16,10 +16,10 @@ If you like this app and you want to show your support you can [pay me a beer](h
 ## Features
 - Free and Open Source
 - No external service or subscription required, just your watch!
-- Download individual episodes or the most recent ones
+- [gpodder.net](https://gpodder.net/) support
+- Subscription management
 - Configurable playback queue
 - Episode progress tracking, resume from where you left
-- gpodder.net support
 
 ## Screeshots
 
