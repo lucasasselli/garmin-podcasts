@@ -16,8 +16,6 @@ class PodcastsProvider_Local extends PodcastsProviderBase {
         podcasts = StorageHelper.get(Constants.STORAGE_SUBSCRIBED, {});
         podcasts.put(Utils.hash(podcast[Constants.PODCAST_URL]), podcast);
         Storage.setValue(Constants.STORAGE_SUBSCRIBED, podcasts);
-
-        return false;
     }
 
     function remove(podcast, doneCallback, errorCallback){
@@ -29,7 +27,5 @@ class PodcastsProvider_Local extends PodcastsProviderBase {
 
         // Trigger data cleanup
         Utils.purgeBadMedia();
-
-        return false;
     }
 }
