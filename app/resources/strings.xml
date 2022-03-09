@@ -18,7 +18,7 @@
     <string id="errorNoSubscriptions">You are not subscribed to any podcast!</string>
     <string id="errorNoQueueEpisodes">No episodes downloaded!</string>
     <string id="errorNoPodcastEpisodes">Unable to retrieve episodes for this podcast!</string>
-    <string id="errorNoCredentials">Login credentials\nnot set!</string>
+    <string id="errorNoCredentials">Login or Device ID not set!</string>
     <string id="errorTooManySubs">Too many\nsubscriptions!</string>
 
     <!-- Titles -->

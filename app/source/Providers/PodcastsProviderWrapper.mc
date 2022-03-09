@@ -43,7 +43,7 @@ class PodcastsProviderWrapper {
             }
             provider.get(method(:doneCallback), method(:errorHandler), method(:progressCallback));
         }else{
-            error(Rez.Strings.errorNoCredentials);
+            errorHandler(Rez.Strings.errorNoCredentials);
         }
     }
 
