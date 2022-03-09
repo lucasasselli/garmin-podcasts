@@ -25,6 +25,19 @@ class Utils {
         return null;
     }
 
+    function sortArrayField(array, field){
+        var swapped;
+        do {
+            swapped = false;
+            for(var i=0; i<array.size()-1; i++){
+                if (array[i][field] < array[i+1][field]){
+                    Utils.arraySwap(keys, i, i+1);
+                    swapped = true;
+                }
+            }
+        }while(swapped);
+    }
+
     function arraySwap(array, i, j){
         var temp = array[i];
         array[i] = array[j];
@@ -99,7 +112,7 @@ class Utils {
                 continue;
             }
 
-            var podcastId = podcasts[Constants.EPISODE_PODCAST];
+            var podcastId = podcasts[episode[Constants.EPISODE_PODCAST]];
             if(podcastId == null || !podcasts.hasKey(podcastId)){
                 episodes.remove(episodeIds[i]);
                 System.println("Episode " + episodeIds[i] + " doesn't have a podcast. Deleting...");

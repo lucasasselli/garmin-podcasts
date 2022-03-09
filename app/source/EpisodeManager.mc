@@ -37,14 +37,17 @@ class EpisodeManager extends Ui.CompactMenu {
             var podcastTitle = "";
 
             if(episode[Constants.EPISODE_MEDIA] != null){
-                downloadedCount++;
 
                 // If podcast still exists
+                // FIXME: Is this a valid scenario?
                 if(podcasts.hasKey(episode[Constants.EPISODE_PODCAST])){
                     podcastTitle = podcasts[episode[Constants.EPISODE_PODCAST]][Constants.PODCAST_TITLE];
                 }
 
-                episodesMenu.addItem(new WatchUi.CheckboxMenuItem(episode[Constants.EPISODE_TITLE], podcastTitle, episodes.keys()[i], false, {}));
+                if(episode[Constants.EPISODE_MEDIA] != null){
+                    downloadedCount++;
+                    episodesMenu.addItem(new WatchUi.CheckboxMenuItem(episode[Constants.EPISODE_TITLE], podcastTitle, episodes.keys()[i], false, {}));
+                }
             }
         }
         if (downloadedCount > 0) {
