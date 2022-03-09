@@ -3,12 +3,13 @@ layout: page
 title: "How to use"
 ---
 
-  * [Getting Started](#getting-started)
-  * [Downloading episodes](#downloading-episodes)
-  * [Playback queue](#playback-queue)
-  * [Advanced settings](#advanced-settings)
-    + [Getting your subscriptions from gpodder](#getting-your-subscriptions-from-gpodder)
-    + [Downloading recent episodes automatically](#downloading-recent-episodes-automatically)
+- [Getting Started](#getting-started)
+- [Using a subscription service (optional)](#using-a-subscription-service--optional-)
+- [Subscribing to a podcast](#subscribing-to-a-podcast)
+- [Unsubscribe from a podcast](#unsubscribe-from-a-podcast)
+- [Download episodes](#download-episodes)
+- [Delete an episode](#delete-an-episode)
+- [Playback queue](#playback-queue)
 
 ## Getting Started
 
@@ -28,15 +29,30 @@ In order to start using _Podcast_, you need to set it as your device Music Provi
   <img src="img/how-to/start2.bmp" width="200" />
 </p>
 
-## Subscribing to podcast
+## Using a subscription service (optional)
+
+By default, _Podcasts_ manages the subscriptions directly from your Garmin device, but optionally you can download subscriptions from a gpodder.net account.
+
+{% include note.html content="gpodder is an external project. More info at [gpodder.net](https://gpodder.net)" %}
+
+To enable gpodder as the podcast provider, in the app settings (either in Connect IQ or directly on your watch), set **Subscription service** to _gpodder.net_. 
+From Garmin Connect IQ app set your **Username**, **Password** and **Device ID**. 
+
+{% include note.html content="To login in gPodder use your **Username** not your email! You can find your username at gpodder.net under Settings/Account/Public Profile." %} <br>
+
+<p align="center">
+  <img src="img/gpodder-username.png" width="600" />
+</p>
+
+
+## Subscribing to a podcast
 
 First of all, to listen to podcasts, you need podcasts to listen! To subscribe to a podcast navigate to the app main menu:
 
 1. Select **Manage Subscriptions**
-2. Select **Search**
+2. Select **Subscribe**
 3. Enter the title of the feed you want to subscribe
 4. Select a podcast from the results
-5. Select yes when prompted
 
 <p align="center">
   <img src="img/how-to/podcast1.bmp" width="200" /> 
@@ -44,13 +60,20 @@ First of all, to listen to podcasts, you need podcasts to listen! To subscribe t
   <img src="img/how-to/podcast3.bmp" width="200" />
 </p>
 
+## Unsubscribe from a podcast
+
+1. Select **Manage Subscriptions**
+2. Select **Unsubscribe**
+4. Select a podcast
+
 ## Download episodes
 
 To download episodes, from the main menu:
 
-1. Select **Download Episodes**
-2. Select a podcast from the list
-3. Check the episodes you want to download, or uncheck the episodes you want to remove
+1. Select **Manage Episodes**
+2. Select **Download**
+3. Select a podcast from the list
+4. Check the episodes you want to download, or uncheck the episodes you want to remove
 5. When you are done, press back or select **Done**
 6. To start the download, from the podcast menu, press back and select yes when prompted
 
@@ -61,6 +84,14 @@ To download episodes, from the main menu:
 
 {% include note.html content="Downloading many episodes might take a long time, be patient!" %}
 
+## Delete an episode
+
+To delete an episode, from the main menu:
+
+1. Select **Manage Episodes**
+2. Select **Delete**
+3. Select an episode from the list
+
 ## Playback queue
 
 To manage the playback queue, from the main menu:
@@ -70,27 +101,3 @@ To manage the playback queue, from the main menu:
 3. When you are done, press back
 
 At this point you will be prompted to start the playback immediately, select yes if you are ready, or no if you want to do it later. 
-
-## Advanced settings
-
-### Using gpodder subscription
-
-By default, _Podcasts_ manages the subscriptions directly from your Garmin device, but optionally you can download subscriptions from a gpodder.net account.
-
-{% include note.html content="gpodder is an external project. More info at [gpodder.net](https://gpodder.net)" %}
-
-To enable gpodder as the podcast provider, in the app settings (either in Connect IQ or directly on your watch), set **Subscription service** to _gpodder.net_. 
-From Garmin Connect IQ app set your **Username** and **Password**. 
-
-{% include note.html content="To login in gPodder use your **Username** not your email! You can find your username at gpodder.net under Settings/Account/Public Profile." %} <br>
-
-<p align="center">
-  <img src="img/gpodder-username.png" width="600" />
-</p>
-
-### Download recent episodes
-
-Instead of selecting individual episodes each time you sync, _Podcasts_ can automatically download the most recent ones for each feed.
-
-In the app settings (either in Connect IQ or directly on your watch), set **Sync Mode** to _Most Recent_ and select the number of episodes to download for each podcast using the **Episodes per Podcast** setting. 
-To avoid long synchronizations, the numbers of episodes downloaded is limited to the **Max. Episodes** setting.
