@@ -87,7 +87,7 @@ class PodcastsProvider_GPodder extends PodcastsProviderBase {
 
     // Get subscriptions
     function getSubscriptions(responseCode, data){
-        if (responseCode == 200 || responseCode == -400) {
+        if (responseCode == 200) {
             Communications.makeWebRequest(
                 serviceroot + "subscriptions/" + username + "/" + deviceid + ".json",
                 null,
@@ -105,7 +105,6 @@ class PodcastsProvider_GPodder extends PodcastsProviderBase {
     // Get subscriptions - Subscriptions received
     function onSubscriptions(responseCode, data){
         if (responseCode == 200) {
-
             var new_podcasts_urls = [];
             var removed_podcasts = podcasts.keys();
 
@@ -160,7 +159,7 @@ class PodcastsProvider_GPodder extends PodcastsProviderBase {
     }
 
     function manageSubscription(responseCode, data){
-        if (responseCode == 200 || responseCode == -400) {
+        if (responseCode == 200) {
             Communications.makeWebRequest(
                 serviceroot + "api/2/subscriptions/" + username + "/" + deviceid + ".json",
                 podcastRequestParams,
@@ -179,6 +178,6 @@ class PodcastsProvider_GPodder extends PodcastsProviderBase {
     }
 
     function onSubscriptionManage(responseCode, data){
-        getSubscriptions(200, null);
+        getSubscriptions(responseCode, null);
     }
 }

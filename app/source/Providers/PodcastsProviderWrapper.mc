@@ -20,9 +20,6 @@ class PodcastsProviderWrapper {
     function initialize(){
         var service = Application.getApp().getProperty("settingPodcastService");
         switch(service){
-            case PODCAST_SERVICE_LOCAL:
-            provider = new PodcastsProvider_Local();
-            break;
 
             case PODCAST_SERVICE_GPODDER:
             provider = new PodcastsProvider_GPodder();
@@ -30,6 +27,10 @@ class PodcastsProviderWrapper {
 
             case PODCAST_SERVICE_NEXTCLOUD:
             provider = new PodcastsProvider_Nextcloud();
+            break;
+
+            default:
+            provider = new PodcastsProvider_Local();
             break;
         }
     }
