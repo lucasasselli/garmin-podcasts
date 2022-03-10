@@ -49,19 +49,19 @@ class PodcastsProvider_GPodder extends PodcastsProviderBase {
     }
 
     function download(){
-        gPodderlogin(method(:gPodderGetSubscriptions));
+        login(method(:getSubscriptions));
     }
 
     function add(podcast, doneCallback, errorCallback){
         PodcastsProviderBase.add(podcast, doneCallback, errorCallback);
         podcastRequestParams = { "add" => [ podcast[Constants.PODCAST_URL] ], "remove" => []};
-        gPodderlogin(method(:gPodderManagePodcast));
+        login(method(:manageSubscription));
     }
 
     function remove(podcast, doneCallback, errorCallback){
         PodcastsProviderBase.remove(podcast, doneCallback, errorCallback);
         podcastRequestParams = { "add" => [], "remove" => [ podcast[Constants.PODCAST_URL] ] };
-        gPodderlogin(method(:gPodderManagePodcast));
+        login(method(:manageSubscription));
     }
 
     function error(code){
@@ -73,8 +73,7 @@ class PodcastsProvider_GPodder extends PodcastsProviderBase {
         }
     }
 
-    // Login to gPodder
-    function gPodderlogin(callback){
+    function login(callback){
         Communications.makeWebRequest(
             serviceroot + "api/2/auth/" + username + "/login.json",
             null,
@@ -87,7 +86,7 @@ class PodcastsProvider_GPodder extends PodcastsProviderBase {
     }
 
     // Get subscriptions
-    function gPodderGetSubscriptions(responseCode, data){
+    function getSubscriptions(responseCode, data){
         if (responseCode == 200 || responseCode == -400) {
             Communications.makeWebRequest(
                 serviceroot + "subscriptions/" + username + "/" + deviceid + ".json",
@@ -97,14 +96,14 @@ class PodcastsProvider_GPodder extends PodcastsProviderBase {
                     :headers => headers,
                     :responseType => Communications.HTTP_RESPONSE_CONTENT_TYPE_JSON
                 },
-                method(:gPodderOnSubscriptions));
+                method(:onSubscriptions));
         } else {
             error(responseCode);
         }
     }
 
     // Get subscriptions - Subscriptions received
-    function gPodderOnSubscriptions(responseCode, data){
+    function onSubscriptions(responseCode, data){
         if (responseCode == 200) {
 
             var new_podcasts_urls = [];
@@ -160,7 +159,7 @@ class PodcastsProvider_GPodder extends PodcastsProviderBase {
         done(podcasts);
     }
 
-    function gPodderManagePodcast(responseCode, data){
+    function manageSubscription(responseCode, data){
         if (responseCode == 200 || responseCode == -400) {
             Communications.makeWebRequest(
                 serviceroot + "api/2/subscriptions/" + username + "/" + deviceid + ".json",
@@ -173,13 +172,13 @@ class PodcastsProvider_GPodder extends PodcastsProviderBase {
                     },
                     :responseType => Communications.HTTP_RESPONSE_CONTENT_TYPE_JSON
                 },
-                method(:gPodderOnManagePodcast));
+                method(:onSubscriptionManage));
         } else {
             error(responseCode);
         }
     }
 
-    function gPodderOnManagePodcast(responseCode, data){
-        gPodderGetSubscriptions(200, null);
+    function onSubscriptionManage(responseCode, data){
+        getSubscriptions(200, null);
     }
 }

@@ -5,6 +5,7 @@
         "-104": "No internet connection!",
         "-400": "Invalid response data type!",
         "-402": "Response too large!",
+        "-1001": "Unsecure connection",
         "201": "Created",
         "202": "Accepted",
         "203": "Non-authoritative Information",

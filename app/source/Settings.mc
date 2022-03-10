@@ -15,10 +15,15 @@ class Settings extends Ui.CompactMenu {
 
     function getPodcastService(){
         var service = Application.getApp().getProperty("settingPodcastService");
-        if(service == 0){
-            return WatchUi.loadResource(Rez.Strings.none);
-        }else{
+        switch(item.getId()){
+            case :gPodder:
             return WatchUi.loadResource(Rez.Strings.gPodder);
+
+            case :nextcloud:
+            return WatchUi.loadResource(Rez.Strings.nextcloud);
+
+            default:
+            return WatchUi.loadResource(Rez.Strings.none);
         }
     }
 
@@ -45,13 +50,20 @@ class SettingsPodcastServiceDelegate extends WatchUi.Menu2InputDelegate {
     }
 
     function onSelect(item) {
-           var app = Application.getApp();
-        if (item.getId() == :gPodder) {
-               app.setProperty("settingPodcastService", 1);
-        } else {
-            app.setProperty("settingPodcastService", 0);
-        }
+        var app = Application.getApp();
+        switch(item.getId()){
+            case :gPodder:
+            app.setProperty("settingPodcastService", PodcastsProviderWrapper.PODCAST_SERVICE_GPODDER);
+            break;
 
+            case :nextcloud:
+            app.setProperty("settingPodcastService", PodcastsProviderWrapper.PODCAST_SERVICE_NEXTCLOUD);
+            break;
+
+            default:
+            app.setProperty("settingPodcastService", PodcastsProviderWrapper.PODCAST_SERVICE_LOCAL);
+            break;
+        }
         WatchUi.popView(WatchUi.SLIDE_RIGHT);
     }
 }

@@ -17,6 +17,7 @@
 
         <string id="none">Local</string>
         <string id="gPodder">gpodder.net</string>
+        <string id="nextcloud">Nextcloud (gPodder)</string>
     </strings>
 
     <settings>
@@ -24,6 +25,7 @@
             <settingConfig type="list">
                 <listEntry value="0">@Strings.none</listEntry>
                 <listEntry value="1">@Strings.gPodder</listEntry>
+                <listEntry value="2">@Strings.nextcloud</listEntry>
             </settingConfig>
         </setting>
 

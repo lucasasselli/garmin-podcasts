@@ -8,7 +8,8 @@ class PodcastsProviderWrapper {
 
     enum {
         PODCAST_SERVICE_LOCAL,
-        PODCAST_SERVICE_GPODDER
+        PODCAST_SERVICE_GPODDER,
+        PODCAST_SERVICE_NEXTCLOUD
     }
 
     private var provider;
@@ -25,6 +26,10 @@ class PodcastsProviderWrapper {
 
             case PODCAST_SERVICE_GPODDER:
             provider = new PodcastsProvider_GPodder();
+            break;
+
+            case PODCAST_SERVICE_NEXTCLOUD:
+            provider = new PodcastsProvider_Nextcloud();
             break;
         }
     }
