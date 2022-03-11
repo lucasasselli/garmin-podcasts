@@ -31,7 +31,7 @@ class Utils {
             swapped = false;
             for(var i=0; i<array.size()-1; i++){
                 if (array[i][field] < array[i+1][field]){
-                    Utils.arraySwap(keys, i, i+1);
+                    Utils.arraySwap(array, i, i+1);
                     swapped = true;
                 }
             }
@@ -41,7 +41,7 @@ class Utils {
     function arraySwap(array, i, j){
         var temp = array[i];
         array[i] = array[j];
-        array = temp;
+        array[j]= temp;
     }
 
     function getArrayField(array, field){
