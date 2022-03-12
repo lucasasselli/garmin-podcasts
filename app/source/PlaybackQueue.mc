@@ -16,7 +16,7 @@ class PlaybackQueue extends WatchUi.CustomMenu {
         var episodes = StorageHelper.get(Constants.STORAGE_EPISODES, {}).values();
 
         // Sort array by date
-        Utils.sortArrayField(episodes, Constants.EPISODE_DATE);
+        episodes = Utils.sortArrayField(episodes, Constants.EPISODE_DATE);
 
         for (var i = 0; i < episodes.size(); i++) {
             var refId = episodes[i][Constants.EPISODE_MEDIA];

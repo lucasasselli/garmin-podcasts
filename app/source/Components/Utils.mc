@@ -31,17 +31,19 @@ class Utils {
             swapped = false;
             for(var i=0; i<array.size()-1; i++){
                 if (array[i][field] < array[i+1][field]){
-                    Utils.arraySwap(array, i, i+1);
+                    array = Utils.arraySwap(array, i, i+1);
                     swapped = true;
                 }
             }
         }while(swapped);
+        return array;
     }
 
     function arraySwap(array, i, j){
         var temp = array[i];
         array[i] = array[j];
         array[j]= temp;
+        return array;
     }
 
     function getArrayField(array, field){
