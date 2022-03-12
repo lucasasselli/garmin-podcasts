@@ -11,9 +11,8 @@ class Data {
         var episode = new [Constants.EPISODE_DATA_SIZE];
 
         episode[Constants.EPISODE_PODCAST] = podcastId;
-        episode[Constants.EPISODE_DATE] = data["date"];
-        episode[Constants.EPISODE_TITLE] = data["title"];
-        episode[Constants.EPISODE_DURATION] = data["length"];
+        episode[Constants.EPISODE_TITLE] = data[0];
+        episode[Constants.EPISODE_DATE] = data[1];
 
         // Media and duration CAN be null!
         // FIXME: This check is a good idea, but it can trip the watchdog!

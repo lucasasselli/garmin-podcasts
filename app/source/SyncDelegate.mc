@@ -76,7 +76,7 @@ class SyncDelegate extends Communications.SyncDelegate {
 
         if(!needsArtwork(downloadsIterator.item())){
             Log.debug("Skipping artwork " + artworkUrl);
-            getMediaUrl();
+            getMediaInfo();
         }else{
             Log.debug("Downloading artwork " + artworkUrl + " for " + podcastId);
             var options = {
@@ -100,10 +100,10 @@ class SyncDelegate extends Communications.SyncDelegate {
         } else {
             Log.debug(responseCode);
         }
-        getMediaUrl();
+        getMediaInfo();
     }
 
-    function getMediaUrl(){
+    function getMediaInfo(){
         var episodeId = downloadsIterator.item();
         var podcastId = episodes[episodeId][Constants.EPISODE_PODCAST];
         var podcastUrl = podcasts[podcastId][Constants.PODCAST_URL];
@@ -112,12 +112,17 @@ class SyncDelegate extends Communications.SyncDelegate {
         mediaUrlRequest.request(
             Constants.URL_FEEDPARSER_ROOT,
             {"feedUrl" => podcastUrl, "episodeId" => episodeId},
-            method(:onMediaUrl),
+            method(:onMediaInfo),
             episodeId);
     }
 
-    function onMediaUrl(responseCode, data, context){
+    function onMediaInfo(responseCode, data, context){
         if (responseCode == 200) {
+            var episodeId = downloadsIterator.item();
+            episodes[episodeId][Constants.EPISODE_TITLE] = data.get("title");
+            episodes[episodeId][Constants.EPISODE_DURATION] = data.get("duration");
+
+            // FIXME: Likely never null!
             var url = data.get("url");
             if(url != null){
                 downloadMedia(url);
