@@ -17,6 +17,8 @@ class PodcastsProviderWrapper {
     private var callback;
     private var progressBar;
 
+    private var alert;
+
     function initialize(){
         var service = Application.getApp().getProperty("settingPodcastService");
         switch(service){
@@ -74,7 +76,7 @@ class PodcastsProviderWrapper {
     }
 
     function errorHandler(msg){
-        var alert = new Ui.CompactAlert(msg);
+        alert = new Ui.CompactAlert(msg);
         if(progressBar != null){
             alert.switchTo();
         }else{
