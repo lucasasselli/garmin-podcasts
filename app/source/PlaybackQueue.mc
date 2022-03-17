@@ -9,22 +9,32 @@ class PlaybackQueue extends WatchUi.CustomMenu {
     function initialize() {
         CustomMenu.initialize(Constants.CUSTOM_MENU_HEIGHT, Graphics.COLOR_BLACK, {});
 
+        var autoPlaylist = Application.getApp().getProperty("settingPlaylistAutoSelect") == 1;
+        var sortDescending = Application.getApp().getProperty("settingPlaylistSortDescending") == 1;
+        var playlist = [];
         // Get the current stored playlist.
-        var playlist = StorageHelper.get(Constants.STORAGE_PLAYLIST, []);
+        if (!autoPlaylist) {
+            playlist = StorageHelper.get(Constants.STORAGE_PLAYLIST, []);
+        }
+
+        var episodes = StorageHelper.get(Constants.STORAGE_EPISODES, {});
+        // Sort array by date
+        episodes = Utils.sortArrayField(episodes.values(), Constants.EPISODE_DATE, sortDescending);
 
         // For each song in the playlist, precheck the item when adding it to the menu
-        var episodes = StorageHelper.get(Constants.STORAGE_EPISODES, {}).values();
-
-        // Sort array by date
-        episodes = Utils.sortArrayField(episodes, Constants.EPISODE_DATE);
-
         for (var i = 0; i < episodes.size(); i++) {
             var refId = episodes[i][Constants.EPISODE_MEDIA];
             var mediaObj = Utils.getSafeMedia(refId);
-
+            //tick all items if autoPlaylist is enabled
+            if (autoPlaylist){
+                playlist.add(refId);
+            }
             if(mediaObj != null){
                 addItem(new PlaybackQueueItem(episodes[i], (playlist.indexOf(refId) >= 0)));
             }
+        }
+        if (autoPlaylist){
+            Storage.setValue(Constants.STORAGE_PLAYLIST, playlist);
         }
     }
 
@@ -158,6 +168,7 @@ class PlaybackQueueItem extends WatchUi.CustomMenuItem {
 }
 
 class PlaybackQueueDelegate extends WatchUi.Menu2InputDelegate {
+    var checkChanged = false;
 
     function initialize() {
         Menu2InputDelegate.initialize();
@@ -169,6 +180,7 @@ class PlaybackQueueDelegate extends WatchUi.Menu2InputDelegate {
         // When an item is selected, add or remove it from the system playlist
         if (item.check()) {
             playlist.add(item.getId());
+            checkChanged = true;
         } else {
             playlist.remove(item.getId());
         }
@@ -183,6 +195,26 @@ class PlaybackQueueDelegate extends WatchUi.Menu2InputDelegate {
     }
 
     function startPlayback(){
+        //if some items have been checked, then we need to sort the playlist
+        if (checkChanged){
+            Log.debug("checkChanged, sorting playlist...");
+            var playlist = [];
+            var playlistUnsorted = StorageHelper.get(Constants.STORAGE_PLAYLIST, []);
+            var episodes = StorageHelper.get(Constants.STORAGE_EPISODES, {});
+
+            // Sort array by date
+            var sortDescending = Application.getApp().getProperty("settingPlaylistSortDescending") == 1;
+            episodes = Utils.sortArrayField(episodes.values(), Constants.EPISODE_DATE, sortDescending);
+
+            for (var i = 0; i < episodes.size(); i++){
+                var media = episodes[i][Constants.EPISODE_MEDIA];
+                if (playlistUnsorted.indexOf(media) >= 0){
+                    playlist.add(media);
+                }
+            }
+            Storage.setValue(Constants.STORAGE_PLAYLIST, playlist);
+        }
+
         // NOTE: Popping the view before starting playback causes problems...
         Media.startPlayback(null);
     }

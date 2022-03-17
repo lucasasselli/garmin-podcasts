@@ -5,6 +5,8 @@
         <property id="settingPassword" type="string"></property>
         <property id="settingDeviceId" type="string"></property>
         <property id="settingServiceUrl" type="string"></property>
+        <property id="settingPlaylistSortDescending" type="number">1</property>
+        <property id="settingPlaylistAutoSelect" type="number">0</property>
     </properties>
 
     <strings>
@@ -14,10 +16,16 @@
         <string id="settingDeviceIdTitle">Device ID</string>
         <string id="settingServiceUrlTitle">Service URL (optional)</string>
         <string id="settingStorageTitle">Storage info</string>
+        <string id="settingPlaylistSortDescendingTitle">Sort playlist</string>
+        <string id="settingPlaylistAutoSelectTitle">Select all podcasts in playlist</string>
 
         <string id="none">Local</string>
         <string id="gPodder">gpodder.net</string>
         <string id="nextcloud">Nextcloud (gPodder)</string>
+        <string id="ascending">Newest to oldest</string>
+        <string id="descending">Oldest to newest</string>
+        <string id="yes">Yes</string>
+        <string id="no">No</string>
     </strings>
 
     <settings>
@@ -43,6 +51,18 @@
 
         <setting propertyKey="@Properties.settingServiceUrl" title="@Strings.settingServiceUrlTitle">
             <settingConfig type="alphaNumeric" required="false" />
+        </setting>
+                <setting propertyKey="@Properties.settingPlaylistSortDescending" title="@Strings.settingPlaylistSortDescendingTitle">
+            <settingConfig type="list">
+                <listEntry value="0">@Strings.ascending</listEntry>
+                <listEntry value="1">@Strings.descending</listEntry>
+            </settingConfig>
+        </setting>
+                <setting propertyKey="@Properties.settingPlaylistAutoSelect" title="@Strings.settingPlaylistAutoSelectTitle">
+            <settingConfig type="list">
+                <listEntry value="0">@Strings.no</listEntry>
+                <listEntry value="1">@Strings.yes</listEntry>
+            </settingConfig>
         </setting>
     </settings>
 </resources>

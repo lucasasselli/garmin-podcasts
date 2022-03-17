@@ -43,6 +43,17 @@ class ContentDelegate extends Media.ContentDelegate {
             Media.setAlbumArt(artwork);
         }
 
+        // Handle completed episode
+        var autoPlaylist = Application.getApp().getProperty("settingPlaylistAutoSelect") == 1;
+        if(songEvent == Media.SONG_EVENT_COMPLETE){
+            //if autoPlaylist is enabled - delete the episode after played
+            if (id != null && autoPlaylist){
+                episodes.remove(id);
+                Storage.setValue(Constants.STORAGE_EPISODES, episodes);
+            }
+            return;
+        }
+
         // Handle progress...
         if(songEvent != Media.SONG_EVENT_SKIP_PREVIOUS){
             if(id != null){

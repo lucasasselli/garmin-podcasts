@@ -25,12 +25,12 @@ class Utils {
         return null;
     }
 
-    function sortArrayField(array, field){
+    function sortArrayField(array, field, desc){
         var swapped;
         do {
             swapped = false;
             for(var i=0; i<array.size()-1; i++){
-                if (array[i][field] < array[i+1][field]){
+                if ((desc && array[i][field] > array[i+1][field]) || (!desc && array[i][field] < array[i+1][field])){
                     array = Utils.arraySwap(array, i, i+1);
                     swapped = true;
                 }
