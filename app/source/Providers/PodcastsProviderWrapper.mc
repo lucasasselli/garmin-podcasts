@@ -86,7 +86,7 @@ class PodcastsProviderWrapper {
 
     function doneCallback(podcasts){
         if(callback != null){
-            callback.invoke((progressCallback != null), podcasts);
+            callback.invoke((progressBar != null), podcasts);
         }
     }
 
