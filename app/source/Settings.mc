@@ -65,5 +65,9 @@ class SettingsPodcastServiceDelegate extends WatchUi.Menu2InputDelegate {
             break;
         }
         WatchUi.popView(WatchUi.SLIDE_RIGHT);
+
+        // Regenerate the provider
+        $.podcastsProvider = new PodcastsProviderWrapper();
+        $.podcastsProvider.getSilent();
     }
 }

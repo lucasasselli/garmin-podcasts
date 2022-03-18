@@ -60,4 +60,10 @@ class PodcastsApp extends Application.AudioContentProviderApp {
     function getProviderIconInfo() {
         return new Media.ProviderIconInfo(Rez.Drawables.PlayerIcon, 0x00E2E2);
     }
+
+    // Settings changed in GCM app
+    function onSettingsChanged() {
+        $.podcastsProvider = new PodcastsProviderWrapper();
+        $.podcastsProvider.getSilent();
+    }
 }
