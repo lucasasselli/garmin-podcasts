@@ -1,14 +1,14 @@
 module Constants {
 
     const URL_PODCASTINDEX_ROOT = "https://us-central1-garminpodcasts-307017.cloudfunctions.net/podcast-index-minify-1";
-    const URL_FEEDPARSER_ROOT = "https://us-central1-garminpodcasts-307017.cloudfunctions.net/feed-parser-2";
+    const URL_FEEDPARSER_ROOT = "https://us-central1-garminpodcasts-307017.cloudfunctions.net/feed-parser-4";
+    const URL_GPODDER_ROOT = "https://gpodder.net/";
 
     const URL_PODCASTINDEX_SEARCH   = URL_PODCASTINDEX_ROOT + "/api/1.0/search/byterm";
 
     const PODCASTINDEX_MAX_PODCASTS = 30;
     const FEEDPARSER_MAX_EPISODES = 300;
 
-    const URL_GPODDER_ROOT = "https://gpodder.net/";
 
     const ART_PREFIX = "art_";
 

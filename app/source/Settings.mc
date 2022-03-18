@@ -15,11 +15,11 @@ class Settings extends Ui.CompactMenu {
 
     function getPodcastService(){
         var service = Application.getApp().getProperty("settingPodcastService");
-        switch(item.getId()){
-            case :gPodder:
+        switch(service){
+            case PodcastsProviderWrapper.PODCAST_SERVICE_GPODDER:
             return WatchUi.loadResource(Rez.Strings.gPodder);
 
-            case :nextcloud:
+            case PodcastsProviderWrapper.PODCAST_SERVICE_NEXTCLOUD:
             return WatchUi.loadResource(Rez.Strings.nextcloud);
 
             default:
