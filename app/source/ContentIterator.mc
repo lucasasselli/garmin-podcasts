@@ -115,13 +115,12 @@ class ContentIterator extends Media.ContentIterator {
         var autoQueue = Application.getApp().getProperty("settingQueueAutoSelect");
         var sortDescending = Application.getApp().getProperty("settingQueueSortDescending") == 1;
 
-        episodes = (StorageHelper.get(Constants.STORAGE_EPISODES, {})).values();
+        Utils.purgeBadMedia();
 
-        // Sort array by date
+        episodes = (StorageHelper.get(Constants.STORAGE_EPISODES, {})).values();
         episodes = Utils.sortArrayField(episodes, Constants.EPISODE_DATE, sortDescending);
 
         var added = 0;
-
         queue = [];
 
         for(var i=0; i<episodes.size(); i++){
@@ -134,7 +133,7 @@ class ContentIterator extends Media.ContentIterator {
 
         if(added == 0){
             for(var i=0; i<episodes.size(); i++){
-                queue.add(episode[i][Constants.EPISODE_MEDIA]);
+                queue.add(episodes[i][Constants.EPISODE_MEDIA]);
             }
         }
     }
