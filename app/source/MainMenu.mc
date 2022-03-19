@@ -22,7 +22,7 @@ class MainMenu extends Ui.CompactMenu {
     function getQueueSize(){
         var count = 0;
         //if autoPlaylist is enabled, then display the episode count as the downloaded count
-        if (Application.getApp().getProperty("settingPlaylistAutoSelect") == 1) {
+        if (Application.getApp().getProperty("settingPlaylistAutoSelect")) {
             count = getDownloadedSize();
         //else display the size of the playlist
         } else {

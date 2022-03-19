@@ -44,10 +44,10 @@ class ContentDelegate extends Media.ContentDelegate {
         }
 
         // Handle completed episode
-        var autoPlaylist = Application.getApp().getProperty("settingPlaylistAutoSelect") == 1;
+        var deleteAfterPlayed = Application.getApp().getProperty("settingDeleteAfterPlayed");
         if(songEvent == Media.SONG_EVENT_COMPLETE){
-            //if autoPlaylist is enabled - delete the episode after played
-            if (id != null && autoPlaylist){
+            //if deleteAfterPlayed is enabled - delete the episode after played
+            if (id != null && deleteAfterPlayed){
                 episodes.remove(id);
                 Storage.setValue(Constants.STORAGE_EPISODES, episodes);
             }

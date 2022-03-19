@@ -6,7 +6,8 @@
         <property id="settingDeviceId" type="string"></property>
         <property id="settingServiceUrl" type="string"></property>
         <property id="settingPlaylistSortDescending" type="number">1</property>
-        <property id="settingPlaylistAutoSelect" type="number">0</property>
+        <property id="settingPlaylistAutoSelect" type="boolean">false</property>
+        <property id="settingDeleteAfterPlayed" type="boolean">false</property>
     </properties>
 
     <strings>
@@ -18,6 +19,7 @@
         <string id="settingStorageTitle">Storage info</string>
         <string id="settingPlaylistSortDescendingTitle">Sort playlist</string>
         <string id="settingPlaylistAutoSelectTitle">Select all podcasts in playlist</string>
+        <string id="settingDeleteAfterPlayedTitle">Delete episode after played</string>
 
         <string id="none">Local</string>
         <string id="gPodder">gpodder.net</string>
@@ -58,11 +60,11 @@
                 <listEntry value="1">@Strings.descending</listEntry>
             </settingConfig>
         </setting>
-                <setting propertyKey="@Properties.settingPlaylistAutoSelect" title="@Strings.settingPlaylistAutoSelectTitle">
-            <settingConfig type="list">
-                <listEntry value="0">@Strings.no</listEntry>
-                <listEntry value="1">@Strings.yes</listEntry>
-            </settingConfig>
+        <setting propertyKey="@Properties.settingPlaylistAutoSelect" title="@Strings.settingPlaylistAutoSelectTitle">
+            <settingConfig type="boolean" />
+        </setting>
+        <setting propertyKey="@Properties.settingDeleteAfterPlayed" title="@Strings.settingDeleteAfterPlayedTitle">
+            <settingConfig type="boolean" />
         </setting>
     </settings>
 </resources>

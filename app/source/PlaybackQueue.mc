@@ -9,7 +9,7 @@ class PlaybackQueue extends WatchUi.CustomMenu {
     function initialize() {
         CustomMenu.initialize(Constants.CUSTOM_MENU_HEIGHT, Graphics.COLOR_BLACK, {});
 
-        var autoPlaylist = Application.getApp().getProperty("settingPlaylistAutoSelect") == 1;
+        var autoPlaylist = Application.getApp().getProperty("settingPlaylistAutoSelect");
         var sortDescending = Application.getApp().getProperty("settingPlaylistSortDescending") == 1;
         var playlist = [];
         // Get the current stored playlist.
