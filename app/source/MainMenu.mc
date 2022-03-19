@@ -20,12 +20,20 @@ class MainMenu extends Ui.CompactMenu {
 
     // Return playback queue size string
     function getQueueSize(){
-        var playlist = StorageHelper.get(Constants.STORAGE_PLAYLIST, []);
-        return playlist.size().toString() + " " + WatchUi.loadResource(Rez.Strings.episodes);
+        var count = 0;
+        //if autoPlaylist is enabled, then display the episode count as the downloaded count
+        if (Application.getApp().getProperty("settingPlaylistAutoSelect")) {
+            count = getDownloadedSize();
+        //else display the size of the playlist
+        } else {
+            var playlist = StorageHelper.get(Constants.STORAGE_PLAYLIST, []);
+            count = playlist.size().toString();
+        }
+        return count + " " + WatchUi.loadResource(Rez.Strings.episodes);
     }
 
-    // Playback queue
-    function callbackQueue(){
+    //return the number of downloaded episodes
+    function getDownloadedSize(){
         var episodes = StorageHelper.get(Constants.STORAGE_EPISODES, {});
         var downloadedCount = 0;
         for(var i=0; i<episodes.size(); i++){
@@ -33,6 +41,12 @@ class MainMenu extends Ui.CompactMenu {
                 downloadedCount++;
             }
         }
+        return downloadedCount;
+    }
+
+    // Playback queue
+    function callbackQueue(){
+        var downloadedCount = getDownloadedSize();
         if (downloadedCount > 0) {
             // Episodes downloaded
             WatchUi.pushView(new PlaybackQueue(), new PlaybackQueueDelegate(), WatchUi.SLIDE_LEFT);

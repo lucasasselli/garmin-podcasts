@@ -43,6 +43,17 @@ class ContentDelegate extends Media.ContentDelegate {
             Media.setAlbumArt(artwork);
         }
 
+        // Handle completed episode
+        var deleteAfterPlayed = Application.getApp().getProperty("settingDeleteAfterPlayed");
+        if(songEvent == Media.SONG_EVENT_COMPLETE){
+            //if deleteAfterPlayed is enabled - delete the episode after played
+            if (id != null && deleteAfterPlayed){
+                episodes.remove(id);
+                Storage.setValue(Constants.STORAGE_EPISODES, episodes);
+            }
+            return;
+        }
+
         // Handle progress...
         if(songEvent != Media.SONG_EVENT_SKIP_PREVIOUS){
             if(id != null){
