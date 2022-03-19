@@ -5,17 +5,17 @@ using Toybox.Media;
 // Iterator to control the order of song playback
 class ContentIterator extends Media.ContentIterator {
 
-    // The index of the current song in playlist
-    private var playlistIndex;
+    // The index of the current song in queue
+    private var queueIndex;
 
-    private var playlist;
-    private var saved;
+    private var queue;
+    private var episodes;
 
     // Constructor
     function initialize() {
-        playlistIndex = 0;
+        queueIndex = 0;
 
-        initializePlaylist();
+        initializeQueue();
 
         ContentIterator.initialize();
     }
@@ -42,8 +42,8 @@ class ContentIterator extends Media.ContentIterator {
     }
 
     function getAtIndex(index){
-        var ref = new Media.ContentRef(playlist[index], Media.CONTENT_TYPE_AUDIO);
-        var episode = Utils.findArrayField(saved, Constants.EPISODE_MEDIA, playlist[index]);
+        var ref = new Media.ContentRef(queue[index], Media.CONTENT_TYPE_AUDIO);
+        var episode = Utils.findArrayField(episodes, Constants.EPISODE_MEDIA, queue[index]);
         var obj = Media.getCachedContentObj(ref);
         if(episode != null && episode[Constants.EPISODE_PROGRESS] != null){
             obj = new Media.ActiveContent(ref, obj.getMetadata(), episode[Constants.EPISODE_PROGRESS]);
@@ -55,9 +55,9 @@ class ContentIterator extends Media.ContentIterator {
     // Returns the next song, or null if there is no next song. Also increments the current
     // song index.
     function next() {
-        if (playlistIndex < (playlist.size() - 1)) {
-            ++playlistIndex;
-            return getAtIndex(playlistIndex);
+        if (queueIndex < (queue.size() - 1)) {
+            ++queueIndex;
+            return getAtIndex(queueIndex);
         }
 
         return null;
@@ -66,9 +66,9 @@ class ContentIterator extends Media.ContentIterator {
     // Returns the previous song, or null if there is no previous song. Also decrements the current
     // song index.
     function previous() {
-        if (playlistIndex > 0) {
-            --playlistIndex;
-            return getAtIndex(playlistIndex);
+        if (queueIndex > 0) {
+            --queueIndex;
+            return getAtIndex(queueIndex);
         }
 
         return null;
@@ -77,16 +77,16 @@ class ContentIterator extends Media.ContentIterator {
     // Gets the current song to play
     function get() {
         var obj = null;
-        if ((playlistIndex >= 0) && (playlistIndex < playlist.size())) {
-            return getAtIndex(playlistIndex);
+        if ((queueIndex >= 0) && (queueIndex < queue.size())) {
+            return getAtIndex(queueIndex);
         }
         return null;
     }
 
     // Returns the next song, or null if there is no next song, without decrementing the current song index.
     function peekNext() {
-        var nextIndex = playlistIndex + 1;
-        if (nextIndex < playlist.size()) {
+        var nextIndex = queueIndex + 1;
+        if (nextIndex < queue.size()) {
             return getAtIndex(nextIndex);
         }
 
@@ -95,7 +95,7 @@ class ContentIterator extends Media.ContentIterator {
 
     // Returns the previous song, or null if there is no previous song, without incrementing the current song index.
     function peekPrevious() {
-        var previousIndex = playlistIndex - 1;
+        var previousIndex = queueIndex - 1;
         if (previousIndex >= 0) {
             return getAtIndex(previousIndex);
         }
@@ -108,31 +108,32 @@ class ContentIterator extends Media.ContentIterator {
         return true;
     }
 
-    // Gets the songs to play. If no playlist is available then all the songs in the
+    // Gets the songs to play. If no queue is available then all the songs in the
     // system are played.
-    function initializePlaylist() {
+    function initializeQueue() {
 
-        saved = (StorageHelper.get(Constants.STORAGE_EPISODES, {})).values();
+        var autoQueue = Application.getApp().getProperty("settingQueueAutoSelect");
+        var sortDescending = Application.getApp().getProperty("settingQueueSortDescending") == 1;
 
-        // Read the playlist from storage
-        var tempPlaylist = StorageHelper.get(Constants.STORAGE_PLAYLIST, null);
+        episodes = (StorageHelper.get(Constants.STORAGE_EPISODES, {})).values();
 
-        if (tempPlaylist == null) {
-            // Add all the episodes in memory
-            var episodes = Media.getContentRefIter({:contentType => Media.CONTENT_TYPE_AUDIO});
-            playlist = [];
-            if (episodes != null) {
-                var episode = episodes.next();
-                while (episode != null) {
-                    playlist.add(episode.getId());
-                    episode = episodes.next();
-                }
+        // Sort array by date
+        episodes = Utils.sortArrayField(episodes.values(), Constants.EPISODE_DATE, sortDescending);
+
+        var added = 0;
+
+        for(var i=0; i<episodes.size(); i++){
+            var episode = episodes[i];
+            if(episode[i][Constants.EPISODE_IN_QUEUE] == true || autoQueue){
+    // Utils.getSafeMedia(refId)
+                queue.add(episode[Constants.EPISODE_MEDIA]);
+                added++;
             }
-        } else {
-            // Add the episodes in storage
-            playlist = new [tempPlaylist.size()];
-            for (var i = 0; i < playlist.size(); ++i) {
-                playlist[i] = tempPlaylist[i];
+        }
+
+        if(added == 0){
+            for(var i=0; i<episodes.size(); i++){
+                queue.add(episode[i][Constants.EPISODE_MEDIA]);
             }
         }
     }

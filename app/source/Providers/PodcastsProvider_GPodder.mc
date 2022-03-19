@@ -79,8 +79,7 @@ class PodcastsProvider_GPodder extends PodcastsProviderBase {
             null,
             {
             :method => Communications.HTTP_REQUEST_METHOD_POST,
-            :headers => headers,
-            :responseType => Communications.HTTP_RESPONSE_CONTENT_TYPE_TEXT_PLAIN
+            :headers => headers
             },
             callback);
     }

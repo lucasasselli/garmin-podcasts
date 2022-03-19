@@ -12,22 +12,21 @@ class MainMenu extends Ui.CompactMenu {
     }
 
     function build(){
-        add(Rez.Strings.menuQueue, method(:getQueueSize), method(:callbackQueue));
+        add(Rez.Strings.menuQueue, method(:getQueueLabel), method(:callbackQueue));
         add(Rez.Strings.menuPodcasts, null, method(:callbackManagePodcasts));
         add(Rez.Strings.menuEpisodes, null, method(:callbackManageEpisodes));
         add(Rez.Strings.menuSettings, null, method(:callbackSettings));
     }
 
     // Return playback queue size string
-    function getQueueSize(){
+    function getQueueLabel(){
         var count = 0;
-        //if autoPlaylist is enabled, then display the episode count as the downloaded count
-        if (Application.getApp().getProperty("settingPlaylistAutoSelect")) {
+        //if autoQueue is enabled, then display the episode count as the downloaded count
+        if (Application.getApp().getProperty("settingQueueAutoSelect")) {
             count = getDownloadedSize();
-        //else display the size of the playlist
+        //else display the size of the queue
         } else {
-            var playlist = StorageHelper.get(Constants.STORAGE_PLAYLIST, []);
-            count = playlist.size().toString();
+            count = getQueueSize();
         }
         return count + " " + WatchUi.loadResource(Rez.Strings.episodes);
     }
@@ -44,17 +43,39 @@ class MainMenu extends Ui.CompactMenu {
         return downloadedCount;
     }
 
+    function getQueueSize(){
+        var episodes = StorageHelper.get(Constants.STORAGE_EPISODES, {});
+        var queueCount = 0;
+        for(var i=0; i<episodes.size(); i++){
+            if(episodes.values()[i][Constants.EPISODE_IN_QUEUE] == true){
+                queueCount++;
+            }
+        }
+        return queueCount;
+    }
+
     // Playback queue
     function callbackQueue(){
         var downloadedCount = getDownloadedSize();
         if (downloadedCount > 0) {
             // Episodes downloaded
-            WatchUi.pushView(new PlaybackQueue(), new PlaybackQueueDelegate(), WatchUi.SLIDE_LEFT);
+            var autoQueue = Application.getApp().getProperty("settingQueueAutoSelect");
+            if(autoQueue){
+                var prompt = new Ui.CompactPrompt(Rez.Strings.confirmPlayback, method(:startPlayback), null);
+                prompt.show();
+            }else{
+                WatchUi.pushView(new Queue(), new QueueDelegate(), WatchUi.SLIDE_LEFT);
+            }
         } else {
             // No episodes
             var alert = new Ui.CompactAlert(Rez.Strings.errorNoQueueEpisodes);
             alert.show();
         }
+    }
+
+    function startPlayback(){
+        // NOTE: Popping the view before starting playback causes problems...
+        Media.startPlayback(null);
     }
 
     // Manage subscriptions

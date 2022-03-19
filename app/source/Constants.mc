@@ -15,14 +15,13 @@ module Constants {
     const IMAGE_SIZE = 64;
     const CUSTOM_MENU_HEIGHT = 108;
 
-    const STORAGE_VERSION_VALUE = 4;
+    const STORAGE_VERSION_VALUE = 5;
 
     // Data structures
     enum {
         STORAGE_VERSION,
         STORAGE_SUBSCRIBED,
         STORAGE_EPISODES,
-        STORAGE_PLAYLIST,
         STORAGE_ARTWORKS,
         STORAGE_MANUAL_SYNC
     }
@@ -41,6 +40,7 @@ module Constants {
         EPISODE_DURATION,
         EPISODE_MEDIA,
         EPISODE_PROGRESS,
+        EPISODE_IN_QUEUE,
         EPISODE_DATA_SIZE
     }
 }

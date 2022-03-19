@@ -5,8 +5,8 @@
         <property id="settingPassword" type="string"></property>
         <property id="settingDeviceId" type="string"></property>
         <property id="settingServiceUrl" type="string"></property>
-        <property id="settingPlaylistSortDescending" type="number">1</property>
-        <property id="settingPlaylistAutoSelect" type="boolean">false</property>
+        <property id="settingQueueSortDescending" type="number">1</property>
+        <property id="settingQueueAutoSelect" type="boolean">false</property>
         <property id="settingDeleteAfterPlayed" type="boolean">false</property>
     </properties>
 
@@ -17,9 +17,9 @@
         <string id="settingDeviceIdTitle">Device ID</string>
         <string id="settingServiceUrlTitle">Service URL (optional)</string>
         <string id="settingStorageTitle">Storage info</string>
-        <string id="settingPlaylistSortDescendingTitle">Sort playlist</string>
-        <string id="settingPlaylistAutoSelectTitle">Select all podcasts in playlist</string>
-        <string id="settingDeleteAfterPlayedTitle">Delete episode after played</string>
+        <string id="settingQueueSortDescendingTitle">Queue order</string>
+        <string id="settingQueueAutoSelectTitle">Add all episodes to queue</string>
+        <string id="settingDeleteAfterPlayedTitle">Auto-delete completed episodes</string>
 
         <string id="none">Local</string>
         <string id="gPodder">gpodder.net</string>
@@ -54,13 +54,13 @@
         <setting propertyKey="@Properties.settingServiceUrl" title="@Strings.settingServiceUrlTitle">
             <settingConfig type="alphaNumeric" required="false" />
         </setting>
-                <setting propertyKey="@Properties.settingPlaylistSortDescending" title="@Strings.settingPlaylistSortDescendingTitle">
+                <setting propertyKey="@Properties.settingQueueSortDescending" title="@Strings.settingQueueSortDescendingTitle">
             <settingConfig type="list">
                 <listEntry value="0">@Strings.ascending</listEntry>
                 <listEntry value="1">@Strings.descending</listEntry>
             </settingConfig>
         </setting>
-        <setting propertyKey="@Properties.settingPlaylistAutoSelect" title="@Strings.settingPlaylistAutoSelectTitle">
+        <setting propertyKey="@Properties.settingQueueAutoSelect" title="@Strings.settingQueueAutoSelectTitle">
             <settingConfig type="boolean" />
         </setting>
         <setting propertyKey="@Properties.settingDeleteAfterPlayed" title="@Strings.settingDeleteAfterPlayedTitle">

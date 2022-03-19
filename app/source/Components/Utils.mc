@@ -123,19 +123,6 @@ class Utils {
         }
         Storage.setValue(Constants.STORAGE_EPISODES, episodes);
 
-        // Purge playlist episodes
-        var playlist = StorageHelper.get(Constants.STORAGE_PLAYLIST, []);
-        var purgedPlaylist = [];
-        for(var i=0; i<playlist.size(); i++){
-            var x = Utils.findArrayField(episodes.values(), Constants.EPISODE_MEDIA, playlist[i]);
-            if(x != null){
-                purgedPlaylist.add(playlist[i]);
-            }else{
-                Log.debug("Media " + playlist[i] + " doesn't exist anymore. Deleting from playlist...");
-            }
-        }
-        Storage.setValue(Constants.STORAGE_PLAYLIST, purgedPlaylist);
-
         // Purge Artworks without podcast
         var artworks = StorageHelper.get(Constants.STORAGE_ARTWORKS, []);
         var purgedArtworks = [];
