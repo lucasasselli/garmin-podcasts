@@ -118,14 +118,15 @@ class ContentIterator extends Media.ContentIterator {
         episodes = (StorageHelper.get(Constants.STORAGE_EPISODES, {})).values();
 
         // Sort array by date
-        episodes = Utils.sortArrayField(episodes.values(), Constants.EPISODE_DATE, sortDescending);
+        episodes = Utils.sortArrayField(episodes, Constants.EPISODE_DATE, sortDescending);
 
         var added = 0;
 
+        queue = [];
+
         for(var i=0; i<episodes.size(); i++){
             var episode = episodes[i];
-            if(episode[i][Constants.EPISODE_IN_QUEUE] == true || autoQueue){
-    // Utils.getSafeMedia(refId)
+            if(episode[Constants.EPISODE_IN_QUEUE] == true || autoQueue){
                 queue.add(episode[Constants.EPISODE_MEDIA]);
                 added++;
             }

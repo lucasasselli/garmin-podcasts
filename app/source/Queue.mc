@@ -20,7 +20,7 @@ class Queue extends WatchUi.CustomMenu {
         for (var i = 0; i < episodes.size(); i++) {
             var mediaObj = Utils.getSafeMedia(episodes[i][Constants.EPISODE_MEDIA]);
             if(mediaObj != null){
-                addItem(new QueueItem(episodes[i], episodes[i][Constants.EPISODE_IN_QUEUE]));
+                addItem(new QueueItem(episodes[i], episodes[i][Constants.EPISODE_IN_QUEUE] == true));
             }
         }
     }
@@ -87,7 +87,7 @@ class QueueItem extends WatchUi.CustomMenuItem {
         podcastText = new ScrollText(self.weak(), episodePodcast, Graphics.FONT_TINY, MARGIN);
         podcastHeight = Graphics.getFontHeight(Graphics.FONT_TINY);
 
-        CustomMenuItem.initialize(genEpisodeId(episode), {});
+        CustomMenuItem.initialize(Data.genEpisodeId(episode), {});
     }
 
     function draw(dc){
@@ -163,15 +163,10 @@ class QueueDelegate extends WatchUi.Menu2InputDelegate {
     function onSelect(item) {
         var episodes = StorageHelper.get(Constants.STORAGE_EPISODES, {});
 
-        for(var i=0; i<episodes.size(); i++){
-            if(Data.genEpisodeId(episode[i]) == item.getId()){
-                if (item.check()) {
-                    episode[i][Constants.EPISODE_IN_QUEUE] = true;
-                } else {
-                    episode[i][Constants.EPISODE_IN_QUEUE] = false;
-                }
-                break;
-            }
+        if (item.check()) {
+            episodes[item.getId()][Constants.EPISODE_IN_QUEUE] = true;
+        } else {
+            episodes[item.getId()][Constants.EPISODE_IN_QUEUE] = false;
         }
 
         Storage.setValue(Constants.STORAGE_EPISODES, episodes);

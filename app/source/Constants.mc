@@ -9,7 +9,6 @@ module Constants {
     const PODCASTINDEX_MAX_PODCASTS = 30;
     const FEEDPARSER_MAX_EPISODES = 300;
 
-
     const ART_PREFIX = "art_";
 
     const IMAGE_SIZE = 64;

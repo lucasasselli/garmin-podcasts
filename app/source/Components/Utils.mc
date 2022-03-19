@@ -106,14 +106,6 @@ class Utils {
                 continue;
             }
 
-            // FIXME: Allow episodes without media to allow storing episode selection
-            // var mediaObj = Utils.getSafeMedia(episode[Constants.EPISODE_MEDIA]);
-            // if(mediaObj == null){
-            //     episodes.remove(episodeIds[i]);
-            //     Log.debug("Episode " + episodeIds[i] + " doesn't have a media. Deleting...");
-            //     continue;
-            // }
-
             var podcastId = episode[Constants.EPISODE_PODCAST];
             if(podcastId == null || !podcasts.hasKey(podcastId)){
                 episodes.remove(episodeIds[i]);
