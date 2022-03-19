@@ -50,6 +50,7 @@ class EpisodeDownload {
             view.show();
         }else{
             view.switchTo();
+            WatchUi.requestUpdate(); // FIXME:
         }
     }
 
