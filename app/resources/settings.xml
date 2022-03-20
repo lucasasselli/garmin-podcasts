@@ -26,8 +26,6 @@
         <string id="nextcloud">Nextcloud (gPodder)</string>
         <string id="ascending">Newest to oldest</string>
         <string id="descending">Oldest to newest</string>
-        <string id="yes">Yes</string>
-        <string id="no">No</string>
     </strings>
 
     <settings>

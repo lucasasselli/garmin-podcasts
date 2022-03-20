@@ -3,6 +3,7 @@
 	{
         "-101": "Memory error: response too large!",
         "-104": "No internet connection!",
+        "-300": "Request timeout!",
         "-400": "Invalid response data type!",
         "-402": "Response too large!",
         "-1001": "Unsecure connection",
