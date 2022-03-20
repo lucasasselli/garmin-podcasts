@@ -49,25 +49,29 @@ class PodcastsProviderBase {
     function add(podcast, doneCallback, errorCallback){
         self.doneCallback = doneCallback;
         self.errorCallback = errorCallback;
-        busy = true;
+        invokeDone();
     }
 
     function remove(podcast, doneCallback, errorCallback){
         self.doneCallback = doneCallback;
         self.errorCallback = errorCallback;
-        busy = true;
+        invokeDone();
     }
 
     function done(podcasts){
-        if(doneCallback != null){
-            doneCallback.invoke(podcasts);
-        }
-        busy = false;
+        invokeDone();
     }
 
     function error(string){
         if(errorCallback != null){
             errorCallback.invoke(string);
+        }
+        busy = false;
+    }
+
+    function invokeDone(){
+        if(doneCallback != null){
+            doneCallback.invoke(podcasts);
         }
         busy = false;
     }

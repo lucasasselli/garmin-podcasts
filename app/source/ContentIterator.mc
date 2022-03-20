@@ -121,6 +121,7 @@ class ContentIterator extends Media.ContentIterator {
         episodes = Utils.sortArrayField(episodes, Constants.EPISODE_DATE, sortDescending);
 
         var added = 0;
+
         queue = [];
 
         for(var i=0; i<episodes.size(); i++){
