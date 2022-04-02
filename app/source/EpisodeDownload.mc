@@ -46,12 +46,10 @@ class EpisodeDownload {
             view = new Ui.CompactAlert(Rez.Strings.errorNoSubscriptions);
         }
 
-        Log.debug("hasProgress: " + hasProgress);
         if(hasProgress == null || hasProgress == false){
             view.show();
         }else{
             view.switchTo();
-            WatchUi.requestUpdate(); // FIXME:
         }
     }
 
