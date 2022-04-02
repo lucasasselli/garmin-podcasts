@@ -1,5 +1,5 @@
 <menu2 id="SettingPodcastService" title="@Strings.settingPodcastServiceTitle">
     <menu-item id="none" label="@Strings.none"></menu-item>
     <menu-item id="gPodder" label="@Strings.gPodder"></menu-item>
-    <menu-item id="Nextcloud" label="@Strings.nextcloud"></menu-item>
+    <menu-item id="nextcloud" label="@Strings.nextcloud"></menu-item>
 </menu2>
