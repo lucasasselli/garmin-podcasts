@@ -49,13 +49,11 @@ class PodcastsProviderBase {
     function add(podcast, doneCallback, errorCallback){
         self.doneCallback = doneCallback;
         self.errorCallback = errorCallback;
-        invokeDone();
     }
 
     function remove(podcast, doneCallback, errorCallback){
         self.doneCallback = doneCallback;
         self.errorCallback = errorCallback;
-        invokeDone();
     }
 
     function done(podcasts){
