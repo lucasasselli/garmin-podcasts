@@ -10,8 +10,6 @@ using Toybox.Time.Gregorian;
 using CompactLib.Ui;
 
 class SubscriptionManager extends Ui.CompactMenu {
-    private var menu;
-    private var toDelete = [];
 
     function initialize(){
         CompactMenu.initialize(Rez.Strings.menuPodcasts);
@@ -40,7 +38,7 @@ class SubscriptionManager extends Ui.CompactMenu {
         var podcastIds = podcasts.keys();
 
         if(podcasts.size() > 0){
-            menu = new WatchUi.Menu2({:title=> Rez.Strings.menuPodcastsUnsubscribe });
+            var menu = new WatchUi.Menu2({:title=> Rez.Strings.menuPodcastsUnsubscribe });
 
             for(var i=0; i<podcastIds.size(); i++){
 
@@ -54,8 +52,7 @@ class SubscriptionManager extends Ui.CompactMenu {
                     {})
                 );
             }
-            toDelete = [];
-            WatchUi.pushView(menu, new SubscriptionMenuDelegate(method(:onSelectUnsubscribe), method(:deletePrompt)), WatchUi.SLIDE_LEFT);
+            WatchUi.pushView(menu, new SubscriptionMenuDelegate(method(:onSubscriptionRemove)), WatchUi.SLIDE_LEFT);
         } else {
             var alert = new Ui.CompactAlert(Rez.Strings.errorNoSubscriptions);
             alert.show();
@@ -96,65 +93,29 @@ class SubscriptionManager extends Ui.CompactMenu {
             return;
         }
 
-        menu = new WatchUi.CheckboxMenu({:title=>Rez.Strings.titleResultsMenu});
-        var podcasts = StorageHelper.get(Constants.STORAGE_SUBSCRIBED, {});
+        var menu = new WatchUi.Menu2({:title=>Rez.Strings.titleResultsMenu});
 
         for (var i=0; i<feeds.size(); i++) {
-            // FIXME: Might never be null!
             var podcast = Data.parsePodcast(feeds[i], feeds[i]["url"]);
             if(podcast != null){
                 menu.addItem(
-                    new WatchUi.CheckboxMenuItem(
+                    new WatchUi.MenuItem(
                         podcast[Constants.PODCAST_TITLE],
                         feeds[i]["author"],
                         podcast,
-                        podcasts.hasKey(Utils.hash(podcast[Constants.PODCAST_URL])),
                     {}
                     ));
             }
         }
-        WatchUi.switchToView(menu, new SubscriptionMenuDelegate(method(:onSelectSubscribe), null), WatchUi.SLIDE_LEFT);
+        WatchUi.switchToView(menu, new SubscriptionMenuDelegate(method(:onSubscriptionAdd)), WatchUi.SLIDE_LEFT);
     }
 
-    function onSelectSubscribe(context){
-        if (menu.getItem(menu.findItemById(context)).isChecked()){
-            $.podcastsProvider.add(context, null);
-        }else{
-            $.podcastsProvider.remove(context, null);
-        }
+    function onSubscriptionAdd(context){
+        $.podcastsProvider.add(context, method(:onProgressDone));
     }
 
-    function onSelectUnsubscribe(context){
-        menu.deleteItem(menu.findItemById(context));
-        toDelete.add(context);
-        //if no more menu items, then popView
-        if (menu.getItem(0)==null){
-            deletePrompt();
-        }
-    }
-
-    function deletePrompt(){
-        if(toDelete.size() > 0){
-            // ... something to delete, ask user to confirm
-            var prompt = new Ui.CompactPrompt(Rez.Strings.confirmDelete, method(:callbackDelete), method(:exitView));
-            prompt.show();
-        }else{
-            // Just exit
-            WatchUi.popView(WatchUi.SLIDE_RIGHT);
-        }
-    }
-
-    function exitView(){
-        // Just exit
-        WatchUi.popView(WatchUi.SLIDE_RIGHT);
-    }
-
-    function callbackDelete(){
-        // Remove deleted subscription
-        for(var i=0; i<toDelete.size(); i++){
-            $.podcastsProvider.remove(toDelete[i], null);
-        }
-        exitView();
+    function onSubscriptionRemove(context){
+        $.podcastsProvider.remove(context, method(:onProgressDone));
     }
 
     function onProgressDone(podcasts, hasProgress){
@@ -167,24 +128,14 @@ class SubscriptionManager extends Ui.CompactMenu {
 class SubscriptionMenuDelegate extends WatchUi.Menu2InputDelegate {
 
     hidden var msg;
-    hidden var callbackOnSelect;
-    hidden var callbackOnBack;
+    hidden var callback;
 
-    function initialize(callbackOnSelect, callbackOnBack) {
-        self.callbackOnSelect = callbackOnSelect;
-        self.callbackOnBack = callbackOnBack;
+    function initialize(callback) {
+        self.callback = callback;
         Menu2InputDelegate.initialize();
     }
 
     function onSelect(item) {
-        callbackOnSelect.invoke(item.getId());
-    }
-
-    function onBack() {
-        if (callbackOnBack != null){
-            callbackOnBack.invoke();
-        }else{
-            Menu2InputDelegate.onBack();
-        }
+        callback.invoke(item.getId());
     }
 }
