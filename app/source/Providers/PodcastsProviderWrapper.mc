@@ -38,7 +38,9 @@ class PodcastsProviderWrapper {
     }
 
     function getSilent(){
-        return provider.get(null, null, null);
+        if(provider.valid()){
+            provider.get(null, null, null);
+        }
     }
 
     function get(callback){
