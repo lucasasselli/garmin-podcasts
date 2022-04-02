@@ -46,7 +46,8 @@ class EpisodeDownload {
             view = new Ui.CompactAlert(Rez.Strings.errorNoSubscriptions);
         }
 
-        if(hasProgress == null){
+        Log.debug("hasProgress: " + hasProgress);
+        if(hasProgress == null || hasProgress == false){
             view.show();
         }else{
             view.switchTo();

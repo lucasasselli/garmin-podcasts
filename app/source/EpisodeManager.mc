@@ -13,7 +13,7 @@ class EpisodeManager extends Ui.CompactMenu {
 
     function build(){
         add(Rez.Strings.menuEpisodesDownload, null, method(:callbackEpisodeDownload));
-        add(Rez.Strings.menuEpisodesDelete, null, method(:callbackEpisodeDelete));
+        add(Rez.Strings.menuEpisodesDelete, method(:getDeleteLabel), method(:callbackEpisodeDelete));
     }
 
     // Download
@@ -29,7 +29,7 @@ class EpisodeManager extends Ui.CompactMenu {
 
         var downloadedCount = 0;
 
-        var episodesMenu = new WatchUi.CheckboxMenu({:title => Rez.Strings.menuEpisodesDelete});
+        var episodesMenu = new WatchUi.Menu2({:title => Rez.Strings.menuEpisodesDelete});
         var menuEpisodes = {};
 
         for(var i=0; i<episodes.size(); i++){
@@ -46,65 +46,76 @@ class EpisodeManager extends Ui.CompactMenu {
 
                 if(episode[Constants.EPISODE_MEDIA] != null){
                     downloadedCount++;
-                    episodesMenu.addItem(new WatchUi.CheckboxMenuItem(episode[Constants.EPISODE_TITLE], podcastTitle, episodes.keys()[i], false, {}));
+                    episodesMenu.addItem(new WatchUi.MenuItem(episode[Constants.EPISODE_TITLE], podcastTitle, episodes.keys()[i], {}));
                 }
             }
         }
         if (downloadedCount > 0) {
             // Episodes downloaded
-            WatchUi.pushView(episodesMenu, new EpisodeDeleteSelectDelegate(), WatchUi.SLIDE_LEFT);
+            WatchUi.pushView(episodesMenu, new EpisodeDeleteSelectDelegate(episodesMenu), WatchUi.SLIDE_LEFT);
         } else {
             // No episodes
             var alert = new Ui.CompactAlert(Rez.Strings.errorNoQueueEpisodes);
             alert.show();
         }
     }
+
+    function getDeleteLabel(){
+        var count = MainMenu.getDownloadedSize();
+        return count + " " + WatchUi.loadResource(Rez.Strings.episodes);
+    }
 }
 
 class EpisodeDeleteSelectDelegate extends WatchUi.Menu2InputDelegate {
 
-    var toDelete = {};
+    private var toDelete = [];
+    private var menu;
 
-    function initialize() {
+    function initialize(menu) {
+        self.menu = menu;
         Menu2InputDelegate.initialize();
     }
 
     function onSelect(item) {
-        if (item.isChecked()) {
-            toDelete.put(item.getId(), null);
-        } else {
-            toDelete.remove(item.getId());
+        menu.deleteItem(menu.findItemById(item.getId()));
+        toDelete.add(item.getId());
+        //if no more menu items, then popView
+        if (menu.getItem(0)==null){
+            deletePrompt();
         }
     }
 
-    function onDone() {
+    function deletePrompt(){
         if(toDelete.size() > 0){
             // ... something to delete, ask user to confirm
-            var prompt = new Ui.CompactPrompt(Rez.Strings.confirmDelete, method(:delete), method(:exitView));
+            var prompt = new Ui.CompactPrompt(Rez.Strings.confirmDelete, method(:callbackDelete), method(:exitView));
             prompt.show();
         }else{
-            // Just exit
-            WatchUi.popView(WatchUi.SLIDE_RIGHT);
+            exitView();
         }
     }
 
-    function delete(){
+    function callbackDelete(){
 
         // Remove deleted episodes
         var episodes = StorageHelper.get(Constants.STORAGE_EPISODES, {});
         for(var i=0; i<toDelete.size(); i++){
-            episodes.remove(toDelete.keys()[i]);
+            episodes.remove(toDelete[i]);
         }
         Storage.setValue(Constants.STORAGE_EPISODES, episodes);
 
         // Trigger data cleanup
         Utils.purgeBadMedia();
 
-        WatchUi.popView(WatchUi.SLIDE_RIGHT);
+        exitView();
     }
 
     function exitView(){
         // Just exit
         WatchUi.popView(WatchUi.SLIDE_RIGHT);
+    }
+
+    function onBack(){
+        deletePrompt();
     }
 }
