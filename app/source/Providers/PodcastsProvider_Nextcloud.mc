@@ -22,7 +22,7 @@ class PodcastsProvider_Nextcloud extends PodcastsProvider_GPodder {
 
     // Get subscriptions
     function getSubscriptions(responseCode, data){
-        if (responseCode == 200) {
+        if (Utils.validResponse(responseCode)) {
             Communications.makeWebRequest(
                 serviceroot + "index.php/apps/gpoddersync/subscriptions?since=0",
                 null,
@@ -45,7 +45,7 @@ class PodcastsProvider_Nextcloud extends PodcastsProvider_GPodder {
     }
 
     function manageSubscription(responseCode, data){
-        if (responseCode == 200) {
+        if (Utils.validResponse(responseCode)) {
             Communications.makeWebRequest(
                 serviceroot + "/index.php/apps/gpoddersync/subscription_change/create",
                 podcastRequestParams,

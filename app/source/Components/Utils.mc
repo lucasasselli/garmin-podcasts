@@ -174,4 +174,15 @@ class Utils {
 
         return options;
     }
+
+    function validResponse(code){
+        // NOTE:
+        // On some device data get correctly returned with error -400
+        // (invalid data type).
+        if(code == 200 || code == -400){
+            return true;
+        }else{
+            return false;
+        }
+    }
 }

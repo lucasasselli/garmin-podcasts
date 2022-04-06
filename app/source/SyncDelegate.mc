@@ -93,7 +93,7 @@ class SyncDelegate extends Communications.SyncDelegate {
         var episodeId = downloadsIterator.item();
         var podcastId = episodes[episodeId][Constants.EPISODE_PODCAST];
 
-        if (responseCode == 200) {
+        if (Utils.validResponse(responseCode)) {
             artworks.add(podcastId);
             Storage.setValue(Constants.STORAGE_ARTWORKS, artworks);
             Storage.setValue(Constants.ART_PREFIX + podcastId, data);
@@ -117,7 +117,7 @@ class SyncDelegate extends Communications.SyncDelegate {
     }
 
     function onMediaInfo(responseCode, data, context){
-        if (responseCode == 200) {
+        if (Utils.validResponse(responseCode)) {
             var episodeId = downloadsIterator.item();
             episodes[episodeId][Constants.EPISODE_TITLE] = data.get("title");
             episodes[episodeId][Constants.EPISODE_DURATION] = data.get("duration");
@@ -182,7 +182,7 @@ class SyncDelegate extends Communications.SyncDelegate {
         var episodeId = downloadsIterator.item();
         var podcastId = episodes[episodeId][Constants.EPISODE_PODCAST];
 
-        if (responseCode == 200) {
+        if (Utils.validResponse(responseCode)) {
             episodes[downloadsIterator.item()][Constants.EPISODE_MEDIA] = data.getId();
 
             var mediaObj = Utils.getSafeMedia(data.getId());
