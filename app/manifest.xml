@@ -6,7 +6,6 @@
             <iq:product id="d2air"/>
             <iq:product id="d2airx10"/>
             <iq:product id="d2delta"/>
-            <iq:product id="d2deltapx"/>
             <iq:product id="d2deltas"/>
             <iq:product id="d2mach1"/>
             <iq:product id="descentmk2"/>
@@ -16,7 +15,6 @@
             <iq:product id="fenix5splus"/>
             <iq:product id="fenix5xplus"/>
             <iq:product id="fenix6pro"/>
-            <iq:product id="fenix6prosystem5preview"/>
             <iq:product id="fenix6spro"/>
             <iq:product id="fenix6xpro"/>
             <iq:product id="fenix7"/>
@@ -42,7 +40,6 @@
             <iq:product id="venu2"/>
             <iq:product id="venu2plus"/>
             <iq:product id="venu2s"/>
-            <iq:product id="venu2system5preview"/>
             <iq:product id="venud"/>
             <iq:product id="venusqm"/>
             <iq:product id="vivoactive3m"/>
