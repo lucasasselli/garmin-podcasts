@@ -6,10 +6,6 @@
 
 Download your favorite episodes or keep your up-to-date with the most recent ones, organize your queue and resume listening from where you left.
 
-If you like this app and you want to show your support you can [pay me a beer](https://paypal.me/lucasasselli)! :beer:
-
-[<img src="https://developer.garmin.com/static/available-badge-9e49ebfb7336ce47f8df66dfe45d28ae.svg" width="200">](https://apps.garmin.com/en-US/apps/b5b85600-0625-43b6-89e9-1245bd44532c)
-
 ## Features
 
 - Free and Open Source
